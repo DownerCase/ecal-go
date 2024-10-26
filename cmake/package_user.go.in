@@ -1,0 +1,6 @@
+package ecal
+
+// #cgo CPPFLAGS: -I$<TARGET_PROPERTY:eCAL::core,INTERFACE_INCLUDE_DIRECTORIES>
+// #cgo LDFLAGS: -L$<TARGET_LINKER_FILE_DIR:eCAL::core>
+// #cgo LDFLAGS: -Wl,-rpath,$<TARGET_LINKER_FILE_DIR:eCAL::core>
+import "C"
