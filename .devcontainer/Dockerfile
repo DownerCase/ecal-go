@@ -1,0 +1,72 @@
+ARG BASE_IMAGE=docker.io/ubuntu:oracular-20241009
+
+###
+# Build eCAL 6 from source
+###
+FROM ${BASE_IMAGE} AS builder
+
+RUN apt-get update && apt-get install --no-install-recommends  -y\
+    ca-certificates \
+    cmake \
+    g++ \
+    git \
+    libasio-dev \
+    libprotobuf-dev \
+    libprotoc-dev \
+    libtclap-dev \
+    libyaml-cpp-dev \
+    ninja-build \
+    protobuf-compiler \
+    && rm -rf /var/lib/apt/lists/*
+
+# filter=tree:0 will fetch the commits but their trees will be fetched on-demand
+# So we end up with the full commit history but only download trees for HEAD
+# This is needed over shallow clone for the tag-based auto-versioning
+# Reset added to ensure the same commit is always used, even if master advances
+RUN git clone --single-branch --filter=tree:0 --branch master https://github.com/eclipse-ecal/ecal.git /ecal \
+    && git -C ./ecal reset --hard 6b856b668bf1d011d5f066a55569ac160231dc24
+WORKDIR /ecal
+
+# Only download the submodules for dependencies not available as system packages
+RUN git submodule update --init --single-branch --depth 1 \
+    thirdparty/recycle/recycle \
+    thirdparty/tcp_pubsub/tcp_pubsub \
+    thirdparty/ecaludp/ecaludp
+
+# TODO: Blocker for installing to / or / usr
+# - Fix usage of `INSTALL_INCLUDE_DIR` instead of `eCAL_install_include_dir`
+# - Get CMakeFunctions to use GNUInstallDirs
+
+# Configure a minimal build with less vendored dependencies
+RUN cmake --preset core -G Ninja \
+ -DCMAKE_BUILD_TYPE=Release \
+ -DCMAKE_STAGING_PREFIX=staging \
+ -DBUILD_TIME=OFF \
+ -DECAL_THIRDPARTY_BUILD_ASIO=OFF \
+ -DECAL_THIRDPARTY_BUILD_PROTOBUF=OFF \
+ -DECAL_THIRDPARTY_BUILD_YAML-CPP=OFF \
+ -DECAL_THIRDPARTY_BUILD_TCLAP=OFF
+
+RUN cmake --build --preset core
+
+# Component based install avoids the unneeded `app` component
+RUN cmake --install ./out/core/build --strip --component configuration \
+    && cmake --install ./out/core/build --strip --component sdk
+
+###
+# Dev build-stage, for consuming eCAL and building/testing the Go code
+###
+FROM ${BASE_IMAGE} AS dev
+
+LABEL org.opencontainers.image.source https://github.com/downercase/ecal-go
+
+RUN apt-get update && apt-get install --no-install-recommends  -y\
+    g++ \
+    golang \
+    libyaml-cpp0.8 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /ecal/staging /usr/local
+
+# Update dynamic linker so it knows about our new libraries
+RUN ldconfig
