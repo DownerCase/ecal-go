@@ -46,9 +46,12 @@ FROM ${BASE_IMAGE} AS dev
 LABEL org.opencontainers.image.source https://github.com/downercase/ecal-go
 
 RUN apt-get update && apt-get install --no-install-recommends  -y\
-    g++-14-x86-64-linux-gnu \
+    g++ \
     golang \
     libyaml-cpp0.8 \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /ecal/staging /usr/local
+
+# Update dynamic linker so it knows about our new libraries
+RUN ldconfig
