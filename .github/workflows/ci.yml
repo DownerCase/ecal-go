@@ -7,6 +7,8 @@ on:
 
 jobs:
   build:
+    container:
+      image: ghcr.io/downercase/ecal-go:latest
     runs-on: ubuntu-24.04
 
     steps:
