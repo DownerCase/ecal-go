@@ -27,11 +27,11 @@ func TestGetVersion(t *testing.T) {
 
 func TestInitializeFinalize(t *testing.T) {
 
-	if IsInitialized(None) {
+	if IsInitialized(C_None) {
 		t.Error("eCAL pre-initialized...")
 	}
 
-	initResult := Initialize(NewConfig(), "go_test", Default)
+	initResult := Initialize(NewConfig(), "go_test", C_Default)
 	if initResult == 1 {
 		t.Fatal("eCAL already initialized")
 	} else if initResult != 0 {
@@ -39,12 +39,12 @@ func TestInitializeFinalize(t *testing.T) {
 	}
 
 	// Test double initialization
-	secondInit := Initialize(NewConfig(), "go_test2", Default)
+	secondInit := Initialize(NewConfig(), "go_test2", C_Default)
 	if secondInit != 1 {
 		t.Errorf("Second initialize returned %v", secondInit)
 	}
 
-	if !IsInitialized(None) {
+	if !IsInitialized(C_None) {
 		t.Error("IsInitialized return false, expected true")
 	}
 
