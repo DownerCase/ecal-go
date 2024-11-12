@@ -11,6 +11,21 @@ Run the demo:
 go run .
 ```
 
+## Features
+
+- eCAL 6 compatible (unreleased)
+- Pure cgo; no SWIG dependency
+- Custom C interface implementation
+
+Provides Go interfaces for:
+- [x] core
+- [x] publisher
+- [ ] subscriber
+- [ ] services
+- [ ] logging
+- [ ] monitoring
+- [ ] registration
+
 ## Non-system installations
 
 If eCAL is not installed in a default search path or you wish to use a specific
