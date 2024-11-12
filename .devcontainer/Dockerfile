@@ -51,7 +51,8 @@ RUN cmake --build --preset core
 
 # Component based install avoids the unneeded `app` component
 RUN cmake --install ./out/core/build --strip --component configuration \
-    && cmake --install ./out/core/build --strip --component sdk
+    && cmake --install ./out/core/build --strip --component sdk \
+    && cmake --install ./out/core/build --strip --component Unspecified
 
 ###
 # Dev base build-stage, for consuming eCAL
@@ -77,6 +78,7 @@ FROM dev-base AS dev-cpp
 
 RUN apt-get update && apt-get install --no-install-recommends  -y\
     cmake \
+    libprotobuf-dev \
     ninja-build \
     && rm -rf /var/lib/apt/lists/*
 
