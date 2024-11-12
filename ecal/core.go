@@ -1,7 +1,7 @@
 package ecal
 
 // #cgo LDFLAGS: -lecal_core
-// #include "ecal_go_core.h"
+// #include "core.h"
 import "C"
 
 const (

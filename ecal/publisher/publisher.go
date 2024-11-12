@@ -1,7 +1,7 @@
-package ecal
+package publisher
 
 // #cgo LDFLAGS: -lecal_core
-// #include "ecal_go_publisher.h"
+// #include "publisher.h"
 import "C"
 import "unsafe"
 import (
@@ -15,7 +15,7 @@ type Publisher struct {
 	stopped bool
 }
 
-func NewPublisher() (Publisher, error) {
+func New() (Publisher, error) {
 	ptr := C.NewPublisher()
 	if ptr == nil {
 		return Publisher{}, errors.New("Failed to allocate new publisher")
@@ -26,7 +26,7 @@ func NewPublisher() (Publisher, error) {
 	}, nil
 }
 
-func DestroyPublisher(publisher *Publisher) bool {
+func Destroy(publisher *Publisher) bool {
 	fmt.Println("Destroying publisher")
 	if !publisher.stopped {
 		publisher.stopped = true

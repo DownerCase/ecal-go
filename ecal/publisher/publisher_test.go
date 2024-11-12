@@ -1,4 +1,4 @@
-package ecal
+package publisher
 
 import (
 	"testing"
@@ -6,12 +6,12 @@ import (
 
 func TestNewPublishers(t *testing.T) {
 	for range 100 {
-		ptr, err := NewPublisher()
+		ptr, err := New()
 		if err != nil {
 			t.Error(err)
 		}
 		defer func() {
-			if !DestroyPublisher(&ptr) {
+			if !Destroy(&ptr) {
 				t.Error("Failed to cleanup!")
 			}
 		}()
@@ -20,15 +20,15 @@ func TestNewPublishers(t *testing.T) {
 }
 
 func TestPublisher(t *testing.T) {
-	pub, err := NewPublisher()
+	pub, err := New()
 	if err != nil {
 		t.Error(err)
 	}
 	defer func() {
-		if !DestroyPublisher(&pub) {
+		if !Destroy(&pub) {
 			t.Error("Failed to cleanup!")
 		}
-		if DestroyPublisher(&pub) {
+		if Destroy(&pub) {
 			t.Error("Destroyed publisher twice!")
 		}
 	}()

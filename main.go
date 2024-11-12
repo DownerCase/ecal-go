@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/DownerCase/ecal-go/ecal"
+	"github.com/DownerCase/ecal-go/ecal/publisher"
 	"time"
 )
 
@@ -14,18 +15,18 @@ func main() {
 	defer func() { fmt.Println("Finalize: ", ecal.Finalize()) }()
 	fmt.Println("Changed name: ", ecal.SetUnitName("Something new"))
 	fmt.Println("Am ok?", ecal.Ok())
-	publisher, err := ecal.NewPublisher()
+	pub, err := publisher.New()
 	if err != nil {
 		panic("Failed to make new publisher")
 	}
-	defer ecal.DestroyPublisher(&publisher)
-	if publisher.Create("example topic") != nil {
+	defer publisher.Destroy(&pub)
+	if pub.Create("example topic") != nil {
 		panic("Failed to Create publisher")
 	}
-	fmt.Println("Got publisher: ", publisher)
+	fmt.Println("Got publisher: ", pub)
 	for idx := range 100 {
 		fmt.Println("Sending message")
-		publisher.Messages <- []byte{'A', 'B', byte(idx)}
+		pub.Messages <- []byte{'A', 'B', byte(idx)}
 		time.Sleep(1 * time.Second)
 	}
 }

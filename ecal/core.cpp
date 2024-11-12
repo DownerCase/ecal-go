@@ -1,4 +1,4 @@
-#include "ecal_go_core.h"
+#include "core.h"
 
 #include <ecal/config/configuration.h>
 #include <ecal/ecal_core.h>
