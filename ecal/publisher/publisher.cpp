@@ -1,4 +1,4 @@
-#include "ecal_go_publisher.h"
+#include "publisher.h"
 
 #include <memory>
 #include <unordered_map>

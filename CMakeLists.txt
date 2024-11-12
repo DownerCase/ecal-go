@@ -3,16 +3,38 @@ project(ecal-go LANGUAGES C CXX)
 
 find_package(eCAL CONFIG REQUIRED)
 
-add_library(ecal_go)
-target_sources(ecal_go PRIVATE
+add_library(ecal_go_core)
+target_sources(ecal_go_core PRIVATE
   ./ecal/ecal_go_core.h
   ./ecal/ecal_go_core.cpp
-  ./ecal/ecal_go_publisher.h
-  ./ecal/ecal_go_publisher.cpp
 )
-target_link_libraries(ecal_go PRIVATE eCAL::core)
+target_link_libraries(ecal_go_core PRIVATE eCAL::core)
 
-file(GENERATE
-  OUTPUT "${CMAKE_SOURCE_DIR}/ecal/package_user.go"
-  INPUT "./cmake/package_user.go.in"
+add_library(ecal_go_publisher)
+target_sources(ecal_go_publisher PRIVATE
+  ./ecal/publisher/ecal_go_publisher.h
+  ./ecal/publisher/ecal_go_publisher.cpp
 )
+target_link_libraries(ecal_go_publisher PRIVATE eCAL::core)
+
+foreach(package "publisher" "")
+
+  if(NOT package)
+    set(package_name "ecal")
+  else()
+    set(package_name ${package})
+  endif()
+
+  # Have content embedded here to evalue the package_name variable
+  file(GENERATE
+    OUTPUT "${CMAKE_SOURCE_DIR}/ecal/${package}/package_user.go"
+    CONTENT "\
+package ${package_name}
+
+// #cgo CPPFLAGS: -I$<TARGET_PROPERTY:eCAL::core,INTERFACE_INCLUDE_DIRECTORIES>
+// #cgo LDFLAGS: -L$<TARGET_LINKER_FILE_DIR:eCAL::core>
+// #cgo LDFLAGS: -Wl,-rpath,$<TARGET_LINKER_FILE_DIR:eCAL::core>
+import \"C\"
+"
+  )
+endforeach()
