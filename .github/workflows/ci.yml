@@ -26,3 +26,17 @@ jobs:
 
     - name: Test
       run: go test -v ./...
+
+  cmake:
+    container:
+      image: ghcr.io/downercase/ecal-go-cpp:latest
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Configure
+      run: cmake -S . -B build -G Ninja -Werror=dev -DCMAKE_COMPILE_WARNING_AS_ERROR=ON
+
+    - name: Build
+      run: cmake --build ./build
+

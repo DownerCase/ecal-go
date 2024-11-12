@@ -5,15 +5,15 @@ find_package(eCAL CONFIG REQUIRED)
 
 add_library(ecal_go_core)
 target_sources(ecal_go_core PRIVATE
-  ./ecal/ecal_go_core.h
-  ./ecal/ecal_go_core.cpp
+  ./ecal/core.h
+  ./ecal/core.cpp
 )
 target_link_libraries(ecal_go_core PRIVATE eCAL::core)
 
 add_library(ecal_go_publisher)
 target_sources(ecal_go_publisher PRIVATE
-  ./ecal/publisher/ecal_go_publisher.h
-  ./ecal/publisher/ecal_go_publisher.cpp
+  ./ecal/publisher/publisher.h
+  ./ecal/publisher/publisher.cpp
 )
 target_link_libraries(ecal_go_publisher PRIVATE eCAL::core)
 

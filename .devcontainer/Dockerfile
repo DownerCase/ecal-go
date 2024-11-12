@@ -51,18 +51,18 @@ RUN cmake --build --preset core
 
 # Component based install avoids the unneeded `app` component
 RUN cmake --install ./out/core/build --strip --component configuration \
-    && cmake --install ./out/core/build --strip --component sdk
+    && cmake --install ./out/core/build --strip --component sdk \
+    && cmake --install ./out/core/build --strip --component Unspecified
 
 ###
-# Dev build-stage, for consuming eCAL and building/testing the Go code
+# Dev base build-stage, for consuming eCAL
 ###
-FROM ${BASE_IMAGE} AS dev
+FROM ${BASE_IMAGE} AS dev-base
 
 LABEL org.opencontainers.image.source https://github.com/downercase/ecal-go
 
 RUN apt-get update && apt-get install --no-install-recommends  -y\
     g++ \
-    golang \
     libyaml-cpp0.8 \
     && rm -rf /var/lib/apt/lists/*
 
@@ -70,3 +70,24 @@ COPY --from=builder /ecal/staging /usr/local
 
 # Update dynamic linker so it knows about our new libraries
 RUN ldconfig
+
+###
+# Dev build-stage, for consuming eCAL and building/testing the C interface library
+###
+FROM dev-base AS dev-cpp
+
+RUN apt-get update && apt-get install --no-install-recommends  -y\
+    cmake \
+    libprotobuf-dev \
+    ninja-build \
+    && rm -rf /var/lib/apt/lists/*
+
+###
+# Dev build-stage, for consuming eCAL and building/testing the Go code
+###
+FROM dev-base AS dev-go
+
+RUN apt-get update && apt-get install --no-install-recommends  -y\
+    golang \
+    && rm -rf /var/lib/apt/lists/*
+
