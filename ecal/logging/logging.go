@@ -12,16 +12,16 @@ type Level uint8
 
 const (
 	LevelNone   Level = C.log_level_none
-	LevelAll          = C.log_level_all
-	LevelInfo         = C.log_level_info
-	LevelWarn         = C.log_level_warning
-	LevelError        = C.log_level_error
-	LevelFatal        = C.log_level_fatal
-	LevelDebug        = C.log_level_debug1
-	LevelDebug1       = C.log_level_debug1
-	LevelDebug2       = C.log_level_debug2
-	LevelDebug3       = C.log_level_debug3
-	LevelDebug4       = C.log_level_debug4
+	LevelAll    Level = C.log_level_all
+	LevelInfo   Level = C.log_level_info
+	LevelWarn   Level = C.log_level_warning
+	LevelError  Level = C.log_level_error
+	LevelFatal  Level = C.log_level_fatal
+	LevelDebug  Level = C.log_level_debug1
+	LevelDebug1 Level = C.log_level_debug1
+	LevelDebug2 Level = C.log_level_debug2
+	LevelDebug3 Level = C.log_level_debug3
+	LevelDebug4 Level = C.log_level_debug4
 )
 
 func Log(level Level, a ...any) {
