@@ -8,15 +8,15 @@ import "unsafe"
 
 const (
 	// eCAL Components
-	C_None       C.uint = 0x000
-	C_Publisher         = 0x001
-	C_Subscriber        = 0x002
-	C_Service           = 0x004
-	C_Monitoring        = 0x008
-	C_Logging           = 0x010
-	C_TimeSync          = 0x020
-	C_Default           = C_Publisher | C_Subscriber | C_Service | C_Logging | C_TimeSync
-	C_All               = C_Publisher | C_Subscriber | C_Service | C_Monitoring | C_Logging | C_TimeSync
+	C_None       uint = 0x000
+	C_Publisher       = 0x001
+	C_Subscriber      = 0x002
+	C_Service         = 0x004
+	C_Monitoring      = 0x008
+	C_Logging         = 0x010
+	C_TimeSync        = 0x020
+	C_Default         = C_Publisher | C_Subscriber | C_Service | C_Logging | C_TimeSync
+	C_All             = C_Publisher | C_Subscriber | C_Service | C_Monitoring | C_Logging | C_TimeSync
 )
 
 func NewConfig() C.struct_config {
