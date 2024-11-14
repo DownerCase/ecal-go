@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/DownerCase/ecal-go/ecal"
 	"github.com/DownerCase/ecal-go/ecal/protobuf/publisher"
+	string_publisher "github.com/DownerCase/ecal-go/ecal/string/publisher"
 	"github.com/DownerCase/ecal-go/protos"
 )
 
@@ -46,7 +48,12 @@ func main() {
 	}
 
 	if pub.Create("person") != nil {
-		panic("Failed to Create publisher")
+		panic("Failed to Create protobuf publisher")
+	}
+
+	string_pub, _ := string_publisher.New()
+	if string_pub.Create("string topic") != nil {
+		panic("Failed to Create string publisher")
 	}
 
 	for idx := range 100 {
@@ -63,6 +70,11 @@ func main() {
 
 		// Serialize and send protobuf message
 		if err := pub.Send(person); err != nil {
+			fmt.Println("Error: ", err)
+		}
+
+		string_msg := "Sent " + strconv.Itoa(idx) + " messages"
+		if err = string_pub.Send(string_msg); err != nil {
 			fmt.Println("Error: ", err)
 		}
 

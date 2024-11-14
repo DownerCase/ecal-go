@@ -17,7 +17,13 @@ target_sources(ecal_go_publisher PRIVATE
 )
 target_link_libraries(ecal_go_publisher PRIVATE eCAL::core)
 
-foreach(package "ecal/publisher" "ecal" "ecal/protobuf/publisher")
+# Subpackages that use cgo
+set(subpackages
+  "ecal"
+  "ecal/publisher"
+)
+
+foreach(package ${subpackages})
   cmake_path(GET package STEM package_name)
 
   # Have content embedded here to evalue the package_name variable
