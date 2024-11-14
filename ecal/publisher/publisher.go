@@ -48,13 +48,6 @@ func New() (*Publisher, error) {
 	}, nil
 }
 
-func NewStringDataType() DataType {
-	return DataType{
-		Name:     "std::string",
-		Encoding: "base",
-	}
-}
-
 func (p *Publisher) Delete() {
 	fmt.Println("Deleting publisher")
 	if !p.stopped {
