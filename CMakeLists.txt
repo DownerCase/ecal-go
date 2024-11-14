@@ -17,17 +17,12 @@ target_sources(ecal_go_publisher PRIVATE
 )
 target_link_libraries(ecal_go_publisher PRIVATE eCAL::core)
 
-foreach(package "publisher" "")
-
-  if(NOT package)
-    set(package_name "ecal")
-  else()
-    set(package_name ${package})
-  endif()
+foreach(package "ecal/publisher" "ecal" "ecal/protobuf/publisher")
+  cmake_path(GET package STEM package_name)
 
   # Have content embedded here to evalue the package_name variable
   file(GENERATE
-    OUTPUT "${CMAKE_SOURCE_DIR}/ecal/${package}/package_user.go"
+    OUTPUT "${CMAKE_SOURCE_DIR}/${package}/package_user.go"
     CONTENT "\
 package ${package_name}
 

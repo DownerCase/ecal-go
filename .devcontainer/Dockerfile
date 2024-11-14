@@ -66,6 +66,9 @@ RUN apt-get update && apt-get install --no-install-recommends  -y\
     libyaml-cpp0.8 \
     && rm -rf /var/lib/apt/lists/*
 
+# copy the ca-certificate.crt from the build stage
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
 COPY --from=builder /ecal/staging /usr/local
 
 # Update dynamic linker so it knows about our new libraries

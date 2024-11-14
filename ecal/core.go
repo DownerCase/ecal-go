@@ -2,7 +2,9 @@ package ecal
 
 // #cgo LDFLAGS: -lecal_core
 // #include "core.h"
+// #include <stdlib.h>
 import "C"
+import "unsafe"
 
 const (
 	// eCAL Components
@@ -34,7 +36,9 @@ func GetVersion() C.struct_version {
 }
 
 func Initialize(config C.struct_config, unit_name string, components C.uint) int {
-	return int(C.Initialize(&config, C.CString(unit_name), components))
+	unit_c := C.CString(unit_name)
+	defer C.free(unsafe.Pointer(unit_c))
+	return int(C.Initialize(&config, unit_c, components))
 }
 
 func Finalize() int {
@@ -44,7 +48,9 @@ func IsInitialized(component C.uint) bool {
 	return bool(C.IsInitialized(component))
 }
 func SetUnitName(unit_name string) bool {
-	return bool(C.SetUnitName(C.CString(unit_name)))
+	unit_c := C.CString(unit_name)
+	defer C.free(unsafe.Pointer(unit_c))
+	return bool(C.SetUnitName(unit_c))
 }
 func Ok() bool {
 	return bool(C.Ok())
