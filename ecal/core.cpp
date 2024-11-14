@@ -18,8 +18,11 @@ version GetVersion() {
   return version_;
 }
 
-int Initialize(struct config *config, const char *unit_name,
-               unsigned int components) {
+int Initialize(
+    struct config *config,
+    const char *unit_name,
+    unsigned int components
+) {
   auto cfg = convertConfig(*config);
   // TODO: Initialize should take by const ref
   return eCAL::Initialize(cfg, unit_name, components);

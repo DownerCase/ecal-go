@@ -21,8 +21,11 @@ const char *GetVersionString();
 const char *GetVersionDateString();
 struct version GetVersion();
 
-int Initialize(struct config *config, const char *unit_name,
-               unsigned int components);
+int Initialize(
+    struct config *config,
+    const char *unit_name,
+    unsigned int components
+);
 int Finalize();
 bool IsInitialized(unsigned int component);
 bool SetUnitName(const char *unit_name);
