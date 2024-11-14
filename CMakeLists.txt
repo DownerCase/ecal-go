@@ -21,6 +21,7 @@ target_link_libraries(ecal_go_publisher PRIVATE eCAL::core)
 set(subpackages
   "ecal"
   "ecal/publisher"
+  "ecal/logging"
 )
 
 foreach(package ${subpackages})

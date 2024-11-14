@@ -1,11 +1,12 @@
 package main
 
+import "C"
 import (
 	"fmt"
-	"strconv"
 	"time"
 
 	"github.com/DownerCase/ecal-go/ecal"
+	"github.com/DownerCase/ecal-go/ecal/logging"
 	"github.com/DownerCase/ecal-go/ecal/protobuf/publisher"
 	string_publisher "github.com/DownerCase/ecal-go/ecal/string/publisher"
 	"github.com/DownerCase/ecal-go/protos"
@@ -23,17 +24,22 @@ func main() {
 		"Go eCAL!",
 		ecal.C_Publisher|ecal.C_Subscriber|ecal.C_Logging,
 	)
-	fmt.Println("Init:", initResult)
+
+	// Enable all logging levels in the console
+	logging.SetConsoleFilter(logging.LevelAll)
+
+	// Log a message
+	logging.Log(logging.LevelInfo, "Initialized: ", initResult)
 
 	defer ecal.Finalize() // Shutdown eCAL at the end of the program
 
 	// Change the unit name
-	fmt.Println("Changed name:", ecal.SetUnitName("Go demo"))
+	logging.Debug("Changed name:", ecal.SetUnitName("Go demo"))
 
 	// Check if the eCAL system is Ok.
 	// Other eCAL programs can send a message to cause ecal.Ok() to return false
 	// Typically used as a condition to terminate daemon-style programs
-	fmt.Println("eCAL ok?", ecal.Ok())
+	logging.Infof("eCAL ok: %t", ecal.Ok())
 
 	// Create new protobuf publisher
 	pub, err := publisher.New(&protos.Person{})
@@ -59,23 +65,22 @@ func main() {
 	for idx := range 100 {
 		// Check if program has been requested to stop
 		if !ecal.Ok() {
-			fmt.Println("eCAL.Ok() is false; shutting down")
+			logging.Warn("eCAL.Ok() is false; shutting down")
 			return
 		}
 
-		fmt.Println("Sending message ", idx)
+		logging.Info("Sending message ", idx)
 
 		// Update message to send
 		person.Id = int32(idx)
 
 		// Serialize and send protobuf message
 		if err := pub.Send(person); err != nil {
-			fmt.Println("Error: ", err)
+			logging.Error(err)
 		}
 
-		string_msg := "Sent " + strconv.Itoa(idx) + " messages"
-		if err = string_pub.Send(string_msg); err != nil {
-			fmt.Println("Error: ", err)
+		if err = string_pub.Send("Sent ", idx, " messages"); err != nil {
+			logging.Error(err)
 		}
 
 		// Delay next iteration

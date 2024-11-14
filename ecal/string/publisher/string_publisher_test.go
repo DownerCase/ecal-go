@@ -25,4 +25,3 @@ func TestProtobufPublisher(t *testing.T) {
 		t.Error("Failed to send message", err)
 	}
 }
-
