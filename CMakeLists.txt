@@ -20,10 +20,18 @@ target_sources(ecal_go_publisher PRIVATE
 )
 target_link_libraries(ecal_go_publisher PRIVATE eCAL::core utils)
 
+add_library(ecal_go_subscriber)
+target_sources(ecal_go_subscriber PRIVATE
+  ./ecal/subscriber/subscriber.h
+  ./ecal/subscriber/subscriber.cpp
+)
+target_link_libraries(ecal_go_subscriber PRIVATE eCAL::core utils)
+
 # Subpackages that use cgo
 set(subpackages
   "ecal"
   "ecal/publisher"
+  "ecal/subscriber"
   "ecal/logging"
 )
 
