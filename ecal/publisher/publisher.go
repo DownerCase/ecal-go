@@ -1,40 +1,28 @@
 package publisher
 
 // #cgo LDFLAGS: -lecal_core
-// #include "publisher.h"
-//	bool GoPublisherCreate(
-//		uintptr_t handle,
-//		_GoString_ topic,
-//		_GoString_ name,
-//		_GoString_ encoding,
-//		const char* const descriptor,
-//		size_t descriptor_len
-//	) {
-//		return PublisherCreate(
-//			handle,
-//			_GoStringPtr(topic), _GoStringLen(topic),
-//			_GoStringPtr(name), _GoStringLen(name),
-//			_GoStringPtr(encoding), _GoStringLen(encoding),
-//			descriptor, descriptor_len
-//		);
-//	}
+// #cgo CPPFLAGS: -I${SRCDIR}/../../
+//#include "publisher.h"
+//bool GoPublisherCreate(
+//  uintptr_t handle,
+//  _GoString_ topic,
+//  _GoString_ name, _GoString_ encoding,
+//  const char* const descriptor, size_t descriptor_len
+//);
 import "C"
 import "unsafe"
 import (
 	"errors"
-	"fmt"
+
+	"github.com/DownerCase/ecal-go/ecal/msg"
 )
+
+type DataType = msg.DataType
 
 type Publisher struct {
 	Messages chan []byte
 	handle   C.uintptr_t
 	stopped  bool
-}
-
-type DataType struct {
-	Name       string
-	Encoding   string
-	Descriptor []byte
 }
 
 func New() (*Publisher, error) {
@@ -49,7 +37,6 @@ func New() (*Publisher, error) {
 }
 
 func (p *Publisher) Delete() {
-	fmt.Println("Deleting publisher")
 	if !p.stopped {
 		p.stopped = true
 		close(p.Messages)
@@ -79,6 +66,10 @@ func (p *Publisher) Create(topic string, datatype DataType) error {
 	}
 	go p.sendMessages()
 	return nil
+}
+
+func (p *Publisher) IsStopped() bool {
+	return p.stopped
 }
 
 func (p *Publisher) sendMessages() {

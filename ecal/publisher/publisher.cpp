@@ -1,38 +1,23 @@
 #include "publisher.h"
 
-#include <memory>
-#include <unordered_map>
-
 #include <ecal/ecal_publisher.h>
 
+#include "internal/handle_map.hpp"
+
 namespace {
-std::unordered_map<uintptr_t, std::unique_ptr<eCAL::CPublisher>> publishers;
-
-eCAL::CPublisher *const getPublisher(uintptr_t handle) {
-  const auto publisher = publishers.find(handle);
-  if (publisher == publishers.end()) {
-    return nullptr;
-  }
-  return publisher->second.get();
-}
-
+handle_map<eCAL::CPublisher> publishers;
 } // namespace
 
 const void *NewPublisher() {
-  auto publisher = std::make_unique<eCAL::CPublisher>();
-  const auto handle = publisher.get();
-  const auto [new_pub, added] = publishers.emplace(
-      reinterpret_cast<uintptr_t>(handle),
-      std::move(publisher)
-  );
-  if (!added) {
+  const auto [it, added] = publishers.emplace();
+  if(!added) {
     return nullptr;
   }
-  return handle;
+  return it->second.get();
 }
 
 bool DestroyPublisher(uintptr_t handle) {
-  return publishers.erase(handle) == 1;
+  return publishers.erase(handle);
 }
 
 bool PublisherCreate(
@@ -46,7 +31,7 @@ bool PublisherCreate(
     const char *const datatype_descriptor,
     size_t datatype_descriptor_len
 ) {
-  auto *publisher = getPublisher(handle);
+  auto *publisher = publishers.find(handle);
   if (publisher == nullptr) {
     return false;
   }
@@ -59,7 +44,7 @@ bool PublisherCreate(
 }
 
 void PublisherSend(uintptr_t handle, void *buf, size_t len) {
-  auto *publisher = getPublisher(handle);
+  auto *publisher = publishers.find(handle);
   if (publisher == nullptr) {
     return;
   }

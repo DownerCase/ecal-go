@@ -3,6 +3,9 @@ project(ecal-go LANGUAGES C CXX)
 
 find_package(eCAL CONFIG REQUIRED)
 
+add_library(utils INTERFACE)
+target_include_directories(utils INTERFACE .)
+
 add_library(ecal_go_core)
 target_sources(ecal_go_core PRIVATE
   ./ecal/core.h
@@ -15,7 +18,7 @@ target_sources(ecal_go_publisher PRIVATE
   ./ecal/publisher/publisher.h
   ./ecal/publisher/publisher.cpp
 )
-target_link_libraries(ecal_go_publisher PRIVATE eCAL::core)
+target_link_libraries(ecal_go_publisher PRIVATE eCAL::core utils)
 
 # Subpackages that use cgo
 set(subpackages
