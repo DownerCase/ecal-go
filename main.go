@@ -9,6 +9,7 @@ import (
 	"github.com/DownerCase/ecal-go/ecal/logging"
 	"github.com/DownerCase/ecal-go/ecal/protobuf/publisher"
 	string_publisher "github.com/DownerCase/ecal-go/ecal/string/publisher"
+	"github.com/DownerCase/ecal-go/ecal/subscriber"
 	"github.com/DownerCase/ecal-go/protos"
 )
 
@@ -62,6 +63,15 @@ func main() {
 		panic("Failed to Create string publisher")
 	}
 
+	sub, _ := subscriber.New()
+	if sub.Create("string topic", subscriber.DataType{
+		Name:     "std::string",
+		Encoding: "base",
+	}) != nil {
+		panic("Failed to Create string subscriber")
+	}
+	go receiveMessages(sub)
+
 	for idx := range 100 {
 		// Check if program has been requested to stop
 		if !ecal.Ok() {
@@ -79,11 +89,17 @@ func main() {
 			logging.Error(err)
 		}
 
-		if err = string_pub.Send("Sent ", idx, " messages"); err != nil {
+		if err = string_pub.Send("Message ", idx); err != nil {
 			logging.Error(err)
 		}
 
 		// Delay next iteration
 		time.Sleep(1 * time.Second)
+	}
+}
+
+func receiveMessages(s *subscriber.Subscriber) {
+	for {
+		fmt.Println("Received:", string(s.Receive()))
 	}
 }
