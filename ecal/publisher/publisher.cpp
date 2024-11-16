@@ -8,17 +8,12 @@ namespace {
 handle_map<eCAL::CPublisher> publishers;
 } // namespace
 
-const void *NewPublisher() {
-  const auto [it, added] = publishers.emplace();
-  if(!added) {
-    return nullptr;
-  }
-  return it->second.get();
+bool NewPublisher(uintptr_t handle) {
+  const auto [it, added] = publishers.emplace(handle);
+  return added;
 }
 
-bool DestroyPublisher(uintptr_t handle) {
-  return publishers.erase(handle);
-}
+bool DestroyPublisher(uintptr_t handle) { return publishers.erase(handle); }
 
 bool PublisherCreate(
     uintptr_t handle,

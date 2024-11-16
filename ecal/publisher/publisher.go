@@ -10,9 +10,10 @@ package publisher
 //  const char* const descriptor, size_t descriptor_len
 //);
 import "C"
-import "unsafe"
 import (
 	"errors"
+	"runtime/cgo"
+	"unsafe"
 
 	"github.com/DownerCase/ecal-go/ecal/msg"
 )
@@ -21,19 +22,22 @@ type DataType = msg.DataType
 
 type Publisher struct {
 	Messages chan []byte
-	handle   C.uintptr_t
+	handle   cgo.Handle
 	stopped  bool
 }
 
 func New() (*Publisher, error) {
-	ptr := C.NewPublisher()
-	if ptr == nil {
+	pub := Publisher{
+		Messages: make(chan []byte),
+		stopped:  false,
+	}
+	handle := cgo.NewHandle(pub)
+	pub.handle = handle
+	if !C.NewPublisher(C.uintptr_t(pub.handle)) {
+		handle.Delete()
 		return nil, errors.New("Failed to allocate new publisher")
 	}
-	return &Publisher{
-		handle:   C.uintptr_t((uintptr(ptr))),
-		Messages: make(chan []byte),
-	}, nil
+	return &pub, nil
 }
 
 func (p *Publisher) Delete() {
@@ -41,7 +45,7 @@ func (p *Publisher) Delete() {
 		p.stopped = true
 		close(p.Messages)
 	}
-	if !bool(C.DestroyPublisher(p.handle)) {
+	if !bool(C.DestroyPublisher(C.uintptr_t(p.handle))) {
 		// "Failed to delete publisher"
 		return
 	}
@@ -55,7 +59,7 @@ func (p *Publisher) Create(topic string, datatype DataType) error {
 		descriptor_ptr = (*C.char)(unsafe.Pointer(&datatype.Descriptor[0]))
 	}
 	if !C.GoPublisherCreate(
-		p.handle,
+		C.uintptr_t(p.handle),
 		topic,
 		datatype.Name,
 		datatype.Encoding,
@@ -74,6 +78,6 @@ func (p *Publisher) IsStopped() bool {
 
 func (p *Publisher) sendMessages() {
 	for msg := range p.Messages {
-		C.PublisherSend(p.handle, unsafe.Pointer(&msg[0]), C.size_t(len(msg)))
+		C.PublisherSend(C.uintptr_t(p.handle), unsafe.Pointer(&msg[0]), C.size_t(len(msg)))
 	}
 }

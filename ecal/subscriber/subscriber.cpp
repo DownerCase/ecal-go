@@ -1,21 +1,30 @@
 #include "subscriber.h"
 
 #include <ecal/ecal_subscriber.h>
-#include <stdexcept>
 
 #include "internal/handle_map.hpp"
 
+extern "C" {
+extern void goReceiveCallback(uintptr_t, void *, long);
+}
+
 namespace {
 handle_map<eCAL::CSubscriber> subscribers;
-handle_map<std::string> messages;
+
+void receive_callback(
+    const uintptr_t handle,
+    const eCAL::Registration::STopicId &topic,
+    const eCAL::SDataTypeInformation &datatype,
+    const eCAL::SReceiveCallbackData &data
+) {
+  goReceiveCallback(handle, data.buf, data.size);
+}
+
 } // namespace
 
-const void *NewSubscriber() {
-  const auto [it, added] = subscribers.emplace();
-  if (!added) {
-    return nullptr;
-  }
-  return it->second.get();
+bool NewSubscriber(uintptr_t handle) {
+  const auto [it, added] = subscribers.emplace(handle);
+  return added;
 }
 
 bool DestroySubscriber(uintptr_t handle) { return subscribers.erase(handle); }
@@ -35,48 +44,19 @@ bool SubscriberCreate(
   if (subscriber == nullptr) {
     return false;
   }
-  return subscriber->Create(
+  const auto created = subscriber->Create(
       std::string(topic, topic_len),
       {std::string(datatype_name, datatype_name_len),
        std::string(datatype_encoding, datatype_encoding_len),
        std::string(datatype_descriptor, datatype_descriptor_len)}
   );
-}
-
-uintptr_t
-SubscriberReceive(uintptr_t subscriber_handle, const char **msg, size_t *len) {
-  auto *subscriber = subscribers.find(subscriber_handle);
-  if (subscriber == nullptr) {
-    *msg = nullptr;
-    *len = 0;
-    return 0;
-  }
-
-  // Receive message into our buffer
-  // TODO: Replace with callback based method to remove a copy
-  std::string buffer{};
-  const auto received = subscriber->ReceiveBuffer(buffer, nullptr, -1);
-  if (!received) {
-    *msg = nullptr;
-    *len = 0;
-    return 0;
-  }
-
-  // Save the message for later processing
-  auto [it, added] = messages.emplace(std::move(buffer));
-  if (!added) {
-    throw std::runtime_error("Failed to store received message");
-    *msg = nullptr;
-    *len = 0;
-    return 0;
-  }
-
-  *msg = it->second->c_str();
-  *len = it->second->size();
-
-  return it->first;
-}
-
-bool DestroyMessage(uintptr_t message_handle) {
-  return messages.erase(message_handle);
+  const auto bound_callback = [handle](
+                                  const eCAL::Registration::STopicId &topic,
+                                  const eCAL::SDataTypeInformation &datatype,
+                                  const eCAL::SReceiveCallbackData &data
+                              ) {
+    receive_callback(handle, topic, datatype, data);
+  };
+  subscriber->AddReceiveCallback(bound_callback);
+  return created;
 }

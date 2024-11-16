@@ -9,7 +9,7 @@
 extern "C" {
 #endif
 
-const void *NewPublisher();
+bool NewPublisher(uintptr_t handle);
 bool DestroyPublisher(uintptr_t handle);
 
 bool PublisherCreate(
