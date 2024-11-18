@@ -2,6 +2,8 @@ package subscriber
 
 import "C"
 import (
+	"errors"
+	"time"
 	"unsafe"
 
 	"github.com/DownerCase/ecal-go/ecal/subscriber"
@@ -17,8 +19,13 @@ func New() (*Subscriber, error) {
 	return &Subscriber{*sub}, err
 }
 
-func (p *Subscriber) Receive() string {
-	return (<-p.Messages).(string)
+func (p *Subscriber) Receive(timeout time.Duration) (string, error) {
+	select {
+	case msg := <-p.Messages:
+		return msg.(string), nil
+	case <-time.After(timeout):
+		return "", errors.New("Receive timed out")
+	}
 }
 
 func deserialize(data unsafe.Pointer, len int) any {

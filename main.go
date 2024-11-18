@@ -9,7 +9,7 @@ import (
 	"github.com/DownerCase/ecal-go/ecal/logging"
 	"github.com/DownerCase/ecal-go/ecal/protobuf/publisher"
 	string_publisher "github.com/DownerCase/ecal-go/ecal/string/publisher"
-	"github.com/DownerCase/ecal-go/ecal/subscriber"
+	"github.com/DownerCase/ecal-go/ecal/string/subscriber"
 	"github.com/DownerCase/ecal-go/protos"
 )
 
@@ -64,10 +64,7 @@ func main() {
 	}
 
 	sub, _ := subscriber.New()
-	if sub.Create("string topic", subscriber.DataType{
-		Name:     "std::string",
-		Encoding: "base",
-	}) != nil {
+	if sub.Create("string topic") != nil {
 		panic("Failed to Create string subscriber")
 	}
 	go receiveMessages(sub)
@@ -100,6 +97,11 @@ func main() {
 
 func receiveMessages(s *subscriber.Subscriber) {
 	for {
-		fmt.Println("Received:", string(s.Receive()))
+		msg, err := s.Receive(2 * time.Second)
+		if err == nil {
+			fmt.Println("Received:", msg)
+		} else {
+			fmt.Println(err)
+		}
 	}
 }

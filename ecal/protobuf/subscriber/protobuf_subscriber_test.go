@@ -6,42 +6,35 @@ import (
 
 	"github.com/DownerCase/ecal-go/ecal"
 	"github.com/DownerCase/ecal-go/ecal/protobuf/publisher"
+	"github.com/DownerCase/ecal-go/internal/ecaltest"
+	"github.com/DownerCase/ecal-go/internal/ecaltest/protobuf/testutil_publisher"
 	"github.com/DownerCase/ecal-go/protos"
 )
 
-func TestSubscriber(t *testing.T) {
-	initResult := ecal.Initialize(
-		ecal.NewConfig(),
-		"Go eCAL!",
-		ecal.C_Publisher|ecal.C_Subscriber|ecal.C_Logging,
-	)
-	if initResult != 0 {
-		t.Fatal("Failed to initialize", initResult)
+func newSubscriber[U any, T Msg[U]](t *testing.T, topic string) *Subscriber[U, T] {
+	sub, err := New[U, T]()
+	if err != nil {
+		t.Error(err)
 	}
+	if err := sub.Create(topic); err != nil {
+		t.Error(err)
+	}
+	return sub
+}
+
+func TestSubscriber(t *testing.T) {
+	ecaltest.InitEcal(t)
 	defer ecal.Finalize() // Shutdown eCAL at the end of the program
 
-	pub, err := publisher.New[protos.Person]()
-	if err != nil {
-		t.Error(err)
-	}
+	pub := testutil_publisher.NewProtobufPublisher[protos.Person](t, "testing_protobuf_subscriber")
 	defer pub.Delete()
 
-	if err := pub.Create("testing_string_subscriber"); err != nil {
-		t.Error(err)
-	}
-
-	sub, err := New[protos.Person]()
-	if err != nil {
-		t.Error(err)
-	}
+	sub := newSubscriber[protos.Person](t, "testing_protobuf_subscriber")
 	defer sub.Delete()
-	if err := sub.Create("testing_string_subscriber"); err != nil {
-		t.Error(err)
-	}
 
 	go sendMessages(pub)
 	for range 10 {
-		msg, err := sub.Receive()
+		msg, err := sub.Receive(2 * time.Second)
 
 		if err != nil {
 			t.Error(err)
@@ -58,6 +51,17 @@ func TestSubscriber(t *testing.T) {
 		if msg.GetDog().GetName() != "Pluto" {
 			t.Error("Wrong dog")
 		}
+	}
+}
+
+func TestSubscriberTimeout(t *testing.T) {
+	ecaltest.InitEcal(t)
+	defer ecal.Finalize() // Shutdown eCAL at the end of the program
+	sub := newSubscriber[protos.Person](t, "testing_protobuf_subscriber_timeout")
+	defer sub.Delete()
+	msg, err := sub.Receive(50 * time.Millisecond)
+	if err == nil {
+		t.Error("Expected timeout, received message:", &msg)
 	}
 }
 

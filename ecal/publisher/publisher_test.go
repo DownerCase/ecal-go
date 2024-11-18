@@ -1,12 +1,15 @@
-package publisher
+package publisher_test
 
 import (
 	"testing"
+
+	"github.com/DownerCase/ecal-go/ecal/publisher"
+	"github.com/DownerCase/ecal-go/internal/ecaltest/testutil_publisher"
 )
 
 func TestNewPublishers(t *testing.T) {
 	for range 100 {
-		ptr, err := New()
+		ptr, err := publisher.New()
 		if err != nil {
 			t.Error(err)
 		}
@@ -16,15 +19,8 @@ func TestNewPublishers(t *testing.T) {
 }
 
 func TestPublisher(t *testing.T) {
-	pub, err := New()
-	if err != nil {
-		t.Error(err)
-	}
+	pub := testutil_publisher.NewGenericPublisher(t, "testing")
 	defer pub.Delete()
-
-	if err := pub.Create("testing", DataType{}); err != nil {
-		t.Error(err)
-	}
 	if pub.Messages == nil {
 		t.Error("Message channel nil")
 	}

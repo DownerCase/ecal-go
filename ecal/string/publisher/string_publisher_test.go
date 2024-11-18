@@ -1,20 +1,14 @@
-package publisher
+package publisher_test
 
 import (
 	"testing"
+
+	"github.com/DownerCase/ecal-go/internal/ecaltest/string/testutil_publisher"
 )
 
-func TestProtobufPublisher(t *testing.T) {
-	pub, err := New()
-
-	if err != nil {
-		t.Error(err)
-	}
+func TestStringPublisher(t *testing.T) {
+	pub := testutilpublisher.NewStringPublisher(t, "test_string_publisher")
 	defer pub.Delete()
-
-	if err := pub.Create("testing"); err != nil {
-		t.Error(err)
-	}
 
 	if pub.Messages == nil {
 		t.Error("Message channel nil")
