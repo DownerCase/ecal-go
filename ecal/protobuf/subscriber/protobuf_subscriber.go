@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"time"
 	"unsafe"
 
 	"github.com/DownerCase/ecal-go/ecal/subscriber"
@@ -32,9 +33,15 @@ func New[U any, T Msg[U]]() (*Subscriber[U, T], error) {
 	return psub, err
 }
 
-func (p *Subscriber[U, T]) Receive() (U, error) {
+func (p *Subscriber[U, T]) Receive(timeout time.Duration) (U, error) {
 	var u U
-	switch msg := (<-p.Messages).(type) {
+	var msg any
+	select {
+	case msg = <-p.Messages:
+	case <-time.After(timeout):
+		return u, errors.New("Receive timed out")
+	}
+	switch msg := msg.(type) {
 	case U:
 		return msg, nil
 	case error:

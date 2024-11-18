@@ -16,15 +16,22 @@ go run .
 - eCAL 6 compatible (unreleased)
 - Pure cgo; no SWIG dependency
 - Custom C interface implementation
+- Direct deserialization from subscriber buffer to Go types
 
 Provides Go interfaces for:
-- [x] core
-- [x] publisher
-- [ ] subscriber
-- [ ] services
-- [ ] logging
-- [ ] monitoring
-- [ ] registration
+- [x] Core
+- [ ] Configuration
+- [x] Publisher
+  - [ ] Zero Copy
+- [x] Subscriber
+- [x] Message Types
+  - [x] Generic
+  - [x] String
+  - [x] Protobuf
+- [x] Logging
+- [ ] Services
+- [ ] Monitoring
+- [ ] Registration
 
 ## Non-system installations
 

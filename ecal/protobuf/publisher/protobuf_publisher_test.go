@@ -1,22 +1,15 @@
-package publisher
+package publisher_test
 
 import (
 	"testing"
 
+	"github.com/DownerCase/ecal-go/internal/ecaltest/protobuf/testutil_publisher"
 	"github.com/DownerCase/ecal-go/protos"
 )
 
 func TestProtobufPublisher(t *testing.T) {
-	pub, err := New[protos.Person]()
-
-	if err != nil {
-		t.Error(err)
-	}
+	pub := testutil_publisher.NewProtobufPublisher[protos.Person](t, "testing_protobuf_publisher")
 	defer pub.Delete()
-
-	if err := pub.Create("testing"); err != nil {
-		t.Error(err)
-	}
 
 	if pub.Messages == nil {
 		t.Error("Message channel nil")

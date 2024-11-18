@@ -13,6 +13,7 @@ import "C"
 import (
 	"errors"
 	"runtime/cgo"
+	"time"
 	"unsafe"
 
 	"github.com/DownerCase/ecal-go/ecal/msg"
@@ -74,8 +75,13 @@ func (p *Subscriber) Create(topic string, datatype DataType) error {
 }
 
 // Receive a new message from the eCAL receive callback
-func (p *Subscriber) Receive() []byte {
-	return (<-p.Messages).([]byte)
+func (p *Subscriber) Receive(timeout time.Duration) ([]byte, error) {
+	select {
+	case msg := <-p.Messages:
+		return msg.([]byte), nil
+	case <-time.After(timeout):
+		return nil, errors.New("Receive timed out")
+	}
 }
 
 // Deserialize straight from the eCAL internal buffer to our Go []byte

@@ -7,43 +7,41 @@ import (
 
 	"github.com/DownerCase/ecal-go/ecal"
 	"github.com/DownerCase/ecal-go/ecal/publisher"
+	"github.com/DownerCase/ecal-go/internal/ecaltest"
+	"github.com/DownerCase/ecal-go/internal/ecaltest/testutil_publisher"
 )
 
 var TEST_MESSAGE = []byte{4, 15, 80}
 
-func TestSubscriber(t *testing.T) {
-	initResult := ecal.Initialize(
-		ecal.NewConfig(),
-		"Go eCAL!",
-		ecal.C_Publisher|ecal.C_Subscriber|ecal.C_Logging,
-	)
-	if initResult != 0 {
-		t.Fatal("Failed to initialize", initResult)
-	}
-	defer ecal.Finalize() // Shutdown eCAL at the end of the program
-
-	pub, err := publisher.New()
-	if err != nil {
-		t.Error(err)
-	}
-	defer pub.Delete()
-
-	if err := pub.Create("testing_subscriber", DataType{}); err != nil {
-		t.Error(err)
-	}
-
+func newSubscriber(t *testing.T, topic string) *Subscriber {
 	sub, err := New()
 	if err != nil {
 		t.Error(err)
 	}
-	defer sub.Delete()
-	if err := sub.Create("testing_subscriber", DataType{}); err != nil {
+	if err := sub.Create(topic, DataType{}); err != nil {
 		t.Error(err)
 	}
+	return sub
+}
+
+func TestSubscriber(t *testing.T) {
+	ecaltest.InitEcal(t)
+	defer ecal.Finalize() // Shutdown eCAL at the end of the program
+
+	pub := testutil_publisher.NewGenericPublisher(t, "testing_subscriber")
+	defer pub.Delete()
+
+	sub := newSubscriber(t, "testing_subscriber")
+	defer sub.Delete()
 
 	go sendMessages(pub)
 	for range 10 {
-		msg := sub.Receive()
+		// TODO: Reduce the propagation delay for when the subscriber gets
+		// connected to the publisher
+		msg, err := sub.Receive(2 * time.Second)
+		if err != nil {
+			t.Error("Received err:", err)
+		}
 		if msg == nil {
 			t.Error("Nil message received:")
 		}
@@ -53,6 +51,17 @@ func TestSubscriber(t *testing.T) {
 		if !reflect.DeepEqual(msg, TEST_MESSAGE) {
 			t.Error(msg, "!=", TEST_MESSAGE)
 		}
+	}
+}
+
+func TestSubscriberTimeout(t *testing.T) {
+	ecaltest.InitEcal(t)
+	defer ecal.Finalize() // Shutdown eCAL at the end of the program
+	sub := newSubscriber(t, "testing_subscriber_timeout")
+	defer sub.Delete()
+	msg, err := sub.Receive(50 * time.Millisecond)
+	if err == nil {
+		t.Error("Expected timeout, received message:", msg)
 	}
 }
 
