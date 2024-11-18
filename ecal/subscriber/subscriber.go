@@ -19,17 +19,19 @@ import (
 )
 
 type Subscriber struct {
-	messages chan []byte
-	handle   cgo.Handle
-	stopped  bool
+	Messages    chan any
+	handle      cgo.Handle
+	stopped     bool
+	Deserialize func(unsafe.Pointer, int) any
 }
 
 type DataType = msg.DataType
 
 func New() (*Subscriber, error) {
-	sub := Subscriber{
-		messages: make(chan []byte),
-		stopped:  false,
+	sub := &Subscriber{
+		Messages:    make(chan any),
+		stopped:     false,
+		Deserialize: deserializer,
 	}
 	handle := cgo.NewHandle(sub)
 	sub.handle = handle
@@ -37,13 +39,13 @@ func New() (*Subscriber, error) {
 		handle.Delete()
 		return nil, errors.New("Failed to allocate new subscriber")
 	}
-	return &sub, nil
+	return sub, nil
 }
 
 func (p *Subscriber) Delete() {
 	if !p.stopped {
 		p.stopped = true
-		close(p.messages)
+		close(p.Messages)
 	}
 	if !bool(C.DestroySubscriber(C.uintptr_t(p.handle))) {
 		// "Failed to delete subscriber"
@@ -73,11 +75,11 @@ func (p *Subscriber) Create(topic string, datatype DataType) error {
 
 // Receive a new message from the eCAL receive callback
 func (p *Subscriber) Receive() []byte {
-	return <-p.messages
+	return (<-p.Messages).([]byte)
 }
 
 // Deserialize straight from the eCAL internal buffer to our Go []byte
-func (p *Subscriber) deserialize(data unsafe.Pointer, len C.long) []byte {
+func deserializer(data unsafe.Pointer, len int) any {
 	return C.GoBytes(data, C.int(len))
 }
 
@@ -88,9 +90,9 @@ func (p *Subscriber) deserialize(data unsafe.Pointer, len C.long) []byte {
 //export goReceiveCallback
 func goReceiveCallback(handle C.uintptr_t, data unsafe.Pointer, len C.long) {
 	h := cgo.Handle(handle)
-	sub := h.Value().(Subscriber)
+	sub := h.Value().(*Subscriber)
 	select {
-	case sub.messages <- sub.deserialize(data, len):
+	case sub.Messages <- sub.Deserialize(data, int(len)):
 	default:
 	}
 }

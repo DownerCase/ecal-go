@@ -7,11 +7,17 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+// Type must be a pointer and implement the proto.Message interface
+type Msg[T any] interface {
+	*T
+	proto.Message
+}
+
 type Publisher[T proto.Message] struct {
 	publisher.Publisher
 }
 
-func New[T proto.Message](t T) (*Publisher[T], error) {
+func New[U any, T Msg[U]]() (*Publisher[T], error) {
 	pub, err := publisher.New()
 	return &Publisher[T]{*pub}, err
 }
