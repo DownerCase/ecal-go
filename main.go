@@ -43,7 +43,7 @@ func main() {
 	logging.Infof("eCAL ok: %t", ecal.Ok())
 
 	// Create new protobuf publisher
-	pub, err := publisher.New(&protos.Person{})
+	pub, err := publisher.New[protos.Person]()
 	if err != nil {
 		panic("Failed to make new publisher")
 	}

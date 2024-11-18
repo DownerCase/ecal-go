@@ -9,7 +9,7 @@
 extern "C" {
 #endif
 
-const void *NewSubscriber();
+bool NewSubscriber(uintptr_t handle);
 bool DestroySubscriber(uintptr_t handle);
 
 bool SubscriberCreate(
@@ -23,13 +23,6 @@ bool SubscriberCreate(
     const char *const datatype_descriptor,
     size_t datatype_descriptor_len
 );
-
-// Receive a message and return a handle to it as well as the message data
-// pointer and length
-uintptr_t
-SubscriberReceive(uintptr_t subscriber_handle, const char **msg, size_t *len);
-
-bool DestroyMessage(uintptr_t message_handle);
 
 #ifdef __cplusplus
 }

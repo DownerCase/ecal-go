@@ -7,7 +7,7 @@ import (
 )
 
 func TestProtobufPublisher(t *testing.T) {
-	pub, err := New(&protos.Person{})
+	pub, err := New[protos.Person]()
 
 	if err != nil {
 		t.Error(err)

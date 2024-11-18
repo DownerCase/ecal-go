@@ -10,43 +10,49 @@ package subscriber
 //		const char* const descriptor, size_t descriptor_len
 //	);
 import "C"
-import "unsafe"
 import (
 	"errors"
+	"runtime/cgo"
+	"unsafe"
 
 	"github.com/DownerCase/ecal-go/ecal/msg"
 )
 
 type Subscriber struct {
-	messages chan []byte
-	handle   C.uintptr_t
-	stopped  bool
+	Messages    chan any
+	handle      cgo.Handle
+	stopped     bool
+	Deserialize func(unsafe.Pointer, int) any
 }
 
 type DataType = msg.DataType
 
 func New() (*Subscriber, error) {
-	ptr := C.NewSubscriber()
-	if ptr == nil {
+	sub := &Subscriber{
+		Messages:    make(chan any),
+		stopped:     false,
+		Deserialize: deserializer,
+	}
+	handle := cgo.NewHandle(sub)
+	sub.handle = handle
+	if !C.NewSubscriber(C.uintptr_t(sub.handle)) {
+		handle.Delete()
 		return nil, errors.New("Failed to allocate new subscriber")
 	}
-	return &Subscriber{
-		handle:   C.uintptr_t((uintptr(ptr))),
-		messages: make(chan []byte),
-	}, nil
+	return sub, nil
 }
 
 func (p *Subscriber) Delete() {
 	if !p.stopped {
 		p.stopped = true
-		close(p.messages)
+		close(p.Messages)
 	}
-	if !bool(C.DestroySubscriber(p.handle)) {
+	if !bool(C.DestroySubscriber(C.uintptr_t(p.handle))) {
 		// "Failed to delete subscriber"
 		return
 	}
 	// Deleted, clear handle
-	p.handle = 0
+	p.handle.Delete()
 }
 
 func (p *Subscriber) Create(topic string, datatype DataType) error {
@@ -55,7 +61,7 @@ func (p *Subscriber) Create(topic string, datatype DataType) error {
 		descriptor_ptr = (*C.char)(unsafe.Pointer(&datatype.Descriptor[0]))
 	}
 	if !C.GoSubscriberCreate(
-		p.handle,
+		C.uintptr_t(p.handle),
 		topic,
 		datatype.Name,
 		datatype.Encoding,
@@ -67,23 +73,26 @@ func (p *Subscriber) Create(topic string, datatype DataType) error {
 	return nil
 }
 
-// Receive a new message from eCAL
-// Currently performs at least two copies
-// - Internal eCAL recieve buffer -> ReceiveBuffer's buffer in C wrapper
-// - C wrapper -> C.GoBytes
-// TODO: Use a callback based method to copy the data directly from eCAL's
-// buffer to a Go []byte result variable
+// Receive a new message from the eCAL receive callback
 func (p *Subscriber) Receive() []byte {
-	var msg *C.char
-	var len C.size_t
-	// WARNING: Calling through cgo three times in a frequently run function
-	// is suboptimal
+	return (<-p.Messages).([]byte)
+}
 
-	// Receive message
-	handle := C.SubscriberReceive(p.handle, &msg, &len)
-	// Copy to a go []byte
-	go_msg := C.GoBytes(unsafe.Pointer(msg), C.int(len))
-	// Free the original receive buffer
-	C.DestroyMessage(handle)
-	return go_msg
+// Deserialize straight from the eCAL internal buffer to our Go []byte
+func deserializer(data unsafe.Pointer, len int) any {
+	return C.GoBytes(data, C.int(len))
+}
+
+// This function is called by the C code whenever a new message is received
+// and deserializes it into a []byte
+// If the subscriber Receive is not waiting the incoming message will be dropped
+//
+//export goReceiveCallback
+func goReceiveCallback(handle C.uintptr_t, data unsafe.Pointer, len C.long) {
+	h := cgo.Handle(handle)
+	sub := h.Value().(*Subscriber)
+	select {
+	case sub.Messages <- sub.Deserialize(data, int(len)):
+	default:
+	}
 }

@@ -5,4 +5,3 @@ type DataType struct {
 	Encoding   string
 	Descriptor []byte
 }
-
