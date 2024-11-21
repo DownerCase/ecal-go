@@ -6,6 +6,17 @@ find_package(eCAL CONFIG REQUIRED)
 add_library(utils INTERFACE)
 target_include_directories(utils INTERFACE .)
 
+add_library(ecal_go_types)
+target_sources(ecal_go_types PRIVATE
+  ./ecal/types/types.h
+  ./ecal/types/types.hpp
+  ./ecal/types/types.cpp
+)
+target_include_directories(ecal_go_types
+  PUBLIC ./ecal/types
+)
+target_link_libraries(ecal_go_types PRIVATE eCAL::core)
+
 add_library(ecal_go_core)
 target_sources(ecal_go_core PRIVATE
   ./ecal/core.h
@@ -27,12 +38,28 @@ target_sources(ecal_go_subscriber PRIVATE
 )
 target_link_libraries(ecal_go_subscriber PRIVATE eCAL::core utils)
 
+add_library(ecal_go_logging)
+target_sources(ecal_go_logging PRIVATE
+  ./ecal/logging/logging.h
+  ./ecal/logging/logging.cpp
+)
+target_link_libraries(ecal_go_logging PRIVATE eCAL::core)
+
+add_library(ecal_go_registration)
+target_sources(ecal_go_registration PRIVATE
+  ./ecal/registration/registration.h
+  ./ecal/registration/registration.cpp
+)
+target_link_libraries(ecal_go_registration PRIVATE eCAL::core ecal_go_types)
+
 # Subpackages that use cgo
 set(subpackages
   "ecal"
+  "ecal/types"
   "ecal/publisher"
   "ecal/subscriber"
   "ecal/logging"
+  "ecal/registration"
 )
 
 foreach(package ${subpackages})

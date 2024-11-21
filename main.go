@@ -1,6 +1,5 @@
 package main
 
-import "C"
 import (
 	"fmt"
 	"time"
@@ -8,6 +7,7 @@ import (
 	"github.com/DownerCase/ecal-go/ecal"
 	"github.com/DownerCase/ecal-go/ecal/logging"
 	"github.com/DownerCase/ecal-go/ecal/protobuf/publisher"
+	"github.com/DownerCase/ecal-go/ecal/registration"
 	string_publisher "github.com/DownerCase/ecal-go/ecal/string/publisher"
 	"github.com/DownerCase/ecal-go/ecal/string/subscriber"
 	"github.com/DownerCase/ecal-go/protos"
@@ -33,6 +33,8 @@ func main() {
 	logging.Log(logging.LevelInfo, "Initialized: ", initResult)
 
 	defer ecal.Finalize() // Shutdown eCAL at the end of the program
+
+	registration.AddPublisherEventCallback(registrationLogger)
 
 	// Change the unit name
 	logging.Debug("Changed name:", ecal.SetUnitName("Go demo"))
@@ -104,4 +106,8 @@ func receiveMessages(s *subscriber.Subscriber) {
 			fmt.Println(err)
 		}
 	}
+}
+
+func registrationLogger(id registration.TopicId, event registration.Event) {
+	fmt.Println("Received registration sample:", id)
 }

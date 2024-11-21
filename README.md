@@ -32,6 +32,7 @@ Provides Go interfaces for:
 - [ ] Services
 - [ ] Monitoring
 - [ ] Registration
+  - [x] Publisher callbacks
 
 ## Non-system installations
 
