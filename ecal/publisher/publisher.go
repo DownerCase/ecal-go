@@ -15,10 +15,10 @@ import (
 	"runtime/cgo"
 	"unsafe"
 
-	"github.com/DownerCase/ecal-go/ecal/msg"
+	"github.com/DownerCase/ecal-go/ecal/types"
 )
 
-type DataType = msg.DataType
+type DataType = types.DataType
 
 type Publisher struct {
 	Messages chan []byte

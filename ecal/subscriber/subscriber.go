@@ -16,7 +16,7 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/DownerCase/ecal-go/ecal/msg"
+	"github.com/DownerCase/ecal-go/ecal/types"
 )
 
 type Subscriber struct {
@@ -26,7 +26,7 @@ type Subscriber struct {
 	Deserialize func(unsafe.Pointer, int) any
 }
 
-type DataType = msg.DataType
+type DataType = types.DataType
 
 func New() (*Subscriber, error) {
 	sub := &Subscriber{
