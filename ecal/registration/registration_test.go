@@ -3,6 +3,7 @@ package registration
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/DownerCase/ecal-go/ecal"
 	"github.com/DownerCase/ecal-go/internal/ecaltest"
@@ -15,70 +16,67 @@ type callback struct {
 	id    TopicId
 }
 
-func expectNew(t *testing.T, topic string, channel chan callback) {
-	added := <-channel
-	if added.event != ENTITY_NEW {
-		t.Error("Expected new entity, got", added.event)
+func expectEvent(event Event, t *testing.T, topic string, channel chan callback) {
+	var response callback
+	select {
+	case response = <-channel:
+	case <-time.After(3 * time.Second):
+		t.Error("Registration timeout")
+		return
 	}
-	if added.id.Topic_name != topic {
-		t.Error("Unexpected registration for", added.id.Topic_name)
+	if response.id.Topic_name != topic {
+		// Should be pre-filtered by callback
+		t.Error("Unexpected event for topic", response.id.Topic_name)
 	}
-}
-
-func expectDeleted(t *testing.T, topic string, channel chan callback) {
-	removed := <-channel
-	if removed.event != ENTITY_DELETED {
-		t.Error("Expected deleted entity, got", removed.event)
-	}
-	if removed.id.Topic_name != topic {
-		t.Error("Unexpected registration for", removed.id.Topic_name)
+	if response.event != event {
+		t.Error("Expected event", event, "actual", response.event)
 	}
 }
 
-// WARNING: This test relies on no other topics being active whilst running
 func TestPublisherCallback(t *testing.T) {
 	ecaltest.InitEcal(t)
 	defer ecal.Finalize()
 
+	topic := "test_reg_pub"
 	channel := make(chan callback)
 
 	AddPublisherEventCallback(func(id TopicId, event Event) {
-		registrationLogger(channel, id, event)
+		fmt.Println("Event:", event, "Received registration sample:", id)
+		if id.Topic_name == topic {
+			channel <- callback{event, id}
+		}
 	})
 
-	topic := "test_reg_pub"
 	pub := testutil_publisher.NewGenericPublisher(t, topic)
 	defer pub.Delete()
 
-	expectNew(t, topic, channel)
+	expectEvent(ENTITY_NEW, t, topic, channel)
 
 	// Destroy our publisher
 	pub.Delete()
-	expectDeleted(t, topic, channel)
+	expectEvent(ENTITY_DELETED, t, topic, channel)
 }
 
 func TestSubscriberCallback(t *testing.T) {
 	ecaltest.InitEcal(t)
 	defer ecal.Finalize()
 
+	topic := "test_reg_sub"
 	channel := make(chan callback)
 
 	AddSubscriberEventCallback(func(id TopicId, event Event) {
-		registrationLogger(channel, id, event)
+		fmt.Println("Event:", event, "Received registration sample:", id)
+		if id.Topic_name == topic {
+			channel <- callback{event, id}
+		}
 	})
 
-	topic := "test_reg_sub"
 	sub := testutil_subscriber.NewGenericSubscriber(t, topic)
 	defer sub.Delete()
 
-	expectNew(t, topic, channel)
+	expectEvent(ENTITY_NEW, t, topic, channel)
 
 	// Destroy our publisher
 	sub.Delete()
-	expectDeleted(t, topic, channel)
-}
-
-func registrationLogger(channel chan callback, id TopicId, event Event) {
-	fmt.Println("Event:", event, "Received registration sample:", id)
-	channel <- callback{event, id}
+	expectEvent(ENTITY_DELETED, t, topic, channel)
 }
