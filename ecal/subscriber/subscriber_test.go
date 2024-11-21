@@ -1,4 +1,4 @@
-package subscriber
+package subscriber_test
 
 import (
 	"reflect"
@@ -9,20 +9,10 @@ import (
 	"github.com/DownerCase/ecal-go/ecal/publisher"
 	"github.com/DownerCase/ecal-go/internal/ecaltest"
 	"github.com/DownerCase/ecal-go/internal/ecaltest/testutil_publisher"
+	"github.com/DownerCase/ecal-go/internal/ecaltest/testutil_subscriber"
 )
 
 var TEST_MESSAGE = []byte{4, 15, 80}
-
-func newSubscriber(t *testing.T, topic string) *Subscriber {
-	sub, err := New()
-	if err != nil {
-		t.Error(err)
-	}
-	if err := sub.Create(topic, DataType{}); err != nil {
-		t.Error(err)
-	}
-	return sub
-}
 
 func TestSubscriber(t *testing.T) {
 	ecaltest.InitEcal(t)
@@ -31,7 +21,7 @@ func TestSubscriber(t *testing.T) {
 	pub := testutil_publisher.NewGenericPublisher(t, "testing_subscriber")
 	defer pub.Delete()
 
-	sub := newSubscriber(t, "testing_subscriber")
+	sub := testutil_subscriber.NewGenericSubscriber(t, "testing_subscriber")
 	defer sub.Delete()
 
 	go sendMessages(pub)
@@ -57,7 +47,7 @@ func TestSubscriber(t *testing.T) {
 func TestSubscriberTimeout(t *testing.T) {
 	ecaltest.InitEcal(t)
 	defer ecal.Finalize() // Shutdown eCAL at the end of the program
-	sub := newSubscriber(t, "testing_subscriber_timeout")
+	sub := testutil_subscriber.NewGenericSubscriber(t, "testing_subscriber_timeout")
 	defer sub.Delete()
 	msg, err := sub.Receive(50 * time.Millisecond)
 	if err == nil {

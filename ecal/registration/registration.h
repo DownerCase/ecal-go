@@ -18,6 +18,9 @@ struct CQualityInfo {
 size_t AddPublisherEventCallback(uintptr_t handle);
 void RemPublisherEventCallback(size_t handle);
 
+size_t AddSubscriberEventCallback(uintptr_t handle);
+void RemSubscriberEventCallback(size_t handle);
+
 #ifdef __cplusplus
 }
 #endif

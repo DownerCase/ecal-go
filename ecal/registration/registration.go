@@ -47,6 +47,21 @@ func RemPublisherCallback(token CallbackToken) {
 	token.go_handle.Delete()
 }
 
+func AddSubscriberEventCallback(callback func(TopicId, Event)) CallbackToken {
+	handle := cgo.NewHandle(callback)
+	ecal_token := C.AddSubscriberEventCallback(C.uintptr_t(handle))
+	token := CallbackToken{
+		ecal_token: uint(ecal_token),
+		go_handle:  handle,
+	}
+	return token
+}
+
+func RemSubscriberCallback(token CallbackToken) {
+	C.RemSubscriberEventCallback(C.uintptr_t(token.ecal_token))
+	token.go_handle.Delete()
+}
+
 func toQualityTopicInfo(quality *C.struct_CQualityInfo) QualityTopicInfo {
 	return QualityTopicInfo{
 		Datatype: types.DataType{
@@ -69,10 +84,9 @@ func toTopicId(id *C.struct_CTopicId) TopicId {
 	}
 }
 
-//export goPublisherEventCallback
-func goPublisherEventCallback(handle C.uintptr_t, id C.struct_CTopicId, event C.uint8_t) {
+//export goTopicEventCallback
+func goTopicEventCallback(handle C.uintptr_t, id C.struct_CTopicId, event C.uint8_t) {
 	h := cgo.Handle(handle)
 	f := h.Value().(func(TopicId, Event))
 	f(toTopicId(&id), Event(event))
 }
-
