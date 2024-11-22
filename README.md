@@ -30,7 +30,10 @@ Provides Go interfaces for:
   - [x] Protobuf
 - [x] Logging
 - [ ] Services
-- [ ] Monitoring
+- [x] Monitoring
+  - [x] Publisher/Subscribers
+  - [ ] Processes
+  - [ ] Server/Clients
 - [ ] Registration
   - [x] Topic callbacks
 

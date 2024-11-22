@@ -1,4 +1,5 @@
 AlignAfterOpenBracket: BlockIndent
+AlignConsecutiveAssignments: Consecutive
 AllowAllArgumentsOnNextLine: false
 AllowAllParametersOfDeclarationOnNextLine: false
 BinPackArguments: false
