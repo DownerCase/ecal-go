@@ -14,7 +14,7 @@ import (
 type model_detailed struct {
 	table_detailed    table.Model
 	detailed_topic_id string
-	is_subscriber bool
+	is_subscriber     bool
 }
 
 func NewDetailedModel() model_detailed {
@@ -36,9 +36,9 @@ func NewDetailedModel() model_detailed {
 		Bold(false)
 
 	t := table.New(
+		table.WithHeight(8),
 		table.WithFocused(true),
 		table.WithColumns(cols),
-		table.WithHeight(9),
 		table.WithStyles(s),
 	)
 
@@ -72,7 +72,7 @@ func (m *model_detailed) Update(msg tea.Msg) tea.Cmd {
 }
 
 func (m *model_detailed) View() string {
-	return baseStyle.Render(m.table_detailed.View()) + "\n"
+	return baseStyle.Render(m.table_detailed.View()) + "\n" + m.table_detailed.HelpView()
 }
 
 func (m *model_detailed) updateDetailedTable(msg tea.Msg) {

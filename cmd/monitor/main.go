@@ -24,4 +24,3 @@ func main() {
 	logging.SetConsoleFilter(logging.LevelAll)
 	doCli()
 }
-

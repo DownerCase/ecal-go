@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -13,7 +14,7 @@ var baseStyle = lipgloss.NewStyle().
 	BorderStyle(lipgloss.NormalBorder()).
 	BorderForeground(lipgloss.Color("240"))
 
-var highlight = lipgloss.NewStyle().Foreground(lipgloss.Color("229")).Bold(true)
+var highlight = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("229")).Background(lipgloss.Color("57"))
 
 var p *tea.Program
 
@@ -21,6 +22,12 @@ type Page int
 
 const (
 	page_topics Page = iota
+	page_services
+	page_hosts
+	page_processes
+	page_logs
+	page_system
+	page_about
 	page_topic_detailed
 )
 
@@ -75,12 +82,11 @@ func (m *model) navUp() {
 }
 
 func (m *model) transitionTo(newPage Page) {
-	// Pre update
 	switch newPage {
 	case page_topics:
 		m.model_topics.Refresh()
 	case page_topic_detailed:
-		topic, is_subscriber ,err := m.model_topics.GetSelectedId()
+		topic, is_subscriber, err := m.model_topics.GetSelectedId()
 		if err != nil {
 			return // Don't' transition
 		}
@@ -107,6 +113,20 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		case "enter":
 			m.navDown()
+		case "1":
+			m.transitionTo(page_topics)
+		case "2":
+			m.transitionTo(page_services)
+		case "3":
+			m.transitionTo(page_hosts)
+		case "4":
+			m.transitionTo(page_processes)
+		case "5":
+			m.transitionTo(page_logs)
+		case "6":
+			m.transitionTo(page_system)
+		case "7":
+			m.transitionTo(page_about)
 		default:
 			m.updatePage(msg)
 		}
@@ -117,14 +137,32 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m *model) View() string {
+	s := strings.Builder{}
 	switch m.page {
 	case page_topics:
-		return m.model_topics.View()
+		s.WriteString(m.model_topics.View())
 	case page_topic_detailed:
-		return m.model_detailed.View()
+		s.WriteString(m.model_detailed.View())
 	default:
-		return "Invalid page"
+		s.WriteString(placeholderTab(m.page))
 	}
+	tabs := []string{
+		"1: Topics",
+		"2: Services",
+		"3: Hosts",
+		"4: Processes",
+		"5: Logs",
+		"6: System",
+		"7: About",
+	}
+	s.WriteString("\n")
+	page := m.page % (page_about + 1)
+	tabs[page] = highlight.Render(tabs[page])
+	for _, tab := range tabs {
+		s.WriteString(tab)
+		s.WriteRune(' ')
+	}
+	return s.String()
 }
 
 func doCli() {

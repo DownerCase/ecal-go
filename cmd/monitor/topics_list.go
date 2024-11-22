@@ -79,9 +79,9 @@ func NewTopicsModel() model_topics {
 		{Title: "Tick", Width: 4},
 	}
 	t := table.New(
+		table.WithHeight(8),
 		table.WithFocused(true),
 		table.WithColumns(topics_columns),
-		table.WithHeight(7),
 	)
 
 	s := table.DefaultStyles()
@@ -177,5 +177,5 @@ func (m *model_topics) Update(msg tea.Msg) tea.Cmd {
 }
 
 func (m *model_topics) View() string {
-	return baseStyle.Render(m.table_topics.View()) + "\n" + m.help.View(m.keymap) + "\n"
+	return baseStyle.Render(m.table_topics.View()) + "\n" + m.help.View(m.keymap)
 }
