@@ -52,6 +52,13 @@ target_sources(ecal_go_registration PRIVATE
 )
 target_link_libraries(ecal_go_registration PRIVATE eCAL::core ecal_go_types)
 
+add_library(ecal_go_monitoring)
+target_sources(ecal_go_monitoring PRIVATE
+  ./ecal/monitoring/monitoring.h
+  ./ecal/monitoring/monitoring.cpp
+)
+target_link_libraries(ecal_go_monitoring PRIVATE eCAL::core ecal_go_types)
+
 # Subpackages that use cgo
 set(subpackages
   "ecal"
@@ -60,6 +67,7 @@ set(subpackages
   "ecal/subscriber"
   "ecal/logging"
   "ecal/registration"
+  "ecal/monitoring"
 )
 
 foreach(package ${subpackages})
