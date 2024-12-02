@@ -31,8 +31,9 @@ const (
 )
 
 type model struct {
-	page         Page
-	model_topics model_topics
+	page            Page
+	model_topics    model_topics
+	model_processes model_processes
 }
 
 type TickMsg time.Time
@@ -48,6 +49,8 @@ func (m *model) updatePage(msg tea.Msg) tea.Cmd {
 	switch m.page {
 	case page_topics:
 		cmd = m.model_topics.Update(msg)
+	case page_processes:
+		cmd = m.model_processes.Update(msg)
 	}
 	return cmd
 }
@@ -56,6 +59,8 @@ func (m *model) transitionTo(newPage Page) {
 	switch newPage {
 	case page_topics:
 		m.model_topics.Refresh()
+	case page_processes:
+		m.model_processes.Refresh()
 	}
 	m.page = newPage
 }
@@ -99,6 +104,8 @@ func (m *model) View() string {
 	switch m.page {
 	case page_topics:
 		s.WriteString(m.model_topics.View())
+	case page_processes:
+		s.WriteString(m.model_processes.View())
 	default:
 		s.WriteString(placeholderTab(m.page))
 	}
@@ -123,7 +130,7 @@ func (m *model) View() string {
 
 func doCli() {
 
-	m := model{page_topics, NewTopicsModel()}
+	m := model{page_topics, NewTopicsModel(), NewProcessesModel()}
 	p = tea.NewProgram(&m)
 
 	if _, err := p.Run(); err != nil {
