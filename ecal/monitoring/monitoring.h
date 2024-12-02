@@ -38,11 +38,28 @@ struct CTopicMon {
   int64_t data_freq;
 };
 
+struct CProcessMon {
+  const char *host_name;
+  const char *host_group;
+  int32_t registration_clock;
+  int32_t pid;
+  const char *process_name;
+  const char *unit_name;
+  const char *process_parameters;
+  int32_t state_severity;
+  int32_t state_severity_level;
+  const char *state_info;
+  const char *components;
+  const char *runtime;
+};
+
 struct CMonitoring {
   const struct CTopicMon *publishers;
   size_t publishers_len;
   const struct CTopicMon *subscribers;
   size_t subscribers_len;
+  const struct CProcessMon *processes;
+  size_t processes_len;
 };
 
 void GetMonitoring(uintptr_t handle, unsigned int entities);
