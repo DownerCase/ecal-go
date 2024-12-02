@@ -21,6 +21,9 @@ jobs:
       with:
         go-version-file: 'go.mod'
 
+    - name: Check Formatting
+      run: test -z $(gofmt -s -l . 2>&1 | tee /dev/stderr)
+
     - name: Build
       run: go build -v ./...
 

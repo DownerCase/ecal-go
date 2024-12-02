@@ -1,11 +1,13 @@
 package monitoring
 
 //#cgo LDFLAGS: -lecal_core
+//#include <ecal/ecal_process_severity.h>
 //#include "monitoring.h"
 //#cgo CPPFLAGS: -I${SRCDIR}/../types
 import "C"
 import (
 	"runtime/cgo"
+	"strconv"
 
 	"github.com/DownerCase/ecal-go/ecal/types"
 )
@@ -22,6 +24,33 @@ const (
 	MonitorHost       MonitorEntity = C.monitoring_host
 	MonitorAll        MonitorEntity = C.monitoring_all
 )
+
+type ProcessSeverity uint8
+
+const (
+	ProcSevUnknown  ProcessSeverity = C.proc_sev_unknown
+	ProcSevHealthy  ProcessSeverity = C.proc_sev_healthy
+	ProcSevWarning  ProcessSeverity = C.proc_sev_warning
+	ProcSevCritical ProcessSeverity = C.proc_sev_critical
+	ProcSevFailed   ProcessSeverity = C.proc_sev_failed
+)
+
+func (p ProcessSeverity) String() string {
+	switch p {
+	case ProcSevUnknown:
+		return "Unknown"
+	case ProcSevHealthy:
+		return "Healthy"
+	case ProcSevWarning:
+		return "Warning"
+	case ProcSevCritical:
+		return "Critical"
+	case ProcSevFailed:
+		return "Failed"
+	default:
+		return strconv.FormatUint(uint64(p), 10)
+	}
+}
 
 type TopicMon struct {
 	Registration_clock int32 // registration heart beat
@@ -45,16 +74,33 @@ type TopicMon struct {
 	// attributes
 }
 
+type ProcessMon struct {
+	Registration_clock   int32 // registration heart beat
+	Host_name            string
+	Host_group           string
+	Pid                  int32
+	Process_name         string
+	Unit_name            string
+	Process_parameters   string // Command line args
+	State_severity       ProcessSeverity
+	State_severity_level int32
+	State_info           string
+	// TODO: Time sync?
+	Components_initialized string
+	Runtime_version        string // eCAL Version in use
+}
+
 type Monitoring struct {
 	Publishers  []TopicMon
 	Subscribers []TopicMon
+	Processes   []ProcessMon
 }
-
-type Callback = func()
 
 func GetMonitoring(entities MonitorEntity) Monitoring {
 	var mon Monitoring
 	handle := cgo.NewHandle(&mon)
+	// The C code calls goCopyMonitoring to fill the above Monitoring variable
+	// via the handle
 	C.GetMonitoring(C.uintptr_t(handle), C.uint(entities))
 	handle.Delete()
 	return mon

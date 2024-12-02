@@ -35,7 +35,7 @@ Provides Go interfaces for:
 - [ ] Services
 - [x] Monitoring
   - [x] Publisher/Subscribers
-  - [ ] Processes
+  - [x] Processes
   - [ ] Server/Clients
 - [ ] Registration
   - [x] Topic callbacks

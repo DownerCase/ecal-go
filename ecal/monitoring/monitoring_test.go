@@ -1,7 +1,9 @@
 package monitoring
 
 import (
+	"os"
 	"testing"
+	"time"
 
 	"github.com/DownerCase/ecal-go/ecal"
 	"github.com/DownerCase/ecal-go/ecal/registration"
@@ -47,6 +49,22 @@ func TestPublisherMonitoring(t *testing.T) {
 	expectTopicPresent(t, mon.Publishers, topic)
 }
 
+func expectPid(t *testing.T, pid int, procs []ProcessMon) {
+	hostname, err := os.Hostname()
+	if err != nil {
+		t.Error("Could not get hostname")
+	}
+	for _, proc := range procs {
+		if pid == int(proc.Pid) {
+			if proc.Host_name != hostname {
+				t.Error("Expected hostname", hostname, "got", proc.Host_name)
+			}
+			return
+		}
+	}
+	t.Error("Could not find self in process list")
+}
+
 func TestSubscriberMonitoring(t *testing.T) {
 	ecaltest.InitEcal(t)
 	defer ecal.Finalize()
@@ -69,4 +87,17 @@ func TestSubscriberMonitoring(t *testing.T) {
 	// Get its info
 	mon = GetMonitoring(MonitorSubscriber)
 	expectTopicPresent(t, mon.Subscribers, topic)
+}
+
+func TestProcessMonitoring(t *testing.T) {
+	// Given: eCAL Initialized
+	ecaltest.InitEcal(t)
+	defer ecal.Finalize()
+	time.Sleep(1 * time.Second) // Propagation delay...
+
+	// When: Requesting the processes
+	mon := GetMonitoring(MonitorProcess)
+
+	// Expect: This program
+	expectPid(t, os.Getpid(), mon.Processes)
 }
