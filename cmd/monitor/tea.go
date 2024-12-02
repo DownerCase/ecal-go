@@ -45,15 +45,6 @@ func doTick() tea.Cmd {
 	})
 }
 
-func (m *model) refresh() {
-	switch m.page {
-	case page_topics:
-		m.model_topics.Refresh()
-	case page_topic_detailed:
-		m.model_detailed.Refresh()
-	}
-}
-
 func (m *model) updatePage(msg tea.Msg) tea.Cmd {
 	var cmd tea.Cmd
 	switch m.page {
@@ -102,9 +93,6 @@ func (m *model) Init() tea.Cmd {
 func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 	switch msg := msg.(type) {
-	case TickMsg:
-		m.refresh()
-		return m, doTick()
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "esc":
@@ -128,10 +116,10 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "7":
 			m.transitionTo(page_about)
 		default:
-			m.updatePage(msg)
+			cmd = m.updatePage(msg)
 		}
 	default:
-		m.updatePage(msg)
+		cmd = m.updatePage(msg)
 	}
 	return m, cmd
 }

@@ -156,6 +156,9 @@ func (m *model_topics) Init() tea.Cmd {
 func (m *model_topics) Update(msg tea.Msg) tea.Cmd {
 	var cmd tea.Cmd
 	switch msg := msg.(type) {
+	case TickMsg:
+		m.Refresh()
+		return doTick()
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, m.keymap.Help):

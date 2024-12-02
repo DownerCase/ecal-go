@@ -54,10 +54,6 @@ func (m *model_detailed) ShowTopic(topic_id string, is_subscriber bool) {
 	m.updateDetailedTable(nil)
 }
 
-func (m *model_detailed) Refresh() {
-	m.updateDetailedTable(nil)
-}
-
 func (m *model_detailed) Init() tea.Cmd {
 	return nil
 }
@@ -65,6 +61,9 @@ func (m *model_detailed) Init() tea.Cmd {
 func (m *model_detailed) Update(msg tea.Msg) tea.Cmd {
 	var cmd tea.Cmd
 	switch msg := msg.(type) {
+	case TickMsg:
+		m.updateDetailedTable(nil)
+		return doTick()
 	case tea.KeyMsg:
 		m.table_detailed, cmd = m.table_detailed.Update(msg)
 	}
