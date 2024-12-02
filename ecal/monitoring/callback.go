@@ -43,7 +43,7 @@ func copyToProcessMons(cprocs []C.struct_CProcessMon) []ProcessMon {
 			Process_name:           C.GoString(proc.process_name),
 			Unit_name:              C.GoString(proc.unit_name),
 			Process_parameters:     C.GoString(proc.process_parameters), // Command line args
-			State_severity:         int32(proc.state_severity),
+			State_severity:         ProcessSeverity(proc.state_severity),
 			State_severity_level:   int32(proc.state_severity_level),
 			State_info:             C.GoString(proc.state_info),
 			Components_initialized: C.GoString(proc.components),
