@@ -14,7 +14,6 @@ func TestNewPublishers(t *testing.T) {
 			t.Error(err)
 		}
 		defer ptr.Delete()
-		t.Log(ptr)
 	}
 }
 

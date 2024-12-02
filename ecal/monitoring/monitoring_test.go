@@ -20,7 +20,7 @@ func expectTopicPresent(t *testing.T, ts []TopicMon, topic_name string) {
 			return
 		}
 	}
-	t.Error("Monitoring does not contain expected topic", ts)
+	t.Error("Monitoring does not contain expected topic", topic_name, "\nReceived", ts)
 }
 
 func TestPublisherMonitoring(t *testing.T) {
