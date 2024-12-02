@@ -5,10 +5,12 @@ Inspired from [Blutkoete/golang-ecal](https://github.com/Blutkoete/golang-ecal).
 
 ## Usage
 
-Run the demo:
-
 ```sh
+# Go binding demo
 go run .
+
+# Go version of eCAL monitor
+go run ./cmd/monitor
 ```
 
 ## Features
@@ -17,6 +19,7 @@ go run .
 - Pure cgo; no SWIG dependency
 - Custom C interface implementation
 - Direct deserialization from subscriber buffer to Go types
+- Rewrite of eCAL monitor using [bubbletea](https://github.com/charmbracelet/bubbletea)
 
 Provides Go interfaces for:
 - [x] Core
@@ -36,6 +39,21 @@ Provides Go interfaces for:
   - [ ] Server/Clients
 - [ ] Registration
   - [x] Topic callbacks
+
+## CLI Tools
+
+### Monitor
+
+Features:
+
+- [x] Show Publishers and Subscribers
+  - [x] Detailed topic view
+  - [ ] Live message view
+- [ ] Show Services
+- [ ] Show Hosts
+- [ ] Show Processes
+- [ ] Show eCAL Logs
+- [ ] Show config
 
 ## Non-system installations
 
