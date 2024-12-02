@@ -8,7 +8,6 @@ import (
 
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 )
 
 type model_detailed struct {
@@ -24,22 +23,11 @@ func NewDetailedModel() model_detailed {
 		{Title: "", Width: 67},
 	}
 
-	s := table.DefaultStyles()
-	s.Header = s.Header.
-		BorderStyle(lipgloss.NormalBorder()).
-		BorderForeground(lipgloss.Color("240")).
-		BorderBottom(true).
-		Bold(false)
-	s.Selected = s.Selected.
-		Foreground(lipgloss.Color("229")).
-		Background(lipgloss.Color("57")).
-		Bold(false)
-
 	t := table.New(
 		table.WithHeight(8),
 		table.WithFocused(true),
 		table.WithColumns(cols),
-		table.WithStyles(s),
+		table.WithStyles(tableStyle),
 	)
 
 	return model_detailed{
