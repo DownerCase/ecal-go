@@ -2,10 +2,10 @@
 
 namespace {
 int safe_len(size_t str_len) {
-  if (str_len > INT_MAX) {
+  if (str_len > size_t{INT_MAX}) {
     return INT_MAX;
   }
-  return str_len;
+  return static_cast<int>(str_len);
 }
 } // namespace
 
