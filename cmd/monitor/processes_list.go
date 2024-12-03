@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"path/filepath"
 	"strconv"
 
@@ -9,8 +10,17 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+type ProcessesPage int
+
+const (
+	subpage_proc_main ProcessesPage = iota
+	subpage_proc_detailed
+)
+
 type model_processes struct {
 	table_processes table.Model
+	subpage         ProcessesPage
+	model_detailed  model_process_detailed
 }
 
 func NewProcessesModel() model_processes {
@@ -30,6 +40,8 @@ func NewProcessesModel() model_processes {
 	)
 	return model_processes{
 		table_processes: t,
+		subpage:         subpage_proc_main,
+		model_detailed:  NewDetailedProcessModel(),
 	}
 }
 
@@ -39,22 +51,76 @@ func (m *model_processes) Init() tea.Cmd {
 
 func (m *model_processes) Update(msg tea.Msg) tea.Cmd {
 	var cmd tea.Cmd
+
+	// Global navigation keys
 	switch msg := msg.(type) {
-	case TickMsg:
-		m.Refresh()
-		return doTick()
 	case tea.KeyMsg:
-		m.updateTable(msg)
+		switch msg.Type {
+		case tea.KeyEscape:
+			m.navUp()
+			return cmd
+		case tea.KeyEnter:
+			m.navDown()
+			return cmd
+		}
+	}
+
+	switch m.subpage {
+	case subpage_proc_main:
+		switch msg := msg.(type) {
+		case TickMsg:
+			m.Refresh()
+			return doTick()
+		case tea.KeyMsg:
+			m.updateTable(msg)
+		}
+	case subpage_proc_detailed:
+		cmd = m.model_detailed.Update(msg)
 	}
 	return cmd
 }
 
 func (m *model_processes) View() string {
-	return baseStyle.Render(m.table_processes.View()) + "\n" + m.table_processes.HelpView()
+	switch m.subpage {
+	case subpage_proc_main:
+		return baseStyle.Render(m.table_processes.View()) + "\n" + m.table_processes.HelpView()
+	case subpage_proc_detailed:
+		return m.model_detailed.View()
+	}
+	return "Invalid page"
 }
 
 func (m *model_processes) Refresh() {
 	m.updateTable(nil)
+}
+
+func (m *model_processes) navDown() {
+	switch m.subpage {
+	case subpage_proc_main:
+		pid, err := m.getSelectedPid()
+		if err != nil {
+			return // Can't transition
+		}
+		m.model_detailed.Pid = pid
+		m.subpage = subpage_proc_detailed
+		m.model_detailed.Refresh()
+	}
+}
+
+func (m *model_processes) navUp() {
+	switch m.subpage {
+	case subpage_proc_detailed:
+		m.subpage = subpage_proc_main
+	}
+}
+
+func (m *model_processes) getSelectedPid() (int32, error) {
+	row := m.table_processes.SelectedRow()
+	if row == nil {
+		return 0, errors.New("No processes")
+	}
+	pid, err := strconv.ParseInt(row[0], 10, 64)
+	return int32(pid), err
 }
 
 func (m *model_processes) updateTable(msg tea.Msg) {
