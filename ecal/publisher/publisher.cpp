@@ -5,7 +5,7 @@
 #include "internal/handle_map.hpp"
 
 namespace {
-handle_map<eCAL::CPublisher> publishers;
+handle_map<eCAL::CPublisher> publishers{};
 } // namespace
 
 bool NewPublisher(uintptr_t handle) {

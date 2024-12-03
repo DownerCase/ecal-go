@@ -6,7 +6,7 @@
 
 template <class T> class handle_map {
 private:
-  std::unordered_map<uintptr_t, T> handles;
+  std::unordered_map<uintptr_t, T> handles{};
 
 public:
   using iterator = typename decltype(handles)::iterator;
