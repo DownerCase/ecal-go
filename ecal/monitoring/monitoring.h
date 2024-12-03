@@ -24,18 +24,18 @@ enum eCAL_Monitoring_eEntity {
 };
 
 struct CTopicMon {
-  int32_t registration_clock;
   const char *unit_name;
   const char *topic_id;
   const char *topic_name;
   const char *direction;
   struct CDatatype datatype;
+  int64_t data_clock;
+  int64_t data_freq;
+  int32_t registration_clock;
   int32_t topic_size;
   int32_t connections_local;
   int32_t connections_external;
   int32_t message_drops;
-  int64_t data_clock;
-  int64_t data_freq;
 };
 
 struct CProcessMon {
