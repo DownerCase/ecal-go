@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#include <ecal/ecal_log_level.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -53,6 +55,16 @@ struct CProcessMon {
   const char *state_info;
   const char *components;
   const char *runtime;
+};
+
+struct CLogMessage {
+  int64_t time;
+  const char *host_name;
+  const char *process_name;
+  const char *unit_name;
+  const char *content;
+  int32_t pid;
+  enum eCAL_Logging_eLogLevel level;
 };
 
 #ifdef __cplusplus

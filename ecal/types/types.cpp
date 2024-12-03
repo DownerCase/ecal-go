@@ -64,3 +64,15 @@ CProcessMon toCType(const eCAL::Monitoring::SProcessMon &proc) {
       proc.ecal_runtime_version.c_str()
   };
 }
+
+CLogMessage toCType(const eCAL::Logging::SLogMessage &log) {
+  return {
+      log.time,
+      log.hname.c_str(),
+      log.pname.c_str(),
+      log.uname.c_str(),
+      log.content.c_str(),
+      log.pid,
+      log.level
+  };
+}

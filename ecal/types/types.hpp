@@ -1,6 +1,7 @@
 #ifndef ECAL_GO_TYPES_HPP
 #define ECAL_GO_TYPES_HPP
 
+#include <ecal/types/logging.h>
 #include <vector>
 
 #include <ecal/ecal_types.h>
@@ -12,8 +13,12 @@ CDatatype toCType(const eCAL::SDataTypeInformation &datatype);
 CTopicId toCType(const eCAL::Registration::STopicId &id);
 CTopicMon toCType(const eCAL::Monitoring::STopicMon &topic);
 CProcessMon toCType(const eCAL::Monitoring::SProcessMon &proc);
+CLogMessage toCType(const eCAL::Logging::SLogMessage &log);
 
-template <typename CType, typename EcalType, template<typename> typename Container >
+template <
+    typename CType,
+    typename EcalType,
+    template <typename> typename Container>
 std::vector<CType> toCTypes(const Container<EcalType> &ecaltypes) {
   std::vector<CType> ctypes{};
   ctypes.reserve(ecaltypes.size());
@@ -22,6 +27,5 @@ std::vector<CType> toCTypes(const Container<EcalType> &ecaltypes) {
   }
   return ctypes;
 }
-
 
 #endif
