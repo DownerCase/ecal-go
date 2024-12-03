@@ -76,11 +76,11 @@ func toQualityTopicInfo(quality *C.struct_CQualityInfo) QualityTopicInfo {
 func toTopicId(id *C.struct_CTopicId) TopicId {
 	return TopicId{
 		Topic_id: EntityId{
-			Entity_id:  C.GoStringN(id.topic_id.entity_id, id.topic_id.entity_id_len),
+			Entity_id:  C.GoString(id.topic_id.entity_id),
 			Process_id: int32(id.topic_id.process_id),
-			Host_name:  C.GoStringN(id.topic_id.host_name, id.topic_id.host_name_len),
+			Host_name:  C.GoString(id.topic_id.host_name),
 		},
-		Topic_name: C.GoStringN(id.topic_name, id.topic_name_len),
+		Topic_name: C.GoString(id.topic_name),
 	}
 }
 

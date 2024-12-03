@@ -9,16 +9,13 @@ extern "C" {
 
 struct CEntityId {
   const char *entity_id;
-  int entity_id_len;
-  int32_t process_id;
   const char *host_name;
-  int host_name_len;
+  int32_t process_id;
 };
 
 struct CTopicId {
   struct CEntityId topic_id;
   const char *topic_name;
-  int topic_name_len;
 };
 
 struct CDatatype {

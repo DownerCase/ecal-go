@@ -24,18 +24,18 @@ namespace {
 // Makes uses of copy elision
 CTopicMon toCType(const eCAL::Monitoring::STopicMon &topic) {
   return {
-      topic.rclock,
       topic.uname.c_str(),
       topic.tid.c_str(),
       topic.tname.c_str(),
       topic.direction.c_str(),
       toCDataType(topic.tdatatype),
+      topic.dclock,
+      topic.dfreq,
+      topic.rclock,
       topic.tsize,
       topic.connections_loc,
       topic.connections_ext,
-      topic.message_drops,
-      topic.dclock,
-      topic.dfreq
+      topic.message_drops
   };
 }
 

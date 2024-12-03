@@ -13,8 +13,8 @@ handle_map<eCAL::CSubscriber> subscribers;
 
 void receive_callback(
     const uintptr_t handle,
-    const eCAL::Registration::STopicId &topic,
-    const eCAL::SDataTypeInformation &datatype,
+    const eCAL::Registration::STopicId & /*topic*/,
+    const eCAL::SDataTypeInformation & /*datatype*/,
     const eCAL::SReceiveCallbackData &data
 ) {
   goReceiveCallback(handle, data.buf, data.size);
@@ -51,11 +51,11 @@ bool SubscriberCreate(
        std::string(datatype_descriptor, datatype_descriptor_len)}
   );
   const auto bound_callback = [handle](
-                                  const eCAL::Registration::STopicId &topic,
-                                  const eCAL::SDataTypeInformation &datatype,
-                                  const eCAL::SReceiveCallbackData &data
+                                  const eCAL::Registration::STopicId &_topic,
+                                  const eCAL::SDataTypeInformation &_datatype,
+                                  const eCAL::SReceiveCallbackData &_data
                               ) {
-    receive_callback(handle, topic, datatype, data);
+    receive_callback(handle, _topic, _datatype, _data);
   };
   subscriber->AddReceiveCallback(bound_callback);
   return created;
