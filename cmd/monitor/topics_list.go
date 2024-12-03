@@ -11,14 +11,23 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
+)
+
+type TopicsPage int
+
+const (
+	subpage_topic_main TopicsPage = iota
+	subpage_topic_detailed
+	subpage_topic_messages // TODO: Not implemented
 )
 
 type model_topics struct {
-	table_topics table.Model
-	keymap       topicsKeyMap
-	help         help.Model
-	filter       entityFilter
+	table_topics   table.Model
+	keymap         topicsKeyMap
+	help           help.Model
+	filter         entityFilter
+	subpage        TopicsPage
+	model_detailed model_detailed
 }
 
 type topicsKeyMap struct {
@@ -82,23 +91,14 @@ func NewTopicsModel() model_topics {
 		table.WithHeight(8),
 		table.WithFocused(true),
 		table.WithColumns(topics_columns),
+		table.WithStyles(tableStyle),
 	)
-
-	s := table.DefaultStyles()
-	s.Header = s.Header.
-		BorderStyle(lipgloss.NormalBorder()).
-		BorderForeground(lipgloss.Color("240")).
-		BorderBottom(true).
-		Bold(false)
-	s.Selected = s.Selected.
-		Foreground(lipgloss.Color("229")).
-		Background(lipgloss.Color("57")).
-		Bold(false)
-	t.SetStyles(s)
 	return model_topics{
-		table_topics: t,
-		keymap:       newTopicsKeyMap(),
-		help:         help.New(),
+		table_topics:   t,
+		keymap:         newTopicsKeyMap(),
+		help:           help.New(),
+		subpage:        subpage_topic_main,
+		model_detailed: NewDetailedModel(),
 	}
 }
 
@@ -137,6 +137,25 @@ func (m *model_topics) updateTopicsTable(msg tea.Msg) {
 	m.table_topics, _ = m.table_topics.Update(msg)
 }
 
+func (m *model_topics) navDown() {
+	switch m.subpage {
+	case subpage_topic_main:
+		topic, is_subscriber, err := m.GetSelectedId()
+		if err != nil {
+			return // Don't' transition
+		}
+		m.model_detailed.ShowTopic(topic, is_subscriber)
+		m.subpage = subpage_topic_detailed
+	}
+}
+
+func (m *model_topics) navUp() {
+	switch m.subpage {
+	case subpage_topic_detailed:
+		m.subpage = subpage_topic_main
+	}
+}
+
 func (m *model_topics) GetSelectedId() (string, bool, error) {
 	row := m.table_topics.SelectedRow()
 	if row == nil {
@@ -155,27 +174,62 @@ func (m *model_topics) Init() tea.Cmd {
 
 func (m *model_topics) Update(msg tea.Msg) tea.Cmd {
 	var cmd tea.Cmd
+
+	// Global navigation keys
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		switch {
-		case key.Matches(msg, m.keymap.Help):
-			m.help.ShowAll = !m.help.ShowAll
-		case key.Matches(msg, m.keymap.FilterAll):
-			m.filter = entityAll
-			m.updateTopicsTable(nil)
-		case key.Matches(msg, m.keymap.FilterPub):
-			m.filter = entityPublisher
-			m.updateTopicsTable(nil)
-		case key.Matches(msg, m.keymap.FilterSub):
-			m.filter = entitySubscriber
-			m.updateTopicsTable(nil)
+		switch msg.Type {
+		case tea.KeyEscape:
+			m.navUp()
+			return cmd
+		case tea.KeyEnter:
+			m.navDown()
+			return cmd
+		}
+	}
+
+	switch m.subpage {
+	case subpage_topic_main:
+		switch msg := msg.(type) {
+		case TickMsg:
+			m.Refresh()
+			return doTick()
+		case tea.KeyMsg:
+			switch {
+			case key.Matches(msg, m.keymap.Help):
+				m.help.ShowAll = !m.help.ShowAll
+			case key.Matches(msg, m.keymap.FilterAll):
+				m.filter = entityAll
+				m.updateTopicsTable(nil)
+			case key.Matches(msg, m.keymap.FilterPub):
+				m.filter = entityPublisher
+				m.updateTopicsTable(nil)
+			case key.Matches(msg, m.keymap.FilterSub):
+				m.filter = entitySubscriber
+				m.updateTopicsTable(nil)
+			default:
+				m.updateTopicsTable(msg)
+			}
 		default:
 			m.updateTopicsTable(msg)
 		}
+	case subpage_topic_detailed:
+		cmd = m.model_detailed.Update(msg)
+	case subpage_topic_messages:
+		// TODO: Not implemented
 	}
+
 	return cmd
 }
 
 func (m *model_topics) View() string {
-	return baseStyle.Render(m.table_topics.View()) + "\n" + m.help.View(m.keymap)
+	switch m.subpage {
+	case subpage_topic_main:
+		return baseStyle.Render(m.table_topics.View()) + "\n" + m.help.View(m.keymap)
+	case subpage_topic_detailed:
+		return m.model_detailed.View()
+	case subpage_topic_messages:
+		return "TODO: Not implemented"
+	}
+	return "Invalid page"
 }
