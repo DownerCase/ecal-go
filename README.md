@@ -51,7 +51,7 @@ Features:
   - [ ] Live message view
 - [ ] Show Services
 - [ ] Show Hosts
-- [ ] Show Processes
+- [x] Show Processes
 - [ ] Show eCAL Logs
 - [ ] Show config
 
