@@ -38,7 +38,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Configure
-      run: cmake -S . -B build -G Ninja -Werror=dev -DCMAKE_COMPILE_WARNING_AS_ERROR=ON
+      run: cmake -S . -B build -G Ninja -Werror=dev -DCMAKE_COMPILE_WARNING_AS_ERROR=ON -DCMAKE_TOOLCHAIN_FILE=project/gcc.cmake
 
     - name: Build
       run: cmake --build ./build
