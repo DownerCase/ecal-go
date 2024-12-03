@@ -15,7 +15,7 @@ size_t AddPublisherEventCallback(uintptr_t handle) {
                                     eCAL::Registration::RegistrationEventType
                                         event
                                 ) {
-    goTopicEventCallback(handle, toCTopicId(id), static_cast<uint8_t>(event));
+    goTopicEventCallback(handle, toCType(id), static_cast<uint8_t>(event));
   };
   return eCAL::Registration::AddPublisherEventCallback(callback_adapter);
 }
@@ -30,7 +30,7 @@ size_t AddSubscriberEventCallback(uintptr_t handle) {
                                     eCAL::Registration::RegistrationEventType
                                         event
                                 ) {
-    goTopicEventCallback(handle, toCTopicId(id), static_cast<uint8_t>(event));
+    goTopicEventCallback(handle, toCType(id), static_cast<uint8_t>(event));
   };
   return eCAL::Registration::AddSubscriberEventCallback(callback_adapter);
 }
