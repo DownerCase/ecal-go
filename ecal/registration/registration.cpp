@@ -6,8 +6,7 @@
 #include <ecal/ecal_registration.h>
 
 extern "C" {
-extern void
-goTopicEventCallback(uintptr_t handle, struct CTopicId id, uint8_t event);
+extern void goTopicEventCallback(uintptr_t handle, CTopicId id, uint8_t event);
 }
 
 namespace {
@@ -18,8 +17,8 @@ int safe_len(size_t str_len) {
   return str_len;
 }
 
-struct CQualityInfo
-toCQualityInfo(const eCAL::Registration::SQualityTopicInfo &quality) {
+CQualityInfo toCQualityInfo(const eCAL::Registration::SQualityTopicInfo &quality
+) {
   return {
       {quality.info.name.c_str(),
        quality.info.encoding.c_str(),
