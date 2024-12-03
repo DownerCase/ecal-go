@@ -9,18 +9,6 @@ extern "C" {
 extern void goTopicEventCallback(uintptr_t handle, CTopicId id, uint8_t event);
 }
 
-namespace {
-
-CQualityInfo toCQualityInfo(const eCAL::Registration::SQualityTopicInfo &quality
-) {
-  return {
-      toCDataType(quality.info),
-      static_cast<uint8_t>(quality.quality),
-  };
-}
-
-} // namespace
-
 size_t AddPublisherEventCallback(uintptr_t handle) {
   const auto callback_adapter = [handle](
                                     const eCAL::Registration::STopicId &id,
