@@ -49,9 +49,6 @@ func (m *model_detailed) Init() tea.Cmd {
 func (m *model_detailed) Update(msg tea.Msg) tea.Cmd {
 	var cmd tea.Cmd
 	switch msg := msg.(type) {
-	case TickMsg:
-		m.updateDetailedTable(nil)
-		return doTick()
 	case tea.KeyMsg:
 		m.table_detailed, cmd = m.table_detailed.Update(msg)
 	}
@@ -60,6 +57,10 @@ func (m *model_detailed) Update(msg tea.Msg) tea.Cmd {
 
 func (m *model_detailed) View() string {
 	return baseStyle.Render(m.table_detailed.View()) + "\n" + m.table_detailed.HelpView()
+}
+
+func (m *model_detailed) Refresh() {
+	m.updateDetailedTable(nil)
 }
 
 func (m *model_detailed) updateDetailedTable(msg tea.Msg) {
