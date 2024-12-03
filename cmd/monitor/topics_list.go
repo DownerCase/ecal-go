@@ -165,7 +165,12 @@ func (m *model_topics) GetSelectedId() (string, bool, error) {
 }
 
 func (m *model_topics) Refresh() {
-	m.updateTopicsTable(nil)
+	switch m.subpage {
+	case subpage_topic_detailed:
+		m.model_detailed.Refresh()
+	default:
+		m.updateTopicsTable(nil)
+	}
 }
 
 func (m *model_topics) Init() tea.Cmd {
@@ -191,9 +196,6 @@ func (m *model_topics) Update(msg tea.Msg) tea.Cmd {
 	switch m.subpage {
 	case subpage_topic_main:
 		switch msg := msg.(type) {
-		case TickMsg:
-			m.Refresh()
-			return doTick()
 		case tea.KeyMsg:
 			switch {
 			case key.Matches(msg, m.keymap.Help):

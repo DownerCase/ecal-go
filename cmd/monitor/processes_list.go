@@ -68,9 +68,6 @@ func (m *model_processes) Update(msg tea.Msg) tea.Cmd {
 	switch m.subpage {
 	case subpage_proc_main:
 		switch msg := msg.(type) {
-		case TickMsg:
-			m.Refresh()
-			return doTick()
 		case tea.KeyMsg:
 			m.updateTable(msg)
 		}
@@ -91,7 +88,12 @@ func (m *model_processes) View() string {
 }
 
 func (m *model_processes) Refresh() {
-	m.updateTable(nil)
+	switch m.subpage {
+	case subpage_proc_detailed:
+		m.model_detailed.Refresh()
+	default:
+		m.updateTable(nil)
+	}
 }
 
 func (m *model_processes) navDown() {

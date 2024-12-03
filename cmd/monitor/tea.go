@@ -56,13 +56,17 @@ func (m *model) updatePage(msg tea.Msg) tea.Cmd {
 }
 
 func (m *model) transitionTo(newPage Page) {
-	switch newPage {
+	m.page = newPage
+	m.refresh()
+}
+
+func (m *model) refresh() {
+	switch m.page {
 	case page_topics:
 		m.model_topics.Refresh()
 	case page_processes:
 		m.model_processes.Refresh()
 	}
-	m.page = newPage
 }
 
 func (m *model) Init() tea.Cmd {
@@ -72,6 +76,9 @@ func (m *model) Init() tea.Cmd {
 func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 	switch msg := msg.(type) {
+	case TickMsg:
+		m.refresh()
+		cmd = doTick()
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "q", "ctrl+c":
