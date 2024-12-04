@@ -16,7 +16,8 @@ CDatatype toCType(const eCAL::SDataTypeInformation &datatype) {
       datatype.name.c_str(),
       datatype.encoding.c_str(),
       datatype.descriptor.data(),
-      safe_len(datatype.descriptor.size())
+      safe_len(datatype.descriptor.size()),
+      {}
   };
 }
 
@@ -26,6 +27,7 @@ CTopicId toCType(const eCAL::Registration::STopicId &id) {
           id.topic_id.entity_id.data(),
           id.topic_id.host_name.data(),
           id.topic_id.process_id,
+          {},
       },
       id.topic_name.data()
   };
@@ -44,7 +46,8 @@ CTopicMon toCType(const eCAL::Monitoring::STopicMon &topic) {
       topic.tsize,
       topic.connections_loc,
       topic.connections_ext,
-      topic.message_drops
+      topic.message_drops,
+      {}
   };
 }
 

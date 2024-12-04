@@ -13,6 +13,7 @@ struct CEntityId {
   const char *entity_id;
   const char *host_name;
   int32_t process_id;
+  char _PADDING[4];
 };
 
 struct CTopicId {
@@ -25,6 +26,7 @@ struct CDatatype {
   const char *encoding;
   const void *descriptor;
   int descriptor_len;
+  char _PADDING[4];
 };
 
 struct CTopicMon {
@@ -40,6 +42,7 @@ struct CTopicMon {
   int32_t connections_local;
   int32_t connections_external;
   int32_t message_drops;
+  char _PADDING[4];
 };
 
 struct CProcessMon {
