@@ -76,7 +76,7 @@ func (km topicsKeyMap) FullHelp() [][]key.Binding {
 	return append([][]key.Binding{{km.FilterAll, km.FilterPub, km.FilterSub}}, km.KeyMap.FullHelp()...)
 }
 
-func NewTopicsModel() model_topics {
+func NewTopicsModel() *model_topics {
 	topics_columns := []table.Column{
 		{Title: "ID", Width: 0}, // Zero width ID column to use as identifier
 		{Title: "D", Width: 1},
@@ -93,7 +93,7 @@ func NewTopicsModel() model_topics {
 		table.WithColumns(topics_columns),
 		table.WithStyles(tableStyle),
 	)
-	return model_topics{
+	return &model_topics{
 		table_topics:   t,
 		keymap:         newTopicsKeyMap(),
 		help:           help.New(),

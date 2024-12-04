@@ -7,16 +7,15 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 )
 
-var baseStyle = lipgloss.NewStyle().
-	BorderStyle(lipgloss.NormalBorder()).
-	BorderForeground(lipgloss.Color("240"))
-
-var highlight = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("229")).Background(lipgloss.Color("57"))
-
 var p *tea.Program
+
+type PageModel interface {
+	Refresh()
+	Update(tea.Msg) tea.Cmd
+	View() string
+}
 
 type Page int
 
@@ -31,10 +30,23 @@ const (
 )
 
 type model struct {
-	page            Page
-	model_topics    model_topics
-	model_processes model_processes
-	model_logs      model_logs
+	page  Page
+	pages map[Page]PageModel
+}
+
+func newModel() *model {
+	pagesMap := make(map[Page]PageModel)
+	pagesMap[page_topics] = NewTopicsModel()
+	pagesMap[page_services] = &PlaceholderModel{"Services Placeholder"}
+	pagesMap[page_hosts] = &PlaceholderModel{"Hosts Placeholder"}
+	pagesMap[page_processes] = NewProcessesModel()
+	pagesMap[page_logs] = NewLogsModel()
+	pagesMap[page_system] = &PlaceholderModel{"System Placeholder"}
+	pagesMap[page_about] = &PlaceholderModel{"About Placeholder"}
+	return &model{
+		page:  page_topics,
+		pages: pagesMap,
+	}
 }
 
 type TickMsg time.Time
@@ -46,16 +58,7 @@ func doTick() tea.Cmd {
 }
 
 func (m *model) updatePage(msg tea.Msg) tea.Cmd {
-	var cmd tea.Cmd
-	switch m.page {
-	case page_topics:
-		cmd = m.model_topics.Update(msg)
-	case page_processes:
-		cmd = m.model_processes.Update(msg)
-	case page_logs:
-		cmd = m.model_logs.Update(msg)
-	}
-	return cmd
+	return m.pages[m.page].Update(msg)
 }
 
 func (m *model) transitionTo(newPage Page) {
@@ -64,14 +67,7 @@ func (m *model) transitionTo(newPage Page) {
 }
 
 func (m *model) refresh() {
-	switch m.page {
-	case page_topics:
-		m.model_topics.Refresh()
-	case page_processes:
-		m.model_processes.Refresh()
-	case page_logs:
-		m.model_logs.Refresh()
-	}
+	m.pages[m.page].Refresh()
 }
 
 func (m *model) Init() tea.Cmd {
@@ -113,16 +109,7 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m *model) View() string {
 	s := strings.Builder{}
-	switch m.page {
-	case page_topics:
-		s.WriteString(m.model_topics.View())
-	case page_processes:
-		s.WriteString(m.model_processes.View())
-	case page_logs:
-		s.WriteString(m.model_logs.View())
-	default:
-		s.WriteString(placeholderTab(m.page))
-	}
+	s.WriteString(m.pages[m.page].View())
 	tabs := []string{
 		"1: Topics",
 		"2: Services",
@@ -143,10 +130,7 @@ func (m *model) View() string {
 }
 
 func doCli() {
-
-	m := model{page_topics, NewTopicsModel(), NewProcessesModel(), NewLogsModel()}
-	p = tea.NewProgram(&m)
-
+	p = tea.NewProgram(newModel())
 	if _, err := p.Run(); err != nil {
 		fmt.Println("Error running program:", err)
 		os.Exit(1)
