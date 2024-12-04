@@ -48,7 +48,7 @@ func (km logsKeyMap) FullHelp() [][]key.Binding {
 	return append([][]key.Binding{{km.Clear}}, km.KeyMap.FullHelp()...)
 }
 
-func NewLogsModel() model_logs {
+func NewLogsModel() *model_logs {
 	columns := []table.Column{
 		{Title: "Time", Width: 10},
 		{Title: "Level", Width: 6},
@@ -63,7 +63,7 @@ func NewLogsModel() model_logs {
 		table.WithStyles(tableStyle),
 	)
 
-	return model_logs{
+	return &model_logs{
 		table_logs: t,
 		subpage:    subpage_logging_main,
 		help:       help.New(),

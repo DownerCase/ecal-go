@@ -23,7 +23,7 @@ type model_processes struct {
 	model_detailed  model_process_detailed
 }
 
-func NewProcessesModel() model_processes {
+func NewProcessesModel() *model_processes {
 	columns := []table.Column{
 		{Title: "PID", Width: 7},
 		{Title: "Name", Width: 33},
@@ -38,7 +38,7 @@ func NewProcessesModel() model_processes {
 		table.WithColumns(columns),
 		table.WithStyles(tableStyle),
 	)
-	return model_processes{
+	return &model_processes{
 		table_processes: t,
 		subpage:         subpage_proc_main,
 		model_detailed:  NewDetailedProcessModel(),
