@@ -90,6 +90,40 @@ type ProcessMon struct {
 	Runtime_version        string // eCAL Version in use
 }
 
+type methodType struct {
+	Type       string
+	Descriptor string
+}
+
+type MethodMon struct {
+	Name        string
+	RequestType methodType
+	ReponseType methodType
+	CallCount   int64
+}
+
+type serviceBase struct {
+	Name              string
+	Id                string
+	Methods           []MethodMon
+	RegistrationClock int32 // registration heart beat
+	HostName          string
+	Process           string
+	Unit              string
+	Pid               int32
+	ProtocolVersion   uint32
+}
+
+type ServerMon struct {
+	serviceBase
+	PortV0 uint32 // TCP Port for V0 protocol
+	PortV1 uint32 // TCP Port for V1 protocol
+}
+
+type ClientMon struct {
+	serviceBase
+}
+
 type Monitoring struct {
 	Publishers  []TopicMon
 	Subscribers []TopicMon
