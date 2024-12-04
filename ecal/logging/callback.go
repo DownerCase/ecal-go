@@ -6,14 +6,12 @@ import "C"
 import (
 	"runtime/cgo"
 	"unsafe"
-
-	"github.com/DownerCase/ecal-go/ecal/types"
 )
 
-func copyToLogMessages(cmsgs []C.struct_CLogMessage) []types.LogMessage {
-	msgs := make([]types.LogMessage, len(cmsgs))
+func copyToLogMessages(cmsgs []C.struct_CLogMessage) []LogMessage {
+	msgs := make([]LogMessage, len(cmsgs))
 	for idx, msg := range cmsgs {
-		msgs[idx] = types.LogMessage{
+		msgs[idx] = LogMessage{
 			Time:      int64(msg.time),
 			Host:      C.GoString(msg.host_name),
 			Process:   C.GoString(msg.process_name),
