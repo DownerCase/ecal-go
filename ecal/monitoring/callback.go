@@ -57,20 +57,8 @@ func copyToProcessMons(cprocs []C.struct_CProcessMon) []ProcessMon {
 func goCopyMonitoring(handle C.uintptr_t, cmon *C.struct_CMonitoring) {
 	m := cgo.Handle(handle).Value().(*Monitoring)
 
-	numPublishers := cmon.publishers_len
-	if numPublishers > 0 {
-		p := (*[1 << 30]C.struct_CTopicMon)(unsafe.Pointer(cmon.publishers))[:numPublishers:numPublishers]
-		m.Publishers = copyToTopicMons(p)
-	}
-	numSubscribers := cmon.subscribers_len
-	if numSubscribers > 0 {
-		s := (*[1 << 30]C.struct_CTopicMon)(unsafe.Pointer(cmon.subscribers))[:numSubscribers:numSubscribers]
-		m.Subscribers = copyToTopicMons(s)
-	}
-	numProcesses := cmon.processes_len
-	if numProcesses > 0 {
-		p := (*[1 << 30]C.struct_CProcessMon)(unsafe.Pointer(cmon.processes))[:numProcesses:numProcesses]
-		m.Processes = copyToProcessMons(p)
-	}
+	m.Publishers = copyToTopicMons(unsafe.Slice(cmon.publishers, cmon.publishers_len))
+	m.Subscribers = copyToTopicMons(unsafe.Slice(cmon.subscribers, cmon.subscribers_len))
+	m.Processes = copyToProcessMons(unsafe.Slice(cmon.processes, cmon.processes_len))
 
 }
