@@ -6,11 +6,11 @@ import (
 	"time"
 
 	"github.com/DownerCase/ecal-go/ecal"
-	"github.com/DownerCase/ecal-go/ecal/types"
+	_ "github.com/DownerCase/ecal-go/ecal/types"
 	"github.com/DownerCase/ecal-go/internal/ecaltest"
 )
 
-func expectMessageIsFromHost(t *testing.T, msg types.LogMessage) {
+func expectMessageIsFromHost(t *testing.T, msg LogMessage) {
 	host, err := os.Hostname()
 	if err != nil && msg.Host != host {
 		t.Error("Host mismatch", host, "!=", msg.Host)
@@ -20,7 +20,7 @@ func expectMessageIsFromHost(t *testing.T, msg types.LogMessage) {
 	}
 }
 
-func receiveMessage(t *testing.T, msg string, level types.LogLevel) bool {
+func receiveMessage(t *testing.T, msg string, level Level) bool {
 	logs := GetLogging()
 
 	for _, rmsg := range logs.Messages {

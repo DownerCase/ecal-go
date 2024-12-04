@@ -10,11 +10,20 @@ import "C"
 import (
 	"fmt"
 	"runtime/cgo"
-
-	"github.com/DownerCase/ecal-go/ecal/types"
+	"strconv"
 )
 
-type Level = types.LogLevel
+type Level uint8
+
+type LogMessage struct {
+	Time      int64
+	Host      string
+	Process   string
+	Unit_name string
+	Content   string
+	Pid       int32
+	Level     Level
+}
 
 const (
 	LevelNone   Level = C.log_level_none
@@ -30,8 +39,35 @@ const (
 	LevelDebug4 Level = C.log_level_debug4
 )
 
+func (l Level) String() string {
+	switch l {
+	case LevelNone:
+		return "None"
+	case LevelAll:
+		return "All"
+	case LevelInfo:
+		return "Info"
+	case LevelWarn:
+		return "Warn"
+	case LevelError:
+		return "Error"
+	case LevelFatal:
+		return "Fatal"
+	case LevelDebug1:
+		return "Debug1"
+	case LevelDebug2:
+		return "Debug2"
+	case LevelDebug3:
+		return "Debug3"
+	case LevelDebug4:
+		return "Debug4"
+	default:
+		return strconv.FormatUint(uint64(l), 10)
+	}
+}
+
 type Logging struct {
-	Messages []types.LogMessage
+	Messages []LogMessage
 }
 
 func GetLogging() Logging {
