@@ -19,55 +19,6 @@ static_assert(monitoring_process == eCAL::Monitoring::Entity::Process);
 static_assert(monitoring_host == eCAL::Monitoring::Entity::Host);
 static_assert(monitoring_all == eCAL::Monitoring::Entity::All);
 
-namespace {
-
-// Makes uses of copy elision
-CTopicMon toCType(const eCAL::Monitoring::STopicMon &topic) {
-  return {
-      topic.uname.c_str(),
-      topic.tid.c_str(),
-      topic.tname.c_str(),
-      topic.direction.c_str(),
-      toCDataType(topic.tdatatype),
-      topic.dclock,
-      topic.dfreq,
-      topic.rclock,
-      topic.tsize,
-      topic.connections_loc,
-      topic.connections_ext,
-      topic.message_drops
-  };
-}
-
-CProcessMon toCType(const eCAL::Monitoring::SProcessMon &proc) {
-  return {
-      proc.hname.c_str(),
-      proc.hgname.c_str(),
-      proc.rclock,
-      proc.pid,
-      proc.pname.c_str(),
-      proc.uname.c_str(),
-      proc.pparam.c_str(),
-      proc.state_severity,
-      proc.state_severity_level,
-      proc.state_info.c_str(),
-      proc.component_init_info.c_str(),
-      proc.ecal_runtime_version.c_str()
-  };
-}
-
-template <typename CType, typename EcalType>
-std::vector<CType> toCTypes(const std::vector<EcalType> &ecaltypes) {
-  std::vector<CType> ctypes{};
-  ctypes.reserve(ecaltypes.size());
-  for (const auto &ecaltype : ecaltypes) {
-    ctypes.emplace_back(toCType(ecaltype));
-  }
-  return ctypes;
-}
-
-} // namespace
-
 void GetMonitoring(uintptr_t handle, unsigned int entities) {
 
   eCAL::Monitoring::SMonitoring monitoring{};

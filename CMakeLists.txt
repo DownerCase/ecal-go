@@ -43,7 +43,7 @@ target_sources(ecal_go_logging PRIVATE
   ./ecal/logging/logging.h
   ./ecal/logging/logging.cpp
 )
-target_link_libraries(ecal_go_logging PRIVATE eCAL::core)
+target_link_libraries(ecal_go_logging PRIVATE eCAL::core ecal_go_types)
 
 add_library(ecal_go_registration)
 target_sources(ecal_go_registration PRIVATE

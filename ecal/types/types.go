@@ -18,3 +18,15 @@ type DataType struct {
 	Encoding   string
 	Descriptor []byte
 }
+
+type LogLevel uint8
+
+type LogMessage struct {
+	Time      int64
+	Host      string
+	Process   string
+	Unit_name string
+	Content   string
+	Pid       int32
+	Level     LogLevel
+}
