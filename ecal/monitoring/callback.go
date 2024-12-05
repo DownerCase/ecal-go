@@ -53,6 +53,25 @@ func copyToProcessMons(cprocs []C.struct_CProcessMon) []ProcessMon {
 	return procs
 }
 
+func copyToMethodMons(cmethods []C.struct_CMethodMon) []MethodMon {
+	methods := make([]MethodMon, len(cmethods))
+	for idx, cmethod := range cmethods {
+		methods[idx] = MethodMon{
+			Name: C.GoString(cmethod.name),
+			RequestType: methodType{
+				Type:       C.GoString(cmethod.request_name),
+				Descriptor: C.GoString(cmethod.request_desc),
+			},
+			ResponseType: methodType{
+				Type:       C.GoString(cmethod.response_name),
+				Descriptor: C.GoString(cmethod.response_desc),
+			},
+			CallCount: int64(cmethod.call_count),
+		}
+	}
+	return methods
+}
+
 func copyToServiceBase(cbase C.struct_CServiceCommon) ServiceBase {
 	return ServiceBase{
 		Name:              C.GoString(cbase.name),
@@ -63,7 +82,7 @@ func copyToServiceBase(cbase C.struct_CServiceCommon) ServiceBase {
 		Unit:              C.GoString(cbase.unit_name),
 		Pid:               int32(cbase.pid),
 		ProtocolVersion:   uint32(cbase.protocol_version),
-		Methods:           make([]MethodMon, int(cbase.methods_len)),
+		Methods:           copyToMethodMons(unsafe.Slice(cbase.methods, cbase.methods_len)),
 	}
 }
 

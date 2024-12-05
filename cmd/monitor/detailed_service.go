@@ -96,7 +96,14 @@ func (m *model_service_detailed) getBaseRows(b monitoring.ServiceBase) []table.R
 }
 
 func getMethodRows(b monitoring.ServiceBase) []table.Row {
-	return []table.Row{
+	rows := []table.Row{
 		{"Methods", strconv.FormatInt(int64(len(b.Methods)), 10)},
 	}
+	for _, method := range b.Methods {
+		rows = append(rows, table.Row{
+			method.Name,
+			fmt.Sprintf("%s -> %s (Called x%v)", method.RequestType.Type, method.ResponseType.Type, method.CallCount),
+		})
+	}
+	return rows
 }

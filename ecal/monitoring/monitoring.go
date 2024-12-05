@@ -96,10 +96,10 @@ type methodType struct {
 }
 
 type MethodMon struct {
-	Name        string
-	RequestType methodType
-	ReponseType methodType
-	CallCount   int64
+	Name         string
+	RequestType  methodType
+	ResponseType methodType
+	CallCount    int64
 }
 
 type ServiceBase struct {

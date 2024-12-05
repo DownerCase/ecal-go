@@ -106,3 +106,14 @@ CClientMon toCType(const eCAL::Monitoring::SClientMon &client) {
 CServerMon toCType(const eCAL::Monitoring::SServerMon &server) {
   return {toServiceCommon(server), server.tcp_port_v0, server.tcp_port_v1};
 }
+
+CMethodMon toCType(const eCAL::Monitoring::SMethodMon &method) {
+  return {
+      method.mname.c_str(),
+      method.req_type.c_str(),
+      method.req_desc.c_str(),
+      method.resp_type.c_str(),
+      method.resp_desc.c_str(),
+      method.call_count
+  };
+}
