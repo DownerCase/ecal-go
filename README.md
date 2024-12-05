@@ -49,10 +49,10 @@ Features:
 - [x] Show Publishers and Subscribers
   - [x] Detailed topic view
   - [ ] Live message view
-- [ ] Show Services
+- [x] Show Services
 - [ ] Show Hosts
 - [x] Show Processes
-- [ ] Show eCAL Logs
+- [x] Show eCAL Logs
 - [ ] Show config
 
 ## Non-system installations
