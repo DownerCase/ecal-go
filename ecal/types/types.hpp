@@ -14,6 +14,8 @@ CTopicId toCType(const eCAL::Registration::STopicId &id);
 CTopicMon toCType(const eCAL::Monitoring::STopicMon &topic);
 CProcessMon toCType(const eCAL::Monitoring::SProcessMon &proc);
 CLogMessage toCType(const eCAL::Logging::SLogMessage &log);
+CClientMon toCType(const eCAL::Monitoring::SClientMon& client);
+CServerMon toCType(const eCAL::Monitoring::SServerMon &server);
 
 template <
     typename CType,

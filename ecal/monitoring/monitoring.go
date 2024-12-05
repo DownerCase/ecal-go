@@ -102,7 +102,7 @@ type MethodMon struct {
 	CallCount   int64
 }
 
-type serviceBase struct {
+type ServiceBase struct {
 	Name              string
 	Id                string
 	Methods           []MethodMon
@@ -115,19 +115,21 @@ type serviceBase struct {
 }
 
 type ServerMon struct {
-	serviceBase
+	ServiceBase
 	PortV0 uint32 // TCP Port for V0 protocol
 	PortV1 uint32 // TCP Port for V1 protocol
 }
 
 type ClientMon struct {
-	serviceBase
+	ServiceBase
 }
 
 type Monitoring struct {
 	Publishers  []TopicMon
 	Subscribers []TopicMon
 	Processes   []ProcessMon
+	Clients     []ClientMon
+	Servers     []ServerMon
 }
 
 func GetMonitoring(entities MonitorEntity) Monitoring {

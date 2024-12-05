@@ -53,6 +53,41 @@ func copyToProcessMons(cprocs []C.struct_CProcessMon) []ProcessMon {
 	return procs
 }
 
+func copyToServiceBase(cbase C.struct_CServiceCommon) ServiceBase {
+	return ServiceBase{
+		Name:              C.GoString(cbase.name),
+		Id:                C.GoString(cbase.id),
+		RegistrationClock: int32(cbase.registration_clock),
+		HostName:          C.GoString(cbase.host_name),
+		Process:           C.GoString(cbase.process_name),
+		Unit:              C.GoString(cbase.unit_name),
+		Pid:               int32(cbase.pid),
+		ProtocolVersion:   uint32(cbase.protocol_version),
+	}
+}
+
+func copyToServerMons(cservers []C.struct_CServerMon) (servers []ServerMon) {
+	servers = make([]ServerMon, len(cservers))
+	for idx, cserver := range cservers {
+		servers[idx] = ServerMon{
+			ServiceBase: copyToServiceBase(cserver.base),
+			PortV0:      uint32(cserver.port_v0),
+			PortV1:      uint32(cserver.port_v1),
+		}
+	}
+	return
+}
+
+func copyToClientMons(cclients []C.struct_CClientMon) (clients []ClientMon) {
+	clients = make([]ClientMon, len(cclients))
+	for idx, cclient := range cclients {
+		clients[idx] = ClientMon{
+			ServiceBase: copyToServiceBase(cclient.base),
+		}
+	}
+	return
+}
+
 //export goCopyMonitoring
 func goCopyMonitoring(handle C.uintptr_t, cmon *C.struct_CMonitoring) {
 	m := cgo.Handle(handle).Value().(*Monitoring)
@@ -60,5 +95,6 @@ func goCopyMonitoring(handle C.uintptr_t, cmon *C.struct_CMonitoring) {
 	m.Publishers = copyToTopicMons(unsafe.Slice(cmon.publishers, cmon.publishers_len))
 	m.Subscribers = copyToTopicMons(unsafe.Slice(cmon.subscribers, cmon.subscribers_len))
 	m.Processes = copyToProcessMons(unsafe.Slice(cmon.processes, cmon.processes_len))
-
+	m.Clients = copyToClientMons(unsafe.Slice(cmon.clients, cmon.clients_len))
+	m.Servers = copyToServerMons(unsafe.Slice(cmon.servers, cmon.servers_len))
 }

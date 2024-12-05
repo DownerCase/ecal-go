@@ -1,5 +1,6 @@
 #include "monitoring.h"
 
+#include "types.h"
 #include "types.hpp"
 
 #include <ecal/ecal_monitoring.h>
@@ -26,6 +27,8 @@ void GetMonitoring(uintptr_t handle, unsigned int entities) {
   const auto publishers  = toCTypes<CTopicMon>(monitoring.publisher);
   const auto subscribers = toCTypes<CTopicMon>(monitoring.subscriber);
   const auto processes   = toCTypes<CProcessMon>(monitoring.processes);
+  const auto clients     = toCTypes<CClientMon>(monitoring.clients);
+  const auto servers     = toCTypes<CServerMon>(monitoring.server);
   CMonitoring cmon{};
   cmon.publishers      = publishers.data();
   cmon.publishers_len  = publishers.size();
@@ -33,5 +36,9 @@ void GetMonitoring(uintptr_t handle, unsigned int entities) {
   cmon.subscribers_len = subscribers.size();
   cmon.processes       = processes.data();
   cmon.processes_len   = processes.size();
+  cmon.clients         = clients.data();
+  cmon.clients_len     = clients.size();
+  cmon.servers         = servers.data();
+  cmon.servers_len     = servers.size();
   goCopyMonitoring(handle, &cmon);
 }

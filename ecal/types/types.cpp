@@ -1,5 +1,7 @@
 #include <climits>
+#include <ecal/types/monitoring.h>
 
+#include "types.h"
 #include "types.hpp"
 
 namespace {
@@ -9,6 +11,23 @@ int safe_len(size_t str_len) {
   }
   return static_cast<int>(str_len);
 }
+
+template <class T> CServiceCommon toServiceCommon(const T &t) {
+  return {
+      t.sname.c_str(),
+      t.sid.c_str(),
+      nullptr, // Methods are filled in a separate pass
+      t.methods.size(),
+      t.hname.c_str(),
+      t.pname.c_str(),
+      t.uname.c_str(),
+      t.rclock,
+      t.pid,
+      t.version,
+      {}
+  };
+}
+
 } // namespace
 
 CDatatype toCType(const eCAL::SDataTypeInformation &datatype) {
@@ -78,4 +97,12 @@ CLogMessage toCType(const eCAL::Logging::SLogMessage &log) {
       log.pid,
       log.level
   };
+}
+
+CClientMon toCType(const eCAL::Monitoring::SClientMon &client) {
+  return {toServiceCommon(client)};
+}
+
+CServerMon toCType(const eCAL::Monitoring::SServerMon &server) {
+  return {toServiceCommon(server), server.tcp_port_v0, server.tcp_port_v1};
 }
