@@ -93,7 +93,7 @@ func TestProcessMonitoring(t *testing.T) {
 	// Given: eCAL Initialized
 	ecaltest.InitEcal(t)
 	defer ecal.Finalize()
-	time.Sleep(1 * time.Second) // Propagation delay...
+	time.Sleep(1500 * time.Millisecond) // Propagation delay...
 
 	// When: Requesting the processes
 	mon := GetMonitoring(MonitorProcess)
