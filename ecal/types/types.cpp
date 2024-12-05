@@ -55,6 +55,7 @@ CTopicId toCType(const eCAL::Registration::STopicId &id) {
 CTopicMon toCType(const eCAL::Monitoring::STopicMon &topic) {
   return {
       topic.uname.c_str(),
+      topic.hname.c_str(),
       topic.tid.c_str(),
       topic.tname.c_str(),
       topic.direction.c_str(),

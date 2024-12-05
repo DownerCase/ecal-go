@@ -36,7 +36,7 @@ func newModel() *model {
 	pagesMap := make(map[Page]PageModel)
 	pagesMap[page_topics] = NewTopicsModel()
 	pagesMap[page_services] = NewServicesModel()
-	pagesMap[page_hosts] = &PlaceholderModel{"Hosts Placeholder"}
+	pagesMap[page_hosts] = NewHostsModel()
 	pagesMap[page_processes] = NewProcessesModel()
 	pagesMap[page_logs] = NewLogsModel()
 	pagesMap[page_system] = &PlaceholderModel{"System Placeholder"}

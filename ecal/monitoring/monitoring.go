@@ -54,7 +54,7 @@ func (p ProcessSeverity) String() string {
 
 type TopicMon struct {
 	Registration_clock int32 // registration heart beat
-	// host_name          string
+	HostName           string
 	// host_group         string
 	// pid                int32
 	// process_name       string

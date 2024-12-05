@@ -28,6 +28,7 @@ func copyToTopicMons(ctopics []C.struct_CTopicMon) []TopicMon {
 			Connections_local:    int32(pub.connections_local),
 			Connections_external: int32(pub.connections_external),
 			Message_drops:        int32(pub.message_drops),
+			HostName:             C.GoString(pub.host_name),
 		}
 	}
 	return topics
