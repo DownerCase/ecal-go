@@ -9,8 +9,6 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-var p *tea.Program
-
 type PageModel interface {
 	Refresh()
 	Update(tea.Msg) tea.Cmd
@@ -37,7 +35,7 @@ type model struct {
 func newModel() *model {
 	pagesMap := make(map[Page]PageModel)
 	pagesMap[page_topics] = NewTopicsModel()
-	pagesMap[page_services] = &PlaceholderModel{"Services Placeholder"}
+	pagesMap[page_services] = NewServicesModel()
 	pagesMap[page_hosts] = &PlaceholderModel{"Hosts Placeholder"}
 	pagesMap[page_processes] = NewProcessesModel()
 	pagesMap[page_logs] = NewLogsModel()
@@ -130,7 +128,7 @@ func (m *model) View() string {
 }
 
 func doCli() {
-	p = tea.NewProgram(newModel())
+	p := tea.NewProgram(newModel())
 	if _, err := p.Run(); err != nil {
 		fmt.Println("Error running program:", err)
 		os.Exit(1)

@@ -6,7 +6,11 @@ import (
 )
 
 func main() {
-	ecal.Initialize(ecal.NewConfig(), "Go Monitor", ecal.C_Subscriber|ecal.C_Monitoring|ecal.C_Logging)
+	ecal.Initialize(
+		ecal.NewConfig(),
+		"Go Monitor",
+		ecal.C_Subscriber|ecal.C_Monitoring|ecal.C_Logging|ecal.C_Service,
+	)
 	defer ecal.Finalize() // Shutdown eCAL at the end of the program
 	logging.SetConsoleFilter(logging.LevelAll)
 	doCli()
