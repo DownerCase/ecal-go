@@ -30,6 +30,10 @@ struct CMonitoring {
   size_t subscribers_len;
   const struct CProcessMon *processes;
   size_t processes_len;
+  const struct CClientMon *clients;
+  size_t clients_len;
+  const struct CServerMon *servers;
+  size_t servers_len;
 };
 
 void GetMonitoring(uintptr_t handle, unsigned int entities);

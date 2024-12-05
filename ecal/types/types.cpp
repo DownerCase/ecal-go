@@ -1,5 +1,7 @@
 #include <climits>
+#include <ecal/types/monitoring.h>
 
+#include "types.h"
 #include "types.hpp"
 
 namespace {
@@ -9,6 +11,23 @@ int safe_len(size_t str_len) {
   }
   return static_cast<int>(str_len);
 }
+
+template <class T> CServiceCommon toServiceCommon(const T &t) {
+  return {
+      t.sname.c_str(),
+      t.sid.c_str(),
+      nullptr, // Methods are filled in a separate pass
+      t.methods.size(),
+      t.hname.c_str(),
+      t.pname.c_str(),
+      t.uname.c_str(),
+      t.rclock,
+      t.pid,
+      t.version,
+      {}
+  };
+}
+
 } // namespace
 
 CDatatype toCType(const eCAL::SDataTypeInformation &datatype) {
@@ -16,7 +35,8 @@ CDatatype toCType(const eCAL::SDataTypeInformation &datatype) {
       datatype.name.c_str(),
       datatype.encoding.c_str(),
       datatype.descriptor.data(),
-      safe_len(datatype.descriptor.size())
+      safe_len(datatype.descriptor.size()),
+      {}
   };
 }
 
@@ -26,6 +46,7 @@ CTopicId toCType(const eCAL::Registration::STopicId &id) {
           id.topic_id.entity_id.data(),
           id.topic_id.host_name.data(),
           id.topic_id.process_id,
+          {},
       },
       id.topic_name.data()
   };
@@ -44,7 +65,8 @@ CTopicMon toCType(const eCAL::Monitoring::STopicMon &topic) {
       topic.tsize,
       topic.connections_loc,
       topic.connections_ext,
-      topic.message_drops
+      topic.message_drops,
+      {}
   };
 }
 
@@ -74,5 +96,24 @@ CLogMessage toCType(const eCAL::Logging::SLogMessage &log) {
       log.content.c_str(),
       log.pid,
       log.level
+  };
+}
+
+CClientMon toCType(const eCAL::Monitoring::SClientMon &client) {
+  return {toServiceCommon(client)};
+}
+
+CServerMon toCType(const eCAL::Monitoring::SServerMon &server) {
+  return {toServiceCommon(server), server.tcp_port_v0, server.tcp_port_v1};
+}
+
+CMethodMon toCType(const eCAL::Monitoring::SMethodMon &method) {
+  return {
+      method.mname.c_str(),
+      method.req_type.c_str(),
+      method.req_desc.c_str(),
+      method.resp_type.c_str(),
+      method.resp_desc.c_str(),
+      method.call_count
   };
 }

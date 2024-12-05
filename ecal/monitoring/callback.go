@@ -53,24 +53,68 @@ func copyToProcessMons(cprocs []C.struct_CProcessMon) []ProcessMon {
 	return procs
 }
 
+func copyToMethodMons(cmethods []C.struct_CMethodMon) []MethodMon {
+	methods := make([]MethodMon, len(cmethods))
+	for idx, cmethod := range cmethods {
+		methods[idx] = MethodMon{
+			Name: C.GoString(cmethod.name),
+			RequestType: methodType{
+				Type:       C.GoString(cmethod.request_name),
+				Descriptor: C.GoString(cmethod.request_desc),
+			},
+			ResponseType: methodType{
+				Type:       C.GoString(cmethod.response_name),
+				Descriptor: C.GoString(cmethod.response_desc),
+			},
+			CallCount: int64(cmethod.call_count),
+		}
+	}
+	return methods
+}
+
+func copyToServiceBase(cbase C.struct_CServiceCommon) ServiceBase {
+	return ServiceBase{
+		Name:              C.GoString(cbase.name),
+		Id:                C.GoString(cbase.id),
+		RegistrationClock: int32(cbase.registration_clock),
+		HostName:          C.GoString(cbase.host_name),
+		Process:           C.GoString(cbase.process_name),
+		Unit:              C.GoString(cbase.unit_name),
+		Pid:               int32(cbase.pid),
+		ProtocolVersion:   uint32(cbase.protocol_version),
+		Methods:           copyToMethodMons(unsafe.Slice(cbase.methods, cbase.methods_len)),
+	}
+}
+
+func copyToServerMons(cservers []C.struct_CServerMon) (servers []ServerMon) {
+	servers = make([]ServerMon, len(cservers))
+	for idx, cserver := range cservers {
+		servers[idx] = ServerMon{
+			ServiceBase: copyToServiceBase(cserver.base),
+			PortV0:      uint32(cserver.port_v0),
+			PortV1:      uint32(cserver.port_v1),
+		}
+	}
+	return
+}
+
+func copyToClientMons(cclients []C.struct_CClientMon) (clients []ClientMon) {
+	clients = make([]ClientMon, len(cclients))
+	for idx, cclient := range cclients {
+		clients[idx] = ClientMon{
+			ServiceBase: copyToServiceBase(cclient.base),
+		}
+	}
+	return
+}
+
 //export goCopyMonitoring
 func goCopyMonitoring(handle C.uintptr_t, cmon *C.struct_CMonitoring) {
 	m := cgo.Handle(handle).Value().(*Monitoring)
 
-	numPublishers := cmon.publishers_len
-	if numPublishers > 0 {
-		p := (*[1 << 30]C.struct_CTopicMon)(unsafe.Pointer(cmon.publishers))[:numPublishers:numPublishers]
-		m.Publishers = copyToTopicMons(p)
-	}
-	numSubscribers := cmon.subscribers_len
-	if numSubscribers > 0 {
-		s := (*[1 << 30]C.struct_CTopicMon)(unsafe.Pointer(cmon.subscribers))[:numSubscribers:numSubscribers]
-		m.Subscribers = copyToTopicMons(s)
-	}
-	numProcesses := cmon.processes_len
-	if numProcesses > 0 {
-		p := (*[1 << 30]C.struct_CProcessMon)(unsafe.Pointer(cmon.processes))[:numProcesses:numProcesses]
-		m.Processes = copyToProcessMons(p)
-	}
-
+	m.Publishers = copyToTopicMons(unsafe.Slice(cmon.publishers, cmon.publishers_len))
+	m.Subscribers = copyToTopicMons(unsafe.Slice(cmon.subscribers, cmon.subscribers_len))
+	m.Processes = copyToProcessMons(unsafe.Slice(cmon.processes, cmon.processes_len))
+	m.Clients = copyToClientMons(unsafe.Slice(cmon.clients, cmon.clients_len))
+	m.Servers = copyToServerMons(unsafe.Slice(cmon.servers, cmon.servers_len))
 }

@@ -2,6 +2,7 @@ package registration
 
 // #cgo LDFLAGS: -lecal_core
 //#include "registration.h"
+//#include "types.h"
 // #cgo CPPFLAGS: -I${SRCDIR}/../types
 import "C"
 import (
@@ -60,17 +61,6 @@ func AddSubscriberEventCallback(callback func(TopicId, Event)) CallbackToken {
 func RemSubscriberCallback(token CallbackToken) {
 	C.RemSubscriberEventCallback(C.uintptr_t(token.ecal_token))
 	token.go_handle.Delete()
-}
-
-func toQualityTopicInfo(quality *C.struct_CQualityInfo) QualityTopicInfo {
-	return QualityTopicInfo{
-		Datatype: types.DataType{
-			Name:       C.GoString(quality.datatype.name),
-			Encoding:   C.GoString(quality.datatype.encoding),
-			Descriptor: C.GoBytes(quality.datatype.descriptor, quality.datatype.descriptor_len),
-		},
-		QualityFlags: QualityFlags(quality.qualityFlags),
-	}
 }
 
 func toTopicId(id *C.struct_CTopicId) TopicId {

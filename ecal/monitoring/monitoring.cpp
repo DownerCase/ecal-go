@@ -1,5 +1,6 @@
 #include "monitoring.h"
 
+#include "types.h"
 #include "types.hpp"
 
 #include <ecal/ecal_monitoring.h>
@@ -26,6 +27,26 @@ void GetMonitoring(uintptr_t handle, unsigned int entities) {
   const auto publishers  = toCTypes<CTopicMon>(monitoring.publisher);
   const auto subscribers = toCTypes<CTopicMon>(monitoring.subscriber);
   const auto processes   = toCTypes<CProcessMon>(monitoring.processes);
+
+  std::vector<CClientMon> clients{};
+  std::vector<CServerMon> servers{};
+  std::vector<std::vector<CMethodMon>> serviceMethods{};
+
+  for (const auto &client : monitoring.clients) {
+    clients.emplace_back(toCType(client));
+    auto &cclient = clients.back();
+    serviceMethods.emplace_back(toCTypes<CMethodMon>(client.methods));
+    cclient.base.methods_len = serviceMethods.back().size();
+    cclient.base.methods     = serviceMethods.back().data();
+  }
+  for (const auto &server : monitoring.server) {
+    servers.emplace_back(toCType(server));
+    auto &cserver = servers.back();
+    serviceMethods.emplace_back(toCTypes<CMethodMon>(server.methods));
+    cserver.base.methods_len = serviceMethods.back().size();
+    cserver.base.methods     = serviceMethods.back().data();
+  }
+
   CMonitoring cmon{};
   cmon.publishers      = publishers.data();
   cmon.publishers_len  = publishers.size();
@@ -33,5 +54,9 @@ void GetMonitoring(uintptr_t handle, unsigned int entities) {
   cmon.subscribers_len = subscribers.size();
   cmon.processes       = processes.data();
   cmon.processes_len   = processes.size();
+  cmon.clients         = clients.data();
+  cmon.clients_len     = clients.size();
+  cmon.servers         = servers.data();
+  cmon.servers_len     = servers.size();
   goCopyMonitoring(handle, &cmon);
 }
