@@ -32,6 +32,7 @@ struct CDatatype {
 
 struct CTopicMon {
   const char *unit_name;
+  const char *host_name;
   const char *topic_id;
   const char *topic_name;
   const char *direction;
