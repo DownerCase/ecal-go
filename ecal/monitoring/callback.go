@@ -63,6 +63,7 @@ func copyToServiceBase(cbase C.struct_CServiceCommon) ServiceBase {
 		Unit:              C.GoString(cbase.unit_name),
 		Pid:               int32(cbase.pid),
 		ProtocolVersion:   uint32(cbase.protocol_version),
+		Methods:           make([]MethodMon, int(cbase.methods_len)),
 	}
 }
 

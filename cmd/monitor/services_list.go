@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"strconv"
 
 	"github.com/DownerCase/ecal-go/ecal/monitoring"
@@ -18,6 +19,7 @@ const (
 type model_services struct {
 	table_services table.Model
 	subpage        ServicesPage
+	model_detailed model_service_detailed
 }
 
 func NewServicesModel() *model_services {
@@ -37,20 +39,84 @@ func NewServicesModel() *model_services {
 	return &model_services{
 		table_services: t,
 		subpage:        subpage_services_main,
+		model_detailed: NewDetailedServiceModel(),
 	}
 }
 
 func (m *model_services) Refresh() {
-	m.updateTable(nil)
+	switch m.subpage {
+	case subpage_services_detailed:
+		m.model_detailed.Refresh()
+	default:
+		m.updateTable(nil)
+	}
 }
 
 func (m *model_services) Update(msg tea.Msg) tea.Cmd {
-	m.updateTable(msg)
-	return nil
+	var cmd tea.Cmd
+
+	// Global navigation keys
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.Type {
+		case tea.KeyEscape:
+			m.navUp()
+			return cmd
+		case tea.KeyEnter:
+			m.navDown()
+			return cmd
+		}
+	}
+
+	switch m.subpage {
+	case subpage_services_main:
+		switch msg := msg.(type) {
+		case tea.KeyMsg:
+			m.updateTable(msg)
+		}
+	case subpage_services_detailed:
+		cmd = m.model_detailed.Update(msg)
+	}
+	return cmd
 }
 
 func (m *model_services) View() string {
-	return baseStyle.Render(m.table_services.View()) + "\n" + m.table_services.HelpView()
+	switch m.subpage {
+	case subpage_services_main:
+		return baseStyle.Render(m.table_services.View()) + "\n" + m.table_services.HelpView()
+	case subpage_services_detailed:
+		return m.model_detailed.View()
+	}
+	return "Invalid page"
+}
+
+func (m *model_services) navDown() {
+	switch m.subpage {
+	case subpage_services_main:
+		id, isServer, err := m.getSelectedId()
+		if err != nil {
+			return // Can't transition
+		}
+		m.model_detailed.Id = id
+		m.model_detailed.IsServer = isServer
+		m.subpage = subpage_services_detailed
+		m.model_detailed.Refresh()
+	}
+}
+
+func (m *model_services) navUp() {
+	switch m.subpage {
+	case subpage_services_detailed:
+		m.subpage = subpage_services_main
+	}
+}
+
+func (m *model_services) getSelectedId() (string, bool, error) {
+	row := m.table_services.SelectedRow()
+	if row == nil {
+		return "", false, errors.New("No processes")
+	}
+	return row[0], row[1] == "S", nil
 }
 
 func (m *model_services) updateTable(msg tea.Msg) {
