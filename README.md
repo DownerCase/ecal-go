@@ -50,7 +50,7 @@ Features:
   - [x] Detailed topic view
   - [ ] Live message view
 - [x] Show Services
-- [ ] Show Hosts
+- [x] Show Hosts
 - [x] Show Processes
 - [x] Show eCAL Logs
 - [ ] Show config

@@ -39,7 +39,7 @@ func newModel() *model {
 	pagesMap[page_hosts] = NewHostsModel()
 	pagesMap[page_processes] = NewProcessesModel()
 	pagesMap[page_logs] = NewLogsModel()
-	pagesMap[page_system] = &PlaceholderModel{"System Placeholder"}
+	pagesMap[page_system] = NewConfigModel()
 	pagesMap[page_about] = &PlaceholderModel{"About Placeholder"}
 	return &model{
 		page:  page_topics,
@@ -114,7 +114,7 @@ func (m *model) View() string {
 		"3: Hosts",
 		"4: Processes",
 		"5: Logs",
-		"6: System",
+		"6: Config",
 		"7: About",
 	}
 	s.WriteString("\n")

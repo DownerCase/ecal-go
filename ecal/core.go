@@ -4,7 +4,10 @@ package ecal
 // #include "core.h"
 // #include <stdlib.h>
 import "C"
-import "unsafe"
+import (
+	"runtime/cgo"
+	"unsafe"
+)
 
 const (
 	// eCAL Components
@@ -85,4 +88,14 @@ func SetUnitName(unit_name string) bool {
 }
 func Ok() bool {
 	return bool(C.Ok())
+}
+
+// TODO: Reimplement with a proper config serialization as eCAL::DumpConfig()
+// is planned to be removed!
+func GetConfig() string {
+	var cfg string
+	handle := cgo.NewHandle(&cfg)
+	defer handle.Delete()
+	C.GetConfig(C.uintptr_t(handle))
+	return cfg
 }

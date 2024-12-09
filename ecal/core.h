@@ -2,6 +2,7 @@
 #define ECAL_GO_CORE_H
 
 #include <stdbool.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,6 +36,8 @@ bool IsInitialized(void);
 bool IsComponentInitialized(unsigned int component);
 bool SetUnitName(const char *unit_name);
 bool Ok(void);
+
+void GetConfig(uintptr_t handle);
 
 #ifdef __cplusplus
 }
