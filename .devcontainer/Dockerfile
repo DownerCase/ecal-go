@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=docker.io/ubuntu:oracular-20241009
+ARG BASE_IMAGE=docker.io/ubuntu:oracular-20241120
 
 ###
 # Build eCAL 6 from source
@@ -24,7 +24,7 @@ RUN apt-get update && apt-get install --no-install-recommends  -y\
 # This is needed over shallow clone for the tag-based auto-versioning
 # Reset added to ensure the same commit is always used, even if master advances
 RUN git clone --single-branch --filter=tree:0 --branch master https://github.com/eclipse-ecal/ecal.git /ecal \
-    && git -C ./ecal reset --hard 6b856b668bf1d011d5f066a55569ac160231dc24
+    && git -C ./ecal reset --hard 7ba8e0a80328b0fbc2924eaca40e98669f7933bc
 WORKDIR /ecal
 
 # Only download the submodules for dependencies not available as system packages
