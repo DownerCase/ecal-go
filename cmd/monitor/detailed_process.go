@@ -15,21 +15,14 @@ type model_process_detailed struct {
 	Pid            int32
 }
 
-func NewDetailedProcessModel() model_process_detailed {
+func NewDetailedProcessModel() *model_process_detailed {
 	cols := []table.Column{
 		{Title: "", Width: 10},
 		{Title: "", Width: 67},
 	}
 
-	t := table.New(
-		table.WithHeight(8),
-		table.WithFocused(true),
-		table.WithColumns(cols),
-		table.WithStyles(tableStyle),
-	)
-
-	return model_process_detailed{
-		table_detailed: t,
+	return &model_process_detailed{
+		table_detailed: NewTable(cols),
 		Pid:            0,
 	}
 }

@@ -20,6 +20,7 @@ type model_services struct {
 	table_services table.Model
 	subpage        ServicesPage
 	model_detailed model_service_detailed
+	NavKeys        NavKeyMap
 }
 
 func NewServicesModel() *model_services {
@@ -30,17 +31,13 @@ func NewServicesModel() *model_services {
 		{Title: "Unit", Width: 32},
 		{Title: "Tick", Width: 4},
 	}
-	t := table.New(
-		table.WithHeight(8),
-		table.WithFocused(true),
-		table.WithColumns(cols),
-		table.WithStyles(tableStyle),
-	)
-	return &model_services{
-		table_services: t,
+
+	return (&model_services{
+		table_services: NewTable(cols),
 		subpage:        subpage_services_main,
 		model_detailed: NewDetailedServiceModel(),
-	}
+		NavKeys:        make(NavKeyMap),
+	}).Init()
 }
 
 func (m *model_services) Refresh() {
@@ -52,22 +49,18 @@ func (m *model_services) Refresh() {
 	}
 }
 
-func (m *model_services) Update(msg tea.Msg) tea.Cmd {
-	var cmd tea.Cmd
+func (m *model_services) Init() *model_services {
+	m.NavKeys[tea.KeyEscape] = func() tea.Cmd { m.navUp(); return nil }
+	m.NavKeys[tea.KeyEnter] = func() tea.Cmd { m.navDown(); return nil }
+	return m
+}
 
-	// Global navigation keys
-	switch msg := msg.(type) {
-	case tea.KeyMsg:
-		switch msg.Type {
-		case tea.KeyEscape:
-			m.navUp()
-			return cmd
-		case tea.KeyEnter:
-			m.navDown()
-			return cmd
-		}
+func (m *model_services) Update(msg tea.Msg) tea.Cmd {
+	if cmd, navigated := m.NavKeys.HandleMsg(msg); navigated {
+		return cmd
 	}
 
+	var cmd tea.Cmd
 	switch m.subpage {
 	case subpage_services_main:
 		switch msg := msg.(type) {
