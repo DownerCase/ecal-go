@@ -3,6 +3,11 @@
 #include <ecal/config/configuration.h>
 #include <ecal/ecal_core.h>
 #include <ecal/ecal_defs.h>
+#include <ecal/ecal_process.h>
+
+extern "C" {
+extern void goCopyString(uintptr_t, const char *const);
+}
 
 namespace {
 eCAL::Configuration convertConfig(CConfig &config) {
@@ -43,3 +48,9 @@ bool SetUnitName(const char *unit_name) {
 }
 
 bool Ok() { return eCAL::Ok(); }
+
+void GetConfig(uintptr_t handle) {
+  std::string cfg{};
+  eCAL::Process::DumpConfig(cfg);
+  goCopyString(handle, cfg.c_str());
+}
