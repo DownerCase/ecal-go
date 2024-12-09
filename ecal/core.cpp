@@ -25,7 +25,9 @@ int Initialize(config *config, const char *unit_name, unsigned int components) {
 
 int Finalize() { return eCAL::Finalize(); }
 
-bool IsInitialized(unsigned int component) {
+bool IsInitialized() { return eCAL::IsInitialized() == 1; }
+
+bool IsComponentInitialized(unsigned int component) {
   return eCAL::IsInitialized(component) == 1;
 }
 

@@ -27,7 +27,8 @@ int Initialize(
     unsigned int components
 );
 int Finalize();
-bool IsInitialized(unsigned int component);
+bool IsInitialized();
+bool IsComponentInitialized(unsigned int component);
 bool SetUnitName(const char *unit_name);
 bool Ok();
 

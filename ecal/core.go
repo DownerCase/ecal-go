@@ -44,9 +44,15 @@ func Initialize(config C.struct_config, unit_name string, components uint) int {
 func Finalize() int {
 	return int(C.Finalize())
 }
-func IsInitialized(component uint) bool {
-	return bool(C.IsInitialized(C.uint(component)))
+
+func IsInitialized() bool {
+	return bool(C.IsInitialized())
 }
+
+func IsComponentInitialized(component uint) bool {
+	return bool(C.IsComponentInitialized(C.uint(component)))
+}
+
 func SetUnitName(unit_name string) bool {
 	unit_c := C.CString(unit_name)
 	defer C.free(unsafe.Pointer(unit_c))
