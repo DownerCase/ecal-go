@@ -20,7 +20,7 @@ const (
 type model_processes struct {
 	table_processes table.Model
 	subpage         ProcessesPage
-	model_detailed  model_process_detailed
+	pages           map[ProcessesPage]PageModel
 }
 
 func NewProcessesModel() *model_processes {
@@ -32,10 +32,12 @@ func NewProcessesModel() *model_processes {
 		{Title: "Tick", Width: 4},
 	}
 
+	pages := make(map[ProcessesPage]PageModel)
+	pages[subpage_proc_detailed] = NewDetailedProcessModel()
 	return &model_processes{
 		table_processes: NewTable(columns),
 		subpage:         subpage_proc_main,
-		model_detailed:  NewDetailedProcessModel(),
+		pages:           pages,
 	}
 }
 
@@ -59,34 +61,26 @@ func (m *model_processes) Update(msg tea.Msg) tea.Cmd {
 		}
 	}
 
-	switch m.subpage {
-	case subpage_proc_main:
-		switch msg := msg.(type) {
-		case tea.KeyMsg:
-			m.updateTable(msg)
-		}
-	case subpage_proc_detailed:
-		cmd = m.model_detailed.Update(msg)
+	if m.subpage == subpage_proc_main {
+		return m.updateTable(msg)
+	} else {
+		return m.pages[m.subpage].Update(msg)
 	}
-	return cmd
 }
 
 func (m *model_processes) View() string {
-	switch m.subpage {
-	case subpage_proc_main:
+	if m.subpage == subpage_proc_main {
 		return baseStyle.Render(m.table_processes.View()) + "\n" + m.table_processes.HelpView()
-	case subpage_proc_detailed:
-		return m.model_detailed.View()
+	} else {
+		return m.pages[m.subpage].View()
 	}
-	return "Invalid page"
 }
 
 func (m *model_processes) Refresh() {
-	switch m.subpage {
-	case subpage_proc_detailed:
-		m.model_detailed.Refresh()
-	default:
+	if m.subpage == subpage_proc_main {
 		m.updateTable(nil)
+	} else {
+		m.pages[m.subpage].Refresh()
 	}
 }
 
@@ -97,9 +91,10 @@ func (m *model_processes) navDown() {
 		if err != nil {
 			return // Can't transition
 		}
-		m.model_detailed.Pid = pid
+		detailed := m.pages[subpage_proc_detailed].(*model_process_detailed)
+		detailed.Pid = pid
 		m.subpage = subpage_proc_detailed
-		m.model_detailed.Refresh()
+		detailed.Refresh()
 	}
 }
 
