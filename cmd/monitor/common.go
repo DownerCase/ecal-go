@@ -13,3 +13,15 @@ func NewTable(columns []table.Column) table.Model {
 		table.WithColumns(columns),
 	)
 }
+
+type NavKeyMap map[tea.KeyType]func() tea.Cmd
+
+func (navKeys NavKeyMap) HandleMsg(msg tea.Msg) (cmd tea.Cmd, navigated bool) {
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		if f, ok := navKeys[msg.Type]; ok {
+			return f(), true
+		}
+	}
+	return nil, false
+}

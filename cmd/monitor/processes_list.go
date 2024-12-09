@@ -21,6 +21,7 @@ type model_processes struct {
 	table_processes table.Model
 	subpage         ProcessesPage
 	pages           map[ProcessesPage]PageModel
+	NavKeys         NavKeyMap
 }
 
 func NewProcessesModel() *model_processes {
@@ -34,31 +35,24 @@ func NewProcessesModel() *model_processes {
 
 	pages := make(map[ProcessesPage]PageModel)
 	pages[subpage_proc_detailed] = NewDetailedProcessModel()
-	return &model_processes{
+
+	return (&model_processes{
 		table_processes: NewTable(columns),
 		subpage:         subpage_proc_main,
 		pages:           pages,
-	}
+		NavKeys:         make(NavKeyMap),
+	}).Init()
 }
 
-func (m *model_processes) Init() tea.Cmd {
-	return nil
+func (m *model_processes) Init() *model_processes {
+	m.NavKeys[tea.KeyEscape] = func() tea.Cmd { m.navUp(); return nil }
+	m.NavKeys[tea.KeyEnter] = func() tea.Cmd { m.navDown(); return nil }
+	return m
 }
 
 func (m *model_processes) Update(msg tea.Msg) tea.Cmd {
-	var cmd tea.Cmd
-
-	// Global navigation keys
-	switch msg := msg.(type) {
-	case tea.KeyMsg:
-		switch msg.Type {
-		case tea.KeyEscape:
-			m.navUp()
-			return cmd
-		case tea.KeyEnter:
-			m.navDown()
-			return cmd
-		}
+	if cmd, navigated := m.NavKeys.HandleMsg(msg); navigated {
+		return cmd
 	}
 
 	if m.subpage == subpage_proc_main {
@@ -114,14 +108,15 @@ func (m *model_processes) getSelectedPid() (int32, error) {
 	return int32(pid), err
 }
 
-func (m *model_processes) updateTable(msg tea.Msg) {
+func (m *model_processes) updateTable(msg tea.Msg) (cmd tea.Cmd) {
 	rows := []table.Row{}
 	mon := monitoring.GetMonitoring(monitoring.MonitorProcess)
 	for _, proc := range mon.Processes {
 		rows = append(rows, procToRow(proc))
 	}
 	m.table_processes.SetRows(rows)
-	m.table_processes, _ = m.table_processes.Update(msg)
+	m.table_processes, cmd = m.table_processes.Update(msg)
+	return
 }
 
 func procToRow(proc monitoring.ProcessMon) table.Row {

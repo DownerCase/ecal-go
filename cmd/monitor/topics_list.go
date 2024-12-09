@@ -28,6 +28,7 @@ type model_topics struct {
 	filter         entityFilter
 	subpage        TopicsPage
 	model_detailed model_detailed
+	NavKeys        NavKeyMap
 }
 
 type topicsKeyMap struct {
@@ -88,13 +89,14 @@ func NewTopicsModel() *model_topics {
 		{Title: "Tick", Width: 4},
 	}
 
-	return &model_topics{
+	return (&model_topics{
 		table_topics:   NewTable(topics_columns),
 		keymap:         newTopicsKeyMap(),
 		help:           help.New(),
 		subpage:        subpage_topic_main,
 		model_detailed: NewDetailedModel(),
-	}
+		NavKeys:        make(NavKeyMap),
+	}).Init()
 }
 
 func topicToRow(topic monitoring.TopicMon) table.Row {
@@ -168,26 +170,18 @@ func (m *model_topics) Refresh() {
 	}
 }
 
-func (m *model_topics) Init() tea.Cmd {
-	return nil
+func (m *model_topics) Init() *model_topics {
+	m.NavKeys[tea.KeyEscape] = func() tea.Cmd { m.navUp(); return nil }
+	m.NavKeys[tea.KeyEnter] = func() tea.Cmd { m.navDown(); return nil }
+	return m
 }
 
 func (m *model_topics) Update(msg tea.Msg) tea.Cmd {
-	var cmd tea.Cmd
-
-	// Global navigation keys
-	switch msg := msg.(type) {
-	case tea.KeyMsg:
-		switch msg.Type {
-		case tea.KeyEscape:
-			m.navUp()
-			return cmd
-		case tea.KeyEnter:
-			m.navDown()
-			return cmd
-		}
+	if cmd, navigated := m.NavKeys.HandleMsg(msg); navigated {
+		return cmd
 	}
 
+	var cmd tea.Cmd
 	switch m.subpage {
 	case subpage_topic_main:
 		switch msg := msg.(type) {
@@ -215,7 +209,6 @@ func (m *model_topics) Update(msg tea.Msg) tea.Cmd {
 	case subpage_topic_messages:
 		// TODO: Not implemented
 	}
-
 	return cmd
 }
 
