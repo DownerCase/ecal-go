@@ -23,15 +23,8 @@ func NewDetailedModel() model_detailed {
 		{Title: "", Width: 67},
 	}
 
-	t := table.New(
-		table.WithHeight(8),
-		table.WithFocused(true),
-		table.WithColumns(cols),
-		table.WithStyles(tableStyle),
-	)
-
 	return model_detailed{
-		table_detailed:    t,
+		table_detailed:    NewTable(cols),
 		detailed_topic_id: "",
 	}
 }

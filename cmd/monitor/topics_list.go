@@ -87,14 +87,9 @@ func NewTopicsModel() *model_topics {
 		{Title: "Freq (Hz)", Width: 10},
 		{Title: "Tick", Width: 4},
 	}
-	t := table.New(
-		table.WithHeight(8),
-		table.WithFocused(true),
-		table.WithColumns(topics_columns),
-		table.WithStyles(tableStyle),
-	)
+
 	return &model_topics{
-		table_topics:   t,
+		table_topics:   NewTable(topics_columns),
 		keymap:         newTopicsKeyMap(),
 		help:           help.New(),
 		subpage:        subpage_topic_main,

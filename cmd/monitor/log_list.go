@@ -56,15 +56,8 @@ func NewLogsModel() *model_logs {
 		{Title: "Message", Width: 46},
 	}
 
-	t := table.New(
-		table.WithHeight(8),
-		table.WithFocused(true),
-		table.WithColumns(columns),
-		table.WithStyles(tableStyle),
-	)
-
 	return &model_logs{
-		table_logs: t,
+		table_logs: NewTable(columns),
 		subpage:    subpage_logging_main,
 		help:       help.New(),
 		keymap:     newLogsKeyMap(),

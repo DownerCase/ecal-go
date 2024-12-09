@@ -22,15 +22,8 @@ func NewHostsModel() *model_hosts {
 		{Title: "Clients", Width: 7},
 	}
 
-	t := table.New(
-		table.WithHeight(8),
-		table.WithFocused(true),
-		table.WithColumns(columns),
-		table.WithStyles(tableStyle),
-	)
-
 	return &model_hosts{
-		table: t,
+		table: NewTable(columns),
 	}
 }
 

@@ -30,14 +30,9 @@ func NewServicesModel() *model_services {
 		{Title: "Unit", Width: 32},
 		{Title: "Tick", Width: 4},
 	}
-	t := table.New(
-		table.WithHeight(8),
-		table.WithFocused(true),
-		table.WithColumns(cols),
-		table.WithStyles(tableStyle),
-	)
+
 	return &model_services{
-		table_services: t,
+		table_services: NewTable(cols),
 		subpage:        subpage_services_main,
 		model_detailed: NewDetailedServiceModel(),
 	}

@@ -32,14 +32,8 @@ func NewProcessesModel() *model_processes {
 		{Title: "Tick", Width: 4},
 	}
 
-	t := table.New(
-		table.WithHeight(8),
-		table.WithFocused(true),
-		table.WithColumns(columns),
-		table.WithStyles(tableStyle),
-	)
 	return &model_processes{
-		table_processes: t,
+		table_processes: NewTable(columns),
 		subpage:         subpage_proc_main,
 		model_detailed:  NewDetailedProcessModel(),
 	}
