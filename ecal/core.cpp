@@ -5,7 +5,11 @@
 #include <ecal/ecal_defs.h>
 
 namespace {
-eCAL::Configuration convertConfig(config &) { return eCAL::Configuration{}; }
+eCAL::Configuration convertConfig(CConfig &config) {
+  eCAL::Configuration cfg{};
+  cfg.logging.receiver.enable = config.logging.receive_enabled;
+  return cfg;
+}
 } // namespace
 
 const char *GetVersionString() { return ECAL_VERSION; }
@@ -17,9 +21,12 @@ version GetVersion() {
   return {version.major, version.minor, version.patch};
 }
 
-int Initialize(config *config, const char *unit_name, unsigned int components) {
+int Initialize(
+    CConfig *config,
+    const char *unit_name,
+    unsigned int components
+) {
   auto cfg = convertConfig(*config);
-  // TODO: Initialize should take by const ref
   return eCAL::Initialize(cfg, unit_name, components);
 }
 

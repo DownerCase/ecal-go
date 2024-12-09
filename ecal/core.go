@@ -19,8 +19,28 @@ const (
 	C_All        uint = C_Publisher | C_Subscriber | C_Service | C_Monitoring | C_Logging | C_TimeSync
 )
 
-func NewConfig() C.struct_config {
-	return C.struct_config{}
+type ConfigLogging struct {
+	ReceiveEnabled bool
+}
+
+type Config struct {
+	Logging ConfigLogging
+}
+
+type ConfigOption func(*Config)
+
+func NewConfig(opts ...ConfigOption) Config {
+	cfg := Config{}
+	for _, opt := range opts {
+		opt(&cfg)
+	}
+	return cfg
+}
+
+func WithLoggingReceive(r bool) ConfigOption {
+	return func(c *Config) {
+		c.Logging.ReceiveEnabled = r
+	}
 }
 
 func GetVersionString() string {
@@ -35,10 +55,15 @@ func GetVersion() C.struct_version {
 	return C.GetVersion()
 }
 
-func Initialize(config C.struct_config, unit_name string, components uint) int {
+func Initialize(config Config, unit_name string, components uint) int {
+	cconfig := C.struct_CConfig{
+		logging: C.struct_CConfigLogging{
+			receive_enabled: C.bool(config.Logging.ReceiveEnabled),
+		},
+	}
 	unit_c := C.CString(unit_name)
 	defer C.free(unsafe.Pointer(unit_c))
-	return int(C.Initialize(&config, unit_c, C.uint(components)))
+	return int(C.Initialize(&cconfig, unit_c, C.uint(components)))
 }
 
 func Finalize() int {
