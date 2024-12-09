@@ -27,7 +27,7 @@ func TestGetVersion(t *testing.T) {
 
 func TestInitializeFinalize(t *testing.T) {
 
-	if IsInitialized(C_None) {
+	if IsInitialized() {
 		t.Error("eCAL pre-initialized...")
 	}
 
@@ -39,13 +39,16 @@ func TestInitializeFinalize(t *testing.T) {
 	}
 
 	// Test double initialization
-	secondInit := Initialize(NewConfig(), "go_test2", C_Default)
+	secondInit := Initialize(NewConfig(), "go_test2", C_Publisher)
 	if secondInit != 1 {
 		t.Errorf("Second initialize returned %v", secondInit)
 	}
 
-	if !IsInitialized(C_None) {
+	if !IsInitialized() {
 		t.Error("IsInitialized return false, expected true")
+	}
+	if !IsComponentInitialized(C_Publisher) {
+		t.Error("Expected publisher component to be initialised")
 	}
 
 	if !SetUnitName("go_test_set_name") {

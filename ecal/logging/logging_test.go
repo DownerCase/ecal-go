@@ -37,7 +37,7 @@ func receiveMessage(t *testing.T, msg string, level Level) bool {
 
 func TestGetLogging(t *testing.T) {
 	// Given: eCAL Initialized
-	ecaltest.InitEcal(t)
+	ecaltest.InitEcal(t, ecal.WithLoggingReceive(true))
 	defer ecal.Finalize()
 
 	// When: Logging a message
