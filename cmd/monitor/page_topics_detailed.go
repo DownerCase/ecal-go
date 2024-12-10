@@ -10,36 +10,36 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-type model_detailed struct {
+type model_topic_detailed struct {
 	table_detailed    table.Model
 	detailed_topic_id string
 	is_subscriber     bool
 }
 
-func NewDetailedModel() model_detailed {
+func NewDetailedModel() *model_topic_detailed {
 
 	cols := []table.Column{
 		{Title: "", Width: 14},
 		{Title: "", Width: 67},
 	}
 
-	return model_detailed{
+	return &model_topic_detailed{
 		table_detailed:    NewTable(cols),
 		detailed_topic_id: "",
 	}
 }
 
-func (m *model_detailed) ShowTopic(topic_id string, is_subscriber bool) {
+func (m *model_topic_detailed) ShowTopic(topic_id string, is_subscriber bool) {
 	m.detailed_topic_id = topic_id
 	m.is_subscriber = is_subscriber
 	m.updateDetailedTable(nil)
 }
 
-func (m *model_detailed) Init() tea.Cmd {
+func (m *model_topic_detailed) Init() tea.Cmd {
 	return nil
 }
 
-func (m *model_detailed) Update(msg tea.Msg) tea.Cmd {
+func (m *model_topic_detailed) Update(msg tea.Msg) tea.Cmd {
 	var cmd tea.Cmd
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -48,15 +48,15 @@ func (m *model_detailed) Update(msg tea.Msg) tea.Cmd {
 	return cmd
 }
 
-func (m *model_detailed) View() string {
+func (m *model_topic_detailed) View() string {
 	return baseStyle.Render(m.table_detailed.View()) + "\n" + m.table_detailed.HelpView()
 }
 
-func (m *model_detailed) Refresh() {
+func (m *model_topic_detailed) Refresh() {
 	m.updateDetailedTable(nil)
 }
 
-func (m *model_detailed) updateDetailedTable(msg tea.Msg) {
+func (m *model_topic_detailed) updateDetailedTable(msg tea.Msg) {
 	mon := monitoring.GetMonitoring(monitoring.MonitorPublisher | monitoring.MonitorSubscriber)
 	var t monitoring.TopicMon
 	var topic_list []monitoring.TopicMon
