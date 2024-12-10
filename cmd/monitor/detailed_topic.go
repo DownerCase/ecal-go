@@ -16,14 +16,14 @@ type model_detailed struct {
 	is_subscriber     bool
 }
 
-func NewDetailedModel() model_detailed {
+func NewDetailedModel() *model_detailed {
 
 	cols := []table.Column{
 		{Title: "", Width: 14},
 		{Title: "", Width: 67},
 	}
 
-	return model_detailed{
+	return &model_detailed{
 		table_detailed:    NewTable(cols),
 		detailed_topic_id: "",
 	}

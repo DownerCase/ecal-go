@@ -22,13 +22,13 @@ const (
 )
 
 type model_topics struct {
-	table_topics   table.Model
-	keymap         topicsKeyMap
-	help           help.Model
-	filter         entityFilter
-	subpage        TopicsPage
-	model_detailed model_detailed
-	NavKeys        NavKeyMap
+	table_topics table.Model
+	keymap       topicsKeyMap
+	help         help.Model
+	filter       entityFilter
+	subpage      TopicsPage
+	pages        map[TopicsPage]PageModel
+	NavKeys      NavKeyMap
 }
 
 type topicsKeyMap struct {
@@ -90,12 +90,14 @@ func NewTopicsModel() *model_topics {
 	}
 
 	return (&model_topics{
-		table_topics:   NewTable(topics_columns),
-		keymap:         newTopicsKeyMap(),
-		help:           help.New(),
-		subpage:        subpage_topic_main,
-		model_detailed: NewDetailedModel(),
-		NavKeys:        make(NavKeyMap),
+		table_topics: NewTable(topics_columns),
+		keymap:       newTopicsKeyMap(),
+		help:         help.New(),
+		subpage:      subpage_topic_main,
+		pages: map[TopicsPage]PageModel{
+			subpage_topic_detailed: NewDetailedModel(),
+		},
+		NavKeys: make(NavKeyMap),
 	}).Init()
 }
 
@@ -141,7 +143,8 @@ func (m *model_topics) navDown() {
 		if err != nil {
 			return // Don't' transition
 		}
-		m.model_detailed.ShowTopic(topic, is_subscriber)
+		detailed := m.pages[subpage_topic_detailed].(*model_detailed)
+		detailed.ShowTopic(topic, is_subscriber)
 		m.subpage = subpage_topic_detailed
 	}
 }
@@ -162,11 +165,10 @@ func (m *model_topics) GetSelectedId() (string, bool, error) {
 }
 
 func (m *model_topics) Refresh() {
-	switch m.subpage {
-	case subpage_topic_detailed:
-		m.model_detailed.Refresh()
-	default:
+	if m.subpage == subpage_topic_main {
 		m.updateTopicsTable(nil)
+	} else {
+		m.pages[m.subpage].Refresh()
 	}
 }
 
@@ -182,8 +184,7 @@ func (m *model_topics) Update(msg tea.Msg) tea.Cmd {
 	}
 
 	var cmd tea.Cmd
-	switch m.subpage {
-	case subpage_topic_main:
+	if m.subpage == subpage_topic_main {
 		switch msg := msg.(type) {
 		case tea.KeyMsg:
 			switch {
@@ -204,22 +205,16 @@ func (m *model_topics) Update(msg tea.Msg) tea.Cmd {
 		default:
 			m.updateTopicsTable(msg)
 		}
-	case subpage_topic_detailed:
-		cmd = m.model_detailed.Update(msg)
-	case subpage_topic_messages:
-		// TODO: Not implemented
+	} else {
+		cmd = m.pages[m.subpage].Update(msg)
 	}
 	return cmd
 }
 
 func (m *model_topics) View() string {
-	switch m.subpage {
-	case subpage_topic_main:
+	if m.subpage == subpage_topic_main {
 		return baseStyle.Render(m.table_topics.View()) + "\n" + m.help.View(m.keymap)
-	case subpage_topic_detailed:
-		return m.model_detailed.View()
-	case subpage_topic_messages:
-		return "TODO: Not implemented"
+	} else {
+		return m.pages[m.subpage].View()
 	}
-	return "Invalid page"
 }
