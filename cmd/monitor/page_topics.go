@@ -143,7 +143,7 @@ func (m *model_topics) navDown() {
 		if err != nil {
 			return // Don't' transition
 		}
-		detailed := m.pages[subpage_topic_detailed].(*model_detailed)
+		detailed := m.pages[subpage_topic_detailed].(*model_topic_detailed)
 		detailed.ShowTopic(topic, is_subscriber)
 		m.subpage = subpage_topic_detailed
 	}
