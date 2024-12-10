@@ -33,14 +33,13 @@ func NewProcessesModel() *model_processes {
 		{Title: "Tick", Width: 4},
 	}
 
-	pages := make(map[ProcessesPage]PageModel)
-	pages[subpage_proc_detailed] = NewDetailedProcessModel()
-
 	return (&model_processes{
 		table_processes: NewTable(columns),
 		subpage:         subpage_proc_main,
-		pages:           pages,
-		NavKeys:         make(NavKeyMap),
+		pages: map[ProcessesPage]PageModel{
+			subpage_proc_detailed: NewDetailedProcessModel(),
+		},
+		NavKeys: make(NavKeyMap),
 	}).Init()
 }
 
