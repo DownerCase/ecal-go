@@ -15,8 +15,8 @@ import (
 
 func main() {
 	// eCAL version as string and semantic version components
-	fmt.Println(ecal.GetVersionString())
-	fmt.Println(ecal.GetVersion())
+	fmt.Println(ecal.GetVersionString()) //nolint:forbidigo
+	fmt.Println(ecal.GetVersion())       //nolint:forbidigo
 
 	// Initialize eCAL with default config, the unit name "Go eCAL",
 	// and the Publisher, Subscriber and Logging components enabled
@@ -102,13 +102,13 @@ func receiveMessages(s *subscriber.Subscriber) {
 	for {
 		msg, err := s.Receive(2 * time.Second)
 		if err == nil {
-			fmt.Println("Received:", msg)
+			fmt.Println("Received:", msg) //nolint:forbidigo
 		} else {
-			fmt.Println(err)
+			fmt.Println(err) //nolint:forbidigo
 		}
 	}
 }
 
 func registrationLogger(id registration.TopicId, event registration.Event) {
-	fmt.Println("Received registration sample:", id)
+	fmt.Println("Received registration sample:", id) //nolint:forbidigo
 }

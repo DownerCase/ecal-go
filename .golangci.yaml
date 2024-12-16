@@ -3,15 +3,14 @@ linters:
   disable:
     - exportloopref # Deprecated
     - execinquery # Deprecated
+    - exhaustruct # Very noisy, hard to disable when want zero values
     - gci
-    - forbidigo
     - gocritic
     - godox
     - gomnd
     - gochecknoglobals
     - gosec
     - ireturn
-    - exhaustruct
     - mnd
     - forcetypeassert
     - nlreturn

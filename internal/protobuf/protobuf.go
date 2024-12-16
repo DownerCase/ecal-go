@@ -1,7 +1,7 @@
 package protobuf
 
 import (
-	"fmt"
+	"log"
 
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protodesc"
@@ -65,7 +65,7 @@ func GetProtoMessageDescription(msg proto.Message) []byte {
 	getFileDescriptor(desc, &pset)
 	bytes, err := proto.Marshal(&pset)
 	if err != nil {
-		fmt.Println(err)
+		log.Println("WARN: GetProtoMessageDescription failed to marshal file descriptor set", err)
 		return nil
 	}
 	return bytes

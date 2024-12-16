@@ -90,12 +90,12 @@ func (m *model_topic_messages) createSubscriber() {
 	subscriber, err := subscriber.New()
 	if err != nil {
 		subscriber.Delete()
-		fmt.Println("Failed to allocate new subscriber")
+		panic(fmt.Errorf("[Topic Messages]: %w", err))
 	}
 	err = subscriber.Create(m.mon.Topic_name, m.mon.Datatype)
 	if err != nil {
 		subscriber.Delete()
-		fmt.Println("Failed to create subscriber!")
+		panic(fmt.Errorf("[Topic Messages]: %w", err))
 	}
 	switch {
 	case m.mon.Datatype.Name == "std::string" && m.mon.Datatype.Encoding == "base":

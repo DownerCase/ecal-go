@@ -1,8 +1,7 @@
 package main
 
 import (
-	"fmt"
-	"os"
+	"log"
 	"strings"
 	"time"
 
@@ -130,7 +129,6 @@ func (m *model) View() string {
 func doCli() {
 	p := tea.NewProgram(newModel())
 	if _, err := p.Run(); err != nil {
-		fmt.Println("Error running program:", err)
-		os.Exit(1)
+		log.Fatal("Error running program:", err)
 	}
 }
