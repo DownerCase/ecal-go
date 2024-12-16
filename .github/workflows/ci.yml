@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        modules: ${{ fromJSON(needs.detect-modules.outputs.modules) }}
+        modules: ${{ fromJSON(needs.detect-go-modules.outputs.modules) }}
 
     steps:
     - uses: actions/checkout@v4
