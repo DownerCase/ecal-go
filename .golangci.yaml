@@ -34,3 +34,6 @@ linters:
     - gosec
     - protogetter
     - funlen
+    - unparam
+    - exhaustive
+    - inamedparam
