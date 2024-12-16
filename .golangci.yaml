@@ -4,15 +4,14 @@ linters:
     - exportloopref # Deprecated
     - execinquery # Deprecated
     - exhaustruct # Very noisy, hard to disable when want zero values
+    - forcetypeassert # If its wrong, we want to know
     - gci
     - gocritic
     - godox
     - gomnd
     - gochecknoglobals
     - gosec
-    - ireturn
     - mnd
-    - forcetypeassert
     - nlreturn
     - nonamedreturns
     - paralleltest
@@ -30,3 +29,12 @@ linters:
     - unparam
     - exhaustive
     - inamedparam
+
+linters-settings:
+  ireturn:
+    allow:
+      - tea.Model
+      - error
+      - stdlib
+      - empty
+      - generic
