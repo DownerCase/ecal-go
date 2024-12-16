@@ -33,12 +33,12 @@ func (m *model_topics) navDown() {
 	switch m.subpage {
 	case subpage_topic_main:
 		main_model := m.pages[subpage_topic_main].(*model_topics_main)
-		topic, is_subscriber, err := main_model.GetSelectedId()
+		topic, topicType, err := main_model.GetSelectedId()
 		if err != nil {
 			return // Don't' transition
 		}
 		detailed := m.pages[subpage_topic_detailed].(*model_topic_detailed)
-		detailed.ShowTopic(topic, is_subscriber)
+		detailed.ShowTopic(topic, topicType)
 		m.subpage = subpage_topic_detailed
 	}
 }

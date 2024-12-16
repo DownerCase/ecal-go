@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/DownerCase/ecal-go/ecal/monitoring"
-
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -13,7 +11,7 @@ import (
 type model_topic_detailed struct {
 	table_detailed    table.Model
 	detailed_topic_id string
-	is_subscriber     bool
+	topicType         topicType
 }
 
 func NewDetailedModel() *model_topic_detailed {
@@ -29,9 +27,9 @@ func NewDetailedModel() *model_topic_detailed {
 	}
 }
 
-func (m *model_topic_detailed) ShowTopic(topic_id string, is_subscriber bool) {
+func (m *model_topic_detailed) ShowTopic(topic_id string, topicType topicType) {
 	m.detailed_topic_id = topic_id
-	m.is_subscriber = is_subscriber
+	m.topicType = topicType
 	m.updateDetailedTable(nil)
 }
 
@@ -57,20 +55,7 @@ func (m *model_topic_detailed) Refresh() {
 }
 
 func (m *model_topic_detailed) updateDetailedTable(msg tea.Msg) {
-	mon := monitoring.GetMonitoring(monitoring.MonitorPublisher | monitoring.MonitorSubscriber)
-	var t monitoring.TopicMon
-	var topic_list []monitoring.TopicMon
-	if m.is_subscriber {
-		topic_list = mon.Subscribers
-	} else {
-		topic_list = mon.Publishers
-	}
-	for _, topic := range topic_list {
-		if topic.Topic_id == m.detailed_topic_id {
-			t = topic
-			break
-		}
-	}
+	t, _ := getTopicFromId(m.topicType, m.detailed_topic_id)
 	m.table_detailed.Columns()[0].Title = t.Direction
 	m.table_detailed.Columns()[1].Title = t.Topic_name
 	rows := []table.Row{

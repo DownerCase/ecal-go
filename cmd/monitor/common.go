@@ -1,6 +1,9 @@
 package main
 
 import (
+	"errors"
+
+	"github.com/DownerCase/ecal-go/ecal/monitoring"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -24,4 +27,31 @@ func (navKeys NavKeyMap) HandleMsg(msg tea.Msg) (cmd tea.Cmd, navigated bool) {
 		}
 	}
 	return nil, false
+}
+
+type topicType int
+
+const (
+	topicTypeSubscriber topicType = iota
+	topicTypePublisher
+)
+
+func getTopicMonitoring(topicType topicType) []monitoring.TopicMon {
+	switch topicType {
+	case topicTypeSubscriber:
+		return monitoring.GetMonitoring(monitoring.MonitorSubscriber).Subscribers
+	case topicTypePublisher:
+		return monitoring.GetMonitoring(monitoring.MonitorPublisher).Publishers
+	}
+	return nil
+}
+
+func getTopicFromId(topicType topicType, id string) (monitoring.TopicMon, error) {
+	topic_list := getTopicMonitoring(topicType)
+	for _, topic := range topic_list {
+		if topic.Topic_id == id {
+			return topic, nil
+		}
+	}
+	return monitoring.TopicMon{}, errors.New("Unable to find topic")
 }
