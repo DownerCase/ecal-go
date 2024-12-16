@@ -10,7 +10,7 @@ import (
 )
 
 func hasFile(fset *descriptorpb.FileDescriptorSet, fname string) bool {
-	for _, file := range fset.File {
+	for _, file := range fset.GetFile() {
 		if file.GetName() == fname {
 			return true
 		}

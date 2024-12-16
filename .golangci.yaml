@@ -29,7 +29,6 @@ linters:
     - cyclop
     - whitespace
     - revive
-    - protogetter
     - funlen
     - unparam
     - exhaustive
