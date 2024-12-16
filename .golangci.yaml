@@ -1,0 +1,36 @@
+linters:
+  enable-all: true
+  disable:
+    - exportloopref # Deprecated
+    - execinquery # Deprecated
+    - gci
+    - gocritic
+    - gofumpt
+    - forbidigo
+    - godot
+    - godox
+    - gomnd
+    - ireturn
+    - exhaustruct
+    - mnd
+    - forcetypeassert
+    - nlreturn
+    - nonamedreturns
+    - paralleltest
+    - predeclared
+    - testpackage
+    - thelper
+    - varnamelen
+    - wrapcheck
+    - wsl
+    - err113
+    - stylecheck
+    - gochecknoglobals
+    - depguard
+    - cyclop
+    - whitespace
+    - revive
+    - goimports
+    - gosec
+    - protogetter
+    - funlen
