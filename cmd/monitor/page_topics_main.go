@@ -18,6 +18,7 @@ type topicsKeyMap struct {
 	FilterAll key.Binding
 	FilterPub key.Binding
 	FilterSub key.Binding
+	Messages  key.Binding
 	Help      key.Binding
 }
 
@@ -44,6 +45,10 @@ func newTopicsKeyMap() topicsKeyMap {
 			key.WithKeys("s"),
 			key.WithHelp("s", "Subscribers"),
 		),
+		Messages: key.NewBinding(
+			key.WithKeys("m"),
+			key.WithHelp("m", "Messages"),
+		),
 		Help: key.NewBinding(
 			key.WithKeys("?"),
 			key.WithHelp("?", "Help"),
@@ -52,7 +57,7 @@ func newTopicsKeyMap() topicsKeyMap {
 }
 
 func (km topicsKeyMap) ShortHelp() []key.Binding {
-	return append(km.KeyMap.ShortHelp(), km.FilterAll, km.FilterPub, km.FilterSub)
+	return append(km.KeyMap.ShortHelp(), km.FilterAll, km.FilterPub, km.FilterSub, km.Messages)
 }
 
 func (km topicsKeyMap) FullHelp() [][]key.Binding {
