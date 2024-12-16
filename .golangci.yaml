@@ -27,7 +27,6 @@ linters:
     - stylecheck
     - depguard
     - cyclop
-    - whitespace
     - revive
     - funlen
     - unparam
