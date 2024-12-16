@@ -117,7 +117,7 @@ func (m *model_topic_messages) receiveTicks() tea.Cmd {
 	}
 }
 
-// Message deserializers
+// Message deserializers.
 func deserializeBasicString(msg []byte) string {
 	return string(msg)
 }

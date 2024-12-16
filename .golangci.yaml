@@ -6,7 +6,6 @@ linters:
     - gci
     - forbidigo
     - gocritic
-    - godot
     - godox
     - gomnd
     - gochecknoglobals

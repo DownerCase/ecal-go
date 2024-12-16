@@ -24,7 +24,7 @@ func newSubscriber(t *testing.T, topic string) *Subscriber {
 	return sub
 }
 
-// Export for testing
+// Export for testing.
 var NewSubscriber = newSubscriber
 
 func TestSubscriber(t *testing.T) {
