@@ -16,13 +16,13 @@ type model_service_detailed struct {
 	IsServer       bool
 }
 
-func NewDetailedServiceModel() model_service_detailed {
+func NewDetailedServiceModel() *model_service_detailed {
 	cols := []table.Column{
 		{Title: "", Width: 10},
 		{Title: "", Width: 67},
 	}
 
-	return model_service_detailed{
+	return &model_service_detailed{
 		table_detailed: NewTable(cols),
 		Id:             "",
 	}
