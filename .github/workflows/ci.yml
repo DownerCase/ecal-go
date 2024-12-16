@@ -28,14 +28,6 @@ jobs:
       - id: set-modules
         run: echo "modules=$(go list -m -json | jq -s '.' | jq -c '[.[].Dir]')" >> $GITHUB_OUTPUT
 
-      - run: echo $GITHUB_OUTPUT
-
-      - run: echo "$(go list -m -json)"
-
-      - run: echo "$(go list -m -json | jq -s '.')
-
-      - run: echo "$(go list -m -json | jq -s '.' | jq -c '[.[].Dir]')"
-
   go-lint:
     needs: detect-go-modules
     container:
