@@ -50,8 +50,8 @@ func (m *model_services) Refresh() {
 }
 
 func (m *model_services) Init() *model_services {
-	m.NavKeys[tea.KeyEscape] = func() tea.Cmd { m.navUp(); return nil }
-	m.NavKeys[tea.KeyEnter] = func() tea.Cmd { m.navDown(); return nil }
+	m.NavKeys["esc"] = func() tea.Cmd { m.navUp(); return nil }
+	m.NavKeys["enter"] = func() tea.Cmd { m.navDown(); return nil }
 	return m
 }
 

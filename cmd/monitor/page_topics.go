@@ -55,8 +55,8 @@ func (m *model_topics) Refresh() {
 }
 
 func (m *model_topics) Init() *model_topics {
-	m.NavKeys[tea.KeyEscape] = func() tea.Cmd { m.navUp(); return nil }
-	m.NavKeys[tea.KeyEnter] = func() tea.Cmd { m.navDown(); return nil }
+	m.NavKeys["esc"] = func() tea.Cmd { m.navUp(); return nil }
+	m.NavKeys["enter"] = func() tea.Cmd { m.navDown(); return nil }
 	return m
 }
 
