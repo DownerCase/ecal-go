@@ -72,7 +72,7 @@ func sendMessages(p *publisher.Publisher[*protos.Person]) {
 	}
 
 	for !p.IsStopped() {
-		p.Send(person)
+		_ = p.Send(person)
 		person.House.Rooms += 1
 		time.Sleep(10 * time.Millisecond)
 	}
