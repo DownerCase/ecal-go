@@ -53,9 +53,9 @@ func (p *Subscriber[U, T]) Receive(timeout time.Duration) (U, error) {
 func deserialize[U any, T Msg[U]](data unsafe.Pointer, len int) any {
 	// WARNING: Creates a Go slice backed by C data and deserializes into a Go
 	// value which gets put into the channel
-	bytes_unsafe := unsafe.Slice((*byte)(data), len)
+	bytesUnsafe := unsafe.Slice((*byte)(data), len)
 	var msg U
-	err := proto.Unmarshal(bytes_unsafe, T(&msg))
+	err := proto.Unmarshal(bytesUnsafe, T(&msg))
 	if err != nil {
 		return err
 	}

@@ -7,7 +7,7 @@ import (
 	"github.com/DownerCase/ecal-go/ecal"
 	"github.com/DownerCase/ecal-go/ecal/protobuf/publisher"
 	"github.com/DownerCase/ecal-go/internal/ecaltest"
-	"github.com/DownerCase/ecal-go/internal/ecaltest/protobuf/testutil_publisher"
+	testutilpublisher "github.com/DownerCase/ecal-go/internal/ecaltest/protobuf/testutil_publisher"
 	"github.com/DownerCase/ecal-go/protos"
 )
 
@@ -26,7 +26,7 @@ func TestSubscriber(t *testing.T) {
 	ecaltest.InitEcal(t)
 	defer ecal.Finalize() // Shutdown eCAL at the end of the program
 
-	pub := testutil_publisher.NewProtobufPublisher[protos.Person](t, "testing_protobuf_subscriber")
+	pub := testutilpublisher.NewProtobufPublisher[protos.Person](t, "testing_protobuf_subscriber")
 	defer pub.Delete()
 
 	sub := newSubscriber[protos.Person](t, "testing_protobuf_subscriber")

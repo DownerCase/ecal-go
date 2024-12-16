@@ -14,22 +14,22 @@ func copyToTopicMons(ctopics []C.struct_CTopicMon) []TopicMon {
 	topics := make([]TopicMon, len(ctopics))
 	for idx, pub := range ctopics {
 		topics[idx] = TopicMon{
-			Topic_id:           C.GoString(pub.topic_id),
-			Registration_clock: int32(pub.registration_clock),
-			Topic_name:         C.GoString(pub.topic_name),
-			Data_clock:         int64(pub.data_clock),
-			Data_freq:          int32(pub.data_freq),
-			Topic_size:         int32(pub.topic_size),
-			Unit_name:          C.GoString(pub.unit_name),
-			Direction:          C.GoString(pub.direction),
+			TopicID:           C.GoString(pub.topic_id),
+			RegistrationClock: int32(pub.registration_clock),
+			TopicName:         C.GoString(pub.topic_name),
+			DataClock:         int64(pub.data_clock),
+			DataFreq:          int32(pub.data_freq),
+			TopicSize:         int32(pub.topic_size),
+			UnitName:          C.GoString(pub.unit_name),
+			Direction:         C.GoString(pub.direction),
 			Datatype: types.DataType{
 				Name:     C.GoString(pub.datatype.name),
 				Encoding: C.GoString(pub.datatype.encoding),
 			},
-			Connections_local:    int32(pub.connections_local),
-			Connections_external: int32(pub.connections_external),
-			Message_drops:        int32(pub.message_drops),
-			HostName:             C.GoString(pub.host_name),
+			ConnectionsLocal:    int32(pub.connections_local),
+			ConnectionsExternal: int32(pub.connections_external),
+			MessageDrops:        int32(pub.message_drops),
+			HostName:            C.GoString(pub.host_name),
 		}
 	}
 	return topics
@@ -39,17 +39,17 @@ func copyToProcessMons(cprocs []C.struct_CProcessMon) []ProcessMon {
 	procs := make([]ProcessMon, len(cprocs))
 	for idx, proc := range cprocs {
 		procs[idx] = ProcessMon{
-			Registration_clock:     int32(proc.registration_clock),
-			Host_name:              C.GoString(proc.host_name),
-			Pid:                    int32(proc.pid),
-			Process_name:           C.GoString(proc.process_name),
-			Unit_name:              C.GoString(proc.unit_name),
-			Process_parameters:     C.GoString(proc.process_parameters), // Command line args
-			State_severity:         ProcessSeverity(proc.state_severity),
-			State_severity_level:   int32(proc.state_severity_level),
-			State_info:             C.GoString(proc.state_info),
-			Components_initialized: C.GoString(proc.components),
-			Runtime_version:        C.GoString(proc.runtime), // eCAL Version in use
+			RegistrationClock:     int32(proc.registration_clock),
+			HostName:              C.GoString(proc.host_name),
+			Pid:                   int32(proc.pid),
+			ProcessName:           C.GoString(proc.process_name),
+			UnitName:              C.GoString(proc.unit_name),
+			ProcessParameters:     C.GoString(proc.process_parameters), // Command line args
+			StateSeverity:         ProcessSeverity(proc.state_severity),
+			StateSeverityLevel:    int32(proc.state_severity_level),
+			StateInfo:             C.GoString(proc.state_info),
+			ComponentsInitialized: C.GoString(proc.components),
+			RuntimeVersion:        C.GoString(proc.runtime), // eCAL Version in use
 		}
 	}
 	return procs
@@ -77,7 +77,7 @@ func copyToMethodMons(cmethods []C.struct_CMethodMon) []MethodMon {
 func copyToServiceBase(cbase C.struct_CServiceCommon) ServiceBase {
 	return ServiceBase{
 		Name:              C.GoString(cbase.name),
-		Id:                C.GoString(cbase.id),
+		ID:                C.GoString(cbase.id),
 		RegistrationClock: int32(cbase.registration_clock),
 		HostName:          C.GoString(cbase.host_name),
 		Process:           C.GoString(cbase.process_name),

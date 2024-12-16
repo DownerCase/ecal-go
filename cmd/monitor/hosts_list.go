@@ -8,11 +8,11 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-type model_hosts struct {
+type modelHosts struct {
 	table table.Model
 }
 
-func NewHostsModel() *model_hosts {
+func NewHostsModel() *modelHosts {
 	columns := []table.Column{
 		{Title: "Host", Width: 28},
 		{Title: "Processes", Width: 9},
@@ -22,21 +22,21 @@ func NewHostsModel() *model_hosts {
 		{Title: "Clients", Width: 7},
 	}
 
-	return &model_hosts{
+	return &modelHosts{
 		table: NewTable(columns),
 	}
 }
 
-func (m *model_hosts) Update(msg tea.Msg) tea.Cmd {
+func (m *modelHosts) Update(msg tea.Msg) tea.Cmd {
 	m.updateTable(nil)
 	return nil
 }
 
-func (m *model_hosts) View() string {
+func (m *modelHosts) View() string {
 	return baseStyle.Render(m.table.View()) + "\n" + m.table.HelpView()
 }
 
-func (m *model_hosts) Refresh() {
+func (m *modelHosts) Refresh() {
 	m.updateTable(nil)
 }
 
@@ -48,7 +48,7 @@ type hostInfo struct {
 	Processes   int
 }
 
-func (m *model_hosts) updateTable(msg tea.Msg) {
+func (m *modelHosts) updateTable(msg tea.Msg) {
 	mon := monitoring.GetMonitoring(monitoring.MonitorAll)
 
 	hosts := make(map[string]hostInfo)
@@ -73,9 +73,9 @@ func (m *model_hosts) updateTable(msg tea.Msg) {
 		hosts[server.HostName] = host
 	}
 	for _, proc := range mon.Processes {
-		host := hosts[proc.Host_name]
+		host := hosts[proc.HostName]
 		host.Processes += 1
-		hosts[proc.Host_name] = host
+		hosts[proc.HostName] = host
 	}
 
 	m.table.SetRows(hostsToRows(hosts))

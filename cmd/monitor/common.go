@@ -10,8 +10,8 @@ import (
 )
 
 var (
-	errNoTopic    = errors.New("No topic")
-	errEmptyTable = errors.New("Table empty")
+	errNoTopic    = errors.New("no topic")
+	errEmptyTable = errors.New("table empty")
 )
 
 func NewTable(columns []table.Column) table.Model {
@@ -52,10 +52,10 @@ func getTopicMonitoring(topicType topicType) []monitoring.TopicMon {
 	return nil
 }
 
-func getTopicFromId(topicType topicType, id string) (monitoring.TopicMon, error) {
-	topic_list := getTopicMonitoring(topicType)
-	for _, topic := range topic_list {
-		if topic.Topic_id == id {
+func getTopicFromID(topicType topicType, id string) (monitoring.TopicMon, error) {
+	topicList := getTopicMonitoring(topicType)
+	for _, topic := range topicList {
+		if topic.TopicID == id {
 			return topic, nil
 		}
 	}

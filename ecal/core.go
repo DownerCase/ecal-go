@@ -12,15 +12,15 @@ import (
 
 const (
 	// eCAL Components
-	C_None       uint = 0x000
-	C_Publisher  uint = 0x001
-	C_Subscriber uint = 0x002
-	C_Service    uint = 0x004
-	C_Monitoring uint = 0x008
-	C_Logging    uint = 0x010
-	C_TimeSync   uint = 0x020
-	C_Default    uint = C_Publisher | C_Subscriber | C_Service | C_Logging | C_TimeSync
-	C_All        uint = C_Publisher | C_Subscriber | C_Service | C_Monitoring | C_Logging | C_TimeSync
+	CNone       uint = 0x000
+	CPublisher  uint = 0x001
+	CSubscriber uint = 0x002
+	CService    uint = 0x004
+	CMonitoring uint = 0x008
+	CLogging    uint = 0x010
+	CTimeSync   uint = 0x020
+	CDefault    uint = CPublisher | CSubscriber | CService | CLogging | CTimeSync
+	CAll        uint = CPublisher | CSubscriber | CService | CMonitoring | CLogging | CTimeSync
 )
 
 type ConfigLogging struct {
@@ -59,15 +59,15 @@ func GetVersion() C.struct_version {
 	return C.GetVersion()
 }
 
-func Initialize(config Config, unit_name string, components uint) int {
+func Initialize(config Config, unitName string, components uint) int {
 	cconfig := C.struct_CConfig{
 		logging: C.struct_CConfigLogging{
 			receive_enabled: C.bool(config.Logging.ReceiveEnabled),
 		},
 	}
-	unit_c := C.CString(unit_name)
-	defer C.free(unsafe.Pointer(unit_c))
-	return int(C.Initialize(&cconfig, unit_c, C.uint(components)))
+	unitNameC := C.CString(unitName)
+	defer C.free(unsafe.Pointer(unitNameC))
+	return int(C.Initialize(&cconfig, unitNameC, C.uint(components)))
 }
 
 func Finalize() int {
@@ -82,10 +82,10 @@ func IsComponentInitialized(component uint) bool {
 	return bool(C.IsComponentInitialized(C.uint(component)))
 }
 
-func SetUnitName(unit_name string) bool {
-	unit_c := C.CString(unit_name)
-	defer C.free(unsafe.Pointer(unit_c))
-	return bool(C.SetUnitName(unit_c))
+func SetUnitName(unitName string) bool {
+	unitNameC := C.CString(unitName)
+	defer C.free(unsafe.Pointer(unitNameC))
+	return bool(C.SetUnitName(unitNameC))
 }
 
 func Ok() bool {

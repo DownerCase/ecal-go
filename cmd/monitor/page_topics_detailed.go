@@ -8,70 +8,69 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-type model_topic_detailed struct {
-	table_detailed    table.Model
-	detailed_topic_id string
-	topicType         topicType
+type modelTopicDetailed struct {
+	table     table.Model
+	id        string    `exhaustruct:"optional"`
+	topicType topicType `exhaustruct:"optional"`
 }
 
-func NewDetailedModel() *model_topic_detailed {
+func NewDetailedModel() *modelTopicDetailed {
 	cols := []table.Column{
 		{Title: "", Width: 14},
 		{Title: "", Width: 67},
 	}
 
-	return &model_topic_detailed{
-		table_detailed:    NewTable(cols),
-		detailed_topic_id: "",
+	return &modelTopicDetailed{
+		table: NewTable(cols),
 	}
 }
 
-func (m *model_topic_detailed) ShowTopic(topic_id string, topicType topicType) {
-	m.detailed_topic_id = topic_id
+func (m *modelTopicDetailed) ShowTopic(topicID string, topicType topicType) {
+	m.id = topicID
 	m.topicType = topicType
 	m.updateDetailedTable(nil)
 }
 
-func (m *model_topic_detailed) Init() tea.Cmd {
+func (m *modelTopicDetailed) Init() tea.Cmd {
 	return nil
 }
 
-func (m *model_topic_detailed) Update(msg tea.Msg) tea.Cmd {
+func (m *modelTopicDetailed) Update(msg tea.Msg) tea.Cmd {
 	var cmd tea.Cmd
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		m.table_detailed, cmd = m.table_detailed.Update(msg)
+		m.table, cmd = m.table.Update(msg)
 	}
 	return cmd
 }
 
-func (m *model_topic_detailed) View() string {
-	return baseStyle.Render(m.table_detailed.View()) + "\n" + m.table_detailed.HelpView()
+func (m *modelTopicDetailed) View() string {
+	return baseStyle.Render(m.table.View()) + "\n" + m.table.HelpView()
 }
 
-func (m *model_topic_detailed) Refresh() {
+func (m *modelTopicDetailed) Refresh() {
 	m.updateDetailedTable(nil)
 }
 
-func (m *model_topic_detailed) updateDetailedTable(msg tea.Msg) {
-	t, _ := getTopicFromId(m.topicType, m.detailed_topic_id)
-	m.table_detailed.Columns()[0].Title = t.Direction
-	m.table_detailed.Columns()[1].Title = t.Topic_name
+func (m *modelTopicDetailed) updateDetailedTable(msg tea.Msg) {
+	t, _ := getTopicFromID(m.topicType, m.id)
+	m.table.Columns()[0].Title = t.Direction
+	m.table.Columns()[1].Title = t.TopicName
 	rows := []table.Row{
 		{"Datatype", fmt.Sprintf("(%s) %s", t.Datatype.Encoding, t.Datatype.Name)},
-		{"Unit", t.Unit_name},
+		{"Unit", t.UnitName},
 		{
 			"Messages",
-			fmt.Sprintf("%v (%v dropped)", t.Data_clock, t.Message_drops),
+			fmt.Sprintf("%v (%v dropped)", t.DataClock, t.MessageDrops),
 		},
-		{"Frequency", strconv.FormatFloat(float64(t.Data_freq)/1000, 'f', -1, 32)},
-		{"Message Size", strconv.FormatInt(int64(t.Topic_size), 10)},
+		{"Frequency", strconv.FormatFloat(float64(t.DataFreq)/1000, 'f', -1, 32)},
+		{"Message Size", strconv.FormatInt(int64(t.TopicSize), 10)},
 		{
 			"Connections",
-			fmt.Sprintf("%v local, %v external", t.Connections_local, t.Connections_external),
+			fmt.Sprintf("%v local, %v external", t.ConnectionsLocal, t.ConnectionsExternal),
 		},
-		{"Tick", strconv.FormatInt(int64(t.Registration_clock), 10)},
+		{"Tick", strconv.FormatInt(int64(t.RegistrationClock), 10)},
 	}
-	m.table_detailed.SetRows(rows)
-	m.table_detailed, _ = m.table_detailed.Update(msg)
+	m.table.SetRows(rows)
+	m.table, _ = m.table.Update(msg)
 }

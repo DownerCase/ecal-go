@@ -8,11 +8,11 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-type model_services_main struct {
-	table_services table.Model
+type modelServicesMain struct {
+	table table.Model
 }
 
-func NewServicesMainModel() *model_services_main {
+func NewServicesMainModel() *modelServicesMain {
 	cols := []table.Column{
 		{Title: "ID", Width: 0}, // Hidden unique ID
 		{Title: "T", Width: 1},  // Type (Client/Server)
@@ -21,32 +21,32 @@ func NewServicesMainModel() *model_services_main {
 		{Title: "Tick", Width: 4},
 	}
 
-	return &model_services_main{
-		table_services: NewTable(cols),
+	return &modelServicesMain{
+		table: NewTable(cols),
 	}
 }
 
-func (m *model_services_main) Refresh() {
+func (m *modelServicesMain) Refresh() {
 	m.updateTable(nil)
 }
 
-func (m *model_services_main) Update(msg tea.Msg) tea.Cmd {
+func (m *modelServicesMain) Update(msg tea.Msg) tea.Cmd {
 	return m.updateTable(msg)
 }
 
-func (m *model_services_main) View() string {
-	return baseStyle.Render(m.table_services.View()) + "\n" + m.table_services.HelpView()
+func (m *modelServicesMain) View() string {
+	return baseStyle.Render(m.table.View()) + "\n" + m.table.HelpView()
 }
 
-func (m *model_services_main) GetSelectedId() (string, bool, error) {
-	row := m.table_services.SelectedRow()
+func (m *modelServicesMain) GetSelectedID() (string, bool, error) {
+	row := m.table.SelectedRow()
 	if row == nil {
 		return "", false, errEmptyTable
 	}
 	return row[0], row[1] == "S", nil
 }
 
-func (m *model_services_main) updateTable(msg tea.Msg) (cmd tea.Cmd) {
+func (m *modelServicesMain) updateTable(msg tea.Msg) (cmd tea.Cmd) {
 	rows := []table.Row{}
 	mon := monitoring.GetMonitoring(monitoring.MonitorClient | monitoring.MonitorServer)
 	for _, client := range mon.Clients {
@@ -55,8 +55,8 @@ func (m *model_services_main) updateTable(msg tea.Msg) (cmd tea.Cmd) {
 	for _, server := range mon.Servers {
 		rows = append(rows, serverToRow(server))
 	}
-	m.table_services.SetRows(rows)
-	m.table_services, cmd = m.table_services.Update(msg)
+	m.table.SetRows(rows)
+	m.table, cmd = m.table.Update(msg)
 	return
 }
 
@@ -70,14 +70,14 @@ func serviceToRow(service monitoring.ServiceBase) table.Row {
 
 func clientToRow(client monitoring.ClientMon) table.Row {
 	return append(
-		[]string{client.Id, "C"},
+		[]string{client.ID, "C"},
 		serviceToRow(client.ServiceBase)...,
 	)
 }
 
 func serverToRow(server monitoring.ServerMon) table.Row {
 	return append(
-		[]string{server.Id, "S"},
+		[]string{server.ID, "S"},
 		serviceToRow(server.ServiceBase)...,
 	)
 }

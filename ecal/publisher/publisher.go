@@ -20,8 +20,8 @@ import (
 )
 
 var (
-	errFailedAlloc  = errors.New("Failed to allocate publisher")
-	errFailedCreate = errors.New("Failed to create publisher")
+	errFailedAlloc  = errors.New("failed to allocate publisher")
+	errFailedCreate = errors.New("failed to create publisher")
 )
 
 type DataType = types.DataType
@@ -60,16 +60,16 @@ func (p *Publisher) Delete() {
 }
 
 func (p *Publisher) Create(topic string, datatype DataType) error {
-	var descriptor_ptr *C.char = nil
+	var descriptorPtr *C.char = nil
 	if len(datatype.Descriptor) > 0 {
-		descriptor_ptr = (*C.char)(unsafe.Pointer(&datatype.Descriptor[0]))
+		descriptorPtr = (*C.char)(unsafe.Pointer(&datatype.Descriptor[0]))
 	}
 	if !C.GoPublisherCreate(
 		C.uintptr_t(p.handle),
 		topic,
 		datatype.Name,
 		datatype.Encoding,
-		descriptor_ptr,
+		descriptorPtr,
 		C.size_t(len(datatype.Descriptor)),
 	) {
 		return errFailedCreate

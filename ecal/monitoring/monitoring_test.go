@@ -9,20 +9,20 @@ import (
 	"github.com/DownerCase/ecal-go/ecal/registration"
 	"github.com/DownerCase/ecal-go/internal/ecaltest"
 	"github.com/DownerCase/ecal-go/internal/ecaltest/regtest"
-	"github.com/DownerCase/ecal-go/internal/ecaltest/testutil_publisher"
-	"github.com/DownerCase/ecal-go/internal/ecaltest/testutil_subscriber"
+	testutilpublisher "github.com/DownerCase/ecal-go/internal/ecaltest/testutil_publisher"
+	testutilsubscriber "github.com/DownerCase/ecal-go/internal/ecaltest/testutil_subscriber"
 )
 
-func expectTopicPresent(t *testing.T, ts []TopicMon, topic_name string) {
+func expectTopicPresent(t *testing.T, ts []TopicMon, topicName string) {
 	if len(ts) == 0 {
 		t.Error("Monitoring returned no topics")
 	}
 	for _, topic := range ts {
-		if topic.Topic_name == topic_name {
+		if topic.TopicName == topicName {
 			return
 		}
 	}
-	t.Error("Monitoring does not contain expected topic", topic_name, "\nReceived", ts)
+	t.Error("Monitoring does not contain expected topic", topicName, "\nReceived", ts)
 }
 
 func TestPublisherMonitoring(t *testing.T) {
@@ -33,7 +33,7 @@ func TestPublisherMonitoring(t *testing.T) {
 	channel := make(chan regtest.Callback)
 	registration.AddPublisherEventCallback(regtest.EventCallback(topic, channel))
 
-	pub := testutil_publisher.NewGenericPublisher(t, topic)
+	pub := testutilpublisher.NewGenericPublisher(t, topic)
 	defer pub.Delete()
 
 	mon := GetMonitoring(MonitorHost)
@@ -56,8 +56,8 @@ func expectPid(t *testing.T, pid int, procs []ProcessMon) {
 	}
 	for _, proc := range procs {
 		if pid == int(proc.Pid) {
-			if proc.Host_name != hostname {
-				t.Error("Expected hostname", hostname, "got", proc.Host_name)
+			if proc.HostName != hostname {
+				t.Error("Expected hostname", hostname, "got", proc.HostName)
 			}
 			return
 		}
@@ -73,7 +73,7 @@ func TestSubscriberMonitoring(t *testing.T) {
 	channel := make(chan regtest.Callback)
 	registration.AddSubscriberEventCallback(regtest.EventCallback(topic, channel))
 
-	sub := testutil_subscriber.NewGenericSubscriber(t, topic)
+	sub := testutilsubscriber.NewGenericSubscriber(t, topic)
 	defer sub.Delete()
 
 	mon := GetMonitoring(MonitorHost)

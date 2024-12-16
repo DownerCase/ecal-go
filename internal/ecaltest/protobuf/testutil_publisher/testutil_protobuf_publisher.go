@@ -1,4 +1,4 @@
-package testutil_publisher
+package testutilpublisher
 
 import (
 	"testing"

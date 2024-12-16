@@ -1,4 +1,4 @@
-package testutil_subscriber
+package testutilsubscriber
 
 import (
 	"testing"

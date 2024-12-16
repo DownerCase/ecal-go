@@ -11,7 +11,7 @@ import (
 	testutilpublisher "github.com/DownerCase/ecal-go/internal/ecaltest/string/testutil_publisher"
 )
 
-var TEST_MESSAGE = "Test string"
+const TestMessage = "Test string"
 
 func newSubscriber(t *testing.T, topic string) *Subscriber {
 	sub, err := New()
@@ -43,11 +43,11 @@ func TestSubscriber(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		if len(msg) != len(TEST_MESSAGE) {
-			t.Error("Expected message of length", len(TEST_MESSAGE), "Received:", len(msg))
+		if len(msg) != len(TestMessage) {
+			t.Error("Expected message of length", len(TestMessage), "Received:", len(msg))
 		}
-		if !reflect.DeepEqual(msg, TEST_MESSAGE) {
-			t.Error(msg, "!=", TEST_MESSAGE)
+		if !reflect.DeepEqual(msg, TestMessage) {
+			t.Error(msg, "!=", TestMessage)
 		}
 	}
 }
@@ -65,7 +65,7 @@ func TestSubscriberTimeout(t *testing.T) {
 
 func sendMessages(p *publisher.Publisher) {
 	for !p.IsStopped() {
-		p.Messages <- []byte(TEST_MESSAGE)
+		p.Messages <- []byte(TestMessage)
 		time.Sleep(10 * time.Millisecond)
 	}
 }

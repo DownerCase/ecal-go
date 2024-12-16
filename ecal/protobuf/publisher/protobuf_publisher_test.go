@@ -3,12 +3,12 @@ package publisher_test
 import (
 	"testing"
 
-	"github.com/DownerCase/ecal-go/internal/ecaltest/protobuf/testutil_publisher"
+	testutilpublisher "github.com/DownerCase/ecal-go/internal/ecaltest/protobuf/testutil_publisher"
 	"github.com/DownerCase/ecal-go/protos"
 )
 
 func TestProtobufPublisher(t *testing.T) {
-	pub := testutil_publisher.NewProtobufPublisher[protos.Person](t, "testing_protobuf_publisher")
+	pub := testutilpublisher.NewProtobufPublisher[protos.Person](t, "testing_protobuf_publisher")
 	defer pub.Delete()
 
 	if pub.Messages == nil {

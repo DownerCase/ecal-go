@@ -9,12 +9,12 @@ import (
 
 type Callback struct {
 	Event registration.Event
-	Id    registration.TopicId
+	ID    registration.TopicID
 }
 
-func EventCallback(topic string, channel chan Callback) func(registration.TopicId, registration.Event) {
-	return func(id registration.TopicId, event registration.Event) {
-		if id.Topic_name == topic {
+func EventCallback(topic string, channel chan Callback) func(registration.TopicID, registration.Event) {
+	return func(id registration.TopicID, event registration.Event) {
+		if id.TopicName == topic {
 			channel <- Callback{event, id}
 		}
 	}
@@ -28,9 +28,9 @@ func expectEvent(event registration.Event, t *testing.T, topic string, channel c
 		t.Error("Registration timeout")
 		return
 	}
-	if response.Id.Topic_name != topic {
+	if response.ID.TopicName != topic {
 		// Should be pre-filtered by callback
-		t.Error("Unexpected event for topic", response.Id.Topic_name)
+		t.Error("Unexpected event for topic", response.ID.TopicName)
 	} else if response.Event != event {
 		t.Error("Expected event", event, "actual", response.Event)
 	} else {
@@ -39,9 +39,9 @@ func expectEvent(event registration.Event, t *testing.T, topic string, channel c
 }
 
 func ExpectNew(t *testing.T, topic string, channel chan Callback) {
-	expectEvent(registration.ENTITY_NEW, t, topic, channel)
+	expectEvent(registration.EntityNew, t, topic, channel)
 }
 
 func ExpectDeleted(t *testing.T, topic string, channel chan Callback) {
-	expectEvent(registration.ENTITY_DELETED, t, topic, channel)
+	expectEvent(registration.EntityDeleted, t, topic, channel)
 }

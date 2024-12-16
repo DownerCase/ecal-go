@@ -30,7 +30,7 @@ func TestInitializeFinalize(t *testing.T) {
 		t.Error("eCAL pre-initialized...")
 	}
 
-	initResult := Initialize(NewConfig(), "go_test", C_Default)
+	initResult := Initialize(NewConfig(), "go_test", CDefault)
 	if initResult == 1 {
 		t.Fatal("eCAL already initialized")
 	} else if initResult != 0 {
@@ -38,7 +38,7 @@ func TestInitializeFinalize(t *testing.T) {
 	}
 
 	// Test double initialization
-	secondInit := Initialize(NewConfig(), "go_test2", C_Publisher)
+	secondInit := Initialize(NewConfig(), "go_test2", CPublisher)
 	if secondInit != 1 {
 		t.Errorf("Second initialize returned %v", secondInit)
 	}
@@ -46,8 +46,8 @@ func TestInitializeFinalize(t *testing.T) {
 	if !IsInitialized() {
 		t.Error("IsInitialized return false, expected true")
 	}
-	if !IsComponentInitialized(C_Publisher) {
-		t.Error("Expected publisher component to be initialised")
+	if !IsComponentInitialized(CPublisher) {
+		t.Error("Expected publisheCPublisher to be initialised")
 	}
 
 	if !SetUnitName("go_test_set_name") {

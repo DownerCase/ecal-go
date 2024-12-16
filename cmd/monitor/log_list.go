@@ -13,8 +13,8 @@ import (
 type LoggingPage int
 
 const (
-	subpage_logging_main LoggingPage = iota
-	subpage_logging_detailed
+	subpageLoggingMain LoggingPage = iota
+	subpageLoggingDetailed
 )
 
 type logsKeyMap struct {
@@ -22,11 +22,11 @@ type logsKeyMap struct {
 	Clear key.Binding
 }
 
-type model_logs struct {
-	table_logs table.Model
-	subpage    LoggingPage
-	help       help.Model
-	keymap     logsKeyMap
+type modelLogs struct {
+	table   table.Model
+	subpage LoggingPage
+	help    help.Model
+	keymap  logsKeyMap
 	// model_detailed
 }
 
@@ -48,7 +48,7 @@ func (km logsKeyMap) FullHelp() [][]key.Binding {
 	return append([][]key.Binding{{km.Clear}}, km.KeyMap.FullHelp()...)
 }
 
-func NewLogsModel() *model_logs {
+func NewLogsModel() *modelLogs {
 	columns := []table.Column{
 		{Title: "Time", Width: 10},
 		{Title: "Level", Width: 6},
@@ -56,70 +56,70 @@ func NewLogsModel() *model_logs {
 		{Title: "Message", Width: 46},
 	}
 
-	return &model_logs{
-		table_logs: NewTable(columns),
-		subpage:    subpage_logging_main,
-		help:       help.New(),
-		keymap:     newLogsKeyMap(),
+	return &modelLogs{
+		table:   NewTable(columns),
+		subpage: subpageLoggingMain,
+		help:    help.New(),
+		keymap:  newLogsKeyMap(),
 	}
 }
 
-func (m *model_logs) Update(msg tea.Msg) tea.Cmd {
+func (m *modelLogs) Update(msg tea.Msg) tea.Cmd {
 	var cmd tea.Cmd
 
 	switch m.subpage {
-	case subpage_logging_main:
+	case subpageLoggingMain:
 		switch msg := msg.(type) {
 		case tea.KeyMsg:
 			switch {
 			case key.Matches(msg, m.keymap.Clear):
-				m.table_logs.SetRows([]table.Row{})
+				m.table.SetRows([]table.Row{})
 				m.updateTable(nil)
 			default:
 				m.updateTable(msg)
 			}
 		}
-	case subpage_logging_detailed:
+	case subpageLoggingDetailed:
 		// cmd = m.model_detailed.Update(msg)
 	}
 	return cmd
 }
 
-func (m *model_logs) View() string {
+func (m *modelLogs) View() string {
 	switch m.subpage {
-	case subpage_logging_main:
-		return baseStyle.Render(m.table_logs.View()) + "\n" + m.help.View(m.keymap)
-	case subpage_logging_detailed:
+	case subpageLoggingMain:
+		return baseStyle.Render(m.table.View()) + "\n" + m.help.View(m.keymap)
+	case subpageLoggingDetailed:
 		// return m.model_detailed.View()
 	}
 	return "Invalid page"
 }
 
-func (m *model_logs) Refresh() {
+func (m *modelLogs) Refresh() {
 	switch m.subpage {
-	case subpage_logging_detailed:
+	case subpageLoggingDetailed:
 		// m.model_detailed.Refresh()
 	default:
 		m.updateTable(nil)
 	}
 }
 
-func (m *model_logs) updateTable(msg tea.Msg) {
+func (m *modelLogs) updateTable(msg tea.Msg) {
 	rows := []table.Row{}
 	logs := logging.GetLogging().Messages
 
 	for _, log := range logs {
 		rows = append(rows, logToRow(log))
 	}
-	m.table_logs.SetRows(append(m.table_logs.Rows(), rows...))
-	m.table_logs, _ = m.table_logs.Update(msg)
+	m.table.SetRows(append(m.table.Rows(), rows...))
+	m.table, _ = m.table.Update(msg)
 }
 
 func logToRow(log logging.LogMessage) table.Row {
 	return []string{
 		time.UnixMicro(log.Time).Format(time.TimeOnly),
 		log.Level.String(),
-		log.Unit_name,
+		log.UnitName,
 		log.Content,
 	}
 }

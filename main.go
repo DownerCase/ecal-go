@@ -23,7 +23,7 @@ func main() {
 	initResult := ecal.Initialize(
 		ecal.NewConfig(),
 		"Go eCAL!",
-		ecal.C_Publisher|ecal.C_Subscriber|ecal.C_Logging,
+		ecal.CPublisher|ecal.CSubscriber|ecal.CLogging,
 	)
 
 	// Enable all logging levels in the console
@@ -61,8 +61,8 @@ func main() {
 		panic("Failed to Create protobuf publisher")
 	}
 
-	string_pub, _ := string_publisher.New()
-	if string_pub.Create("string topic") != nil {
+	stringPublisher, _ := string_publisher.New()
+	if stringPublisher.Create("string topic") != nil {
 		panic("Failed to Create string publisher")
 	}
 
@@ -89,7 +89,7 @@ func main() {
 			logging.Error(err)
 		}
 
-		if err = string_pub.Send("Message ", idx); err != nil {
+		if err = stringPublisher.Send("Message ", idx); err != nil {
 			logging.Error(err)
 		}
 
@@ -109,6 +109,6 @@ func receiveMessages(s *subscriber.Subscriber) {
 	}
 }
 
-func registrationLogger(id registration.TopicId, event registration.Event) {
+func registrationLogger(id registration.TopicID, event registration.Event) {
 	fmt.Println("Received registration sample:", id) //nolint:forbidigo
 }

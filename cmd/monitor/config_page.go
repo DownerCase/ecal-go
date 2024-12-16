@@ -6,26 +6,26 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-type model_config struct {
+type modelConfig struct {
 	viewport viewport.Model
 }
 
-func NewConfigModel() *model_config {
+func NewConfigModel() *modelConfig {
 	viewport := viewport.New(85, 10)
 	viewport.SetContent(ecal.GetConfig())
 	viewport.Style = baseStyle
-	return &model_config{
+	return &modelConfig{
 		viewport: viewport,
 	}
 }
 
-func (m *model_config) Refresh() {}
+func (m *modelConfig) Refresh() {}
 
-func (m *model_config) Update(msg tea.Msg) (cmd tea.Cmd) {
+func (m *modelConfig) Update(msg tea.Msg) (cmd tea.Cmd) {
 	m.viewport, cmd = m.viewport.Update(msg)
 	return cmd
 }
 
-func (m *model_config) View() string {
+func (m *modelConfig) View() string {
 	return m.viewport.View()
 }

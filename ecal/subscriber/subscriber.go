@@ -22,10 +22,10 @@ import (
 )
 
 var (
-	ErrFailedAlloc  = errors.New("Failed to allocate subscriber")
-	ErrFailedCreate = errors.New("Failed to create subscriber")
-	ErrRcvTimeout   = errors.New("Timed out")
-	ErrRcvBadType   = errors.New("Receive could not handle type")
+	ErrFailedAlloc  = errors.New("failed to allocate subscriber")
+	ErrFailedCreate = errors.New("failed to create subscriber")
+	ErrRcvTimeout   = errors.New("timed out")
+	ErrRcvBadType   = errors.New("receive could not handle type")
 )
 
 type Subscriber struct {
@@ -66,16 +66,16 @@ func (p *Subscriber) Delete() {
 }
 
 func (p *Subscriber) Create(topic string, datatype DataType) error {
-	var descriptor_ptr *C.char = nil
+	var descriptorPtr *C.char = nil
 	if len(datatype.Descriptor) > 0 {
-		descriptor_ptr = (*C.char)(unsafe.Pointer(&datatype.Descriptor[0]))
+		descriptorPtr = (*C.char)(unsafe.Pointer(&datatype.Descriptor[0]))
 	}
 	if !C.GoSubscriberCreate(
 		C.uintptr_t(p.handle),
 		topic,
 		datatype.Name,
 		datatype.Encoding,
-		descriptor_ptr,
+		descriptorPtr,
 		C.size_t(len(datatype.Descriptor)),
 	) {
 		return ErrFailedCreate
