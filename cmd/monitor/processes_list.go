@@ -44,8 +44,8 @@ func NewProcessesModel() *model_processes {
 }
 
 func (m *model_processes) Init() *model_processes {
-	m.NavKeys[tea.KeyEscape] = func() tea.Cmd { m.navUp(); return nil }
-	m.NavKeys[tea.KeyEnter] = func() tea.Cmd { m.navDown(); return nil }
+	m.NavKeys["esc"] = func() tea.Cmd { m.navUp(); return nil }
+	m.NavKeys["enter"] = func() tea.Cmd { m.navDown(); return nil }
 	return m
 }
 

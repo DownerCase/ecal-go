@@ -18,6 +18,7 @@ type topicsKeyMap struct {
 	FilterAll key.Binding
 	FilterPub key.Binding
 	FilterSub key.Binding
+	Messages  key.Binding
 	Help      key.Binding
 }
 
@@ -44,6 +45,10 @@ func newTopicsKeyMap() topicsKeyMap {
 			key.WithKeys("s"),
 			key.WithHelp("s", "Subscribers"),
 		),
+		Messages: key.NewBinding(
+			key.WithKeys("m"),
+			key.WithHelp("m", "Messages"),
+		),
 		Help: key.NewBinding(
 			key.WithKeys("?"),
 			key.WithHelp("?", "Help"),
@@ -52,7 +57,7 @@ func newTopicsKeyMap() topicsKeyMap {
 }
 
 func (km topicsKeyMap) ShortHelp() []key.Binding {
-	return append(km.KeyMap.ShortHelp(), km.FilterAll, km.FilterPub, km.FilterSub)
+	return append(km.KeyMap.ShortHelp(), km.FilterAll, km.FilterPub, km.FilterSub, km.Messages)
 }
 
 func (km topicsKeyMap) FullHelp() [][]key.Binding {
@@ -117,12 +122,19 @@ func (m *model_topics_main) View() string {
 	return baseStyle.Render(m.table_topics.View()) + "\n" + m.help.View(m.keymap)
 }
 
-func (m *model_topics_main) GetSelectedId() (string, bool, error) {
+func (m *model_topics_main) GetSelectedId() (string, topicType, error) {
 	row := m.table_topics.SelectedRow()
 	if row == nil {
-		return "", false, errors.New("No active topics")
+		return "", 0, errors.New("No active topics")
 	}
-	return row[0], row[1] == "S", nil
+	var topicType topicType
+	switch row[1] {
+	case "S":
+		topicType = topicTypeSubscriber
+	case "P":
+		topicType = topicTypePublisher
+	}
+	return row[0], topicType, nil
 }
 
 func (m *model_topics_main) updateTopicsTable(msg tea.Msg) {
