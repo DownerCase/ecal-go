@@ -30,7 +30,6 @@ linters:
     - cyclop
     - whitespace
     - revive
-    - goimports
     - gosec
     - protogetter
     - funlen

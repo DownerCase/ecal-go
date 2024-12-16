@@ -8,7 +8,7 @@ import (
 	"github.com/DownerCase/ecal-go/ecal"
 	"github.com/DownerCase/ecal-go/ecal/string/publisher"
 	"github.com/DownerCase/ecal-go/internal/ecaltest"
-	"github.com/DownerCase/ecal-go/internal/ecaltest/string/testutil_publisher"
+	testutilpublisher "github.com/DownerCase/ecal-go/internal/ecaltest/string/testutil_publisher"
 )
 
 var TEST_MESSAGE = "Test string"
