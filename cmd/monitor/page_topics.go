@@ -24,6 +24,7 @@ func NewTopicsModel() *model_topics {
 		pages: map[TopicsPage]PageModel{
 			subpage_topic_main:     NewTopicsMainModel(),
 			subpage_topic_detailed: NewDetailedModel(),
+			subpage_topic_messages: NewTopicsMessagesModel(),
 		},
 		NavKeys: make(NavKeyMap),
 	}).Init()
@@ -45,9 +46,24 @@ func (m *model_topics) navDown() {
 
 func (m *model_topics) navUp() {
 	switch m.subpage {
-	case subpage_topic_detailed:
+	default:
 		m.subpage = subpage_topic_main
 	}
+}
+
+func (m *model_topics) navMessages() tea.Cmd {
+	if m.subpage != subpage_topic_main {
+		return nil
+	}
+	main_model := m.pages[subpage_topic_main].(*model_topics_main)
+	topic, topicType, err := main_model.GetSelectedId()
+	if err != nil {
+		return nil // Don't' transition
+	}
+	messages_model := m.pages[subpage_topic_messages].(*model_topic_messages)
+	messages_model.ShowTopic(topic, topicType)
+	m.subpage = subpage_topic_messages
+	return messages_model.Init()
 }
 
 func (m *model_topics) Refresh() {
@@ -57,6 +73,7 @@ func (m *model_topics) Refresh() {
 func (m *model_topics) Init() *model_topics {
 	m.NavKeys["esc"] = func() tea.Cmd { m.navUp(); return nil }
 	m.NavKeys["enter"] = func() tea.Cmd { m.navDown(); return nil }
+	m.NavKeys["m"] = func() tea.Cmd { return m.navMessages() }
 	return m
 }
 
