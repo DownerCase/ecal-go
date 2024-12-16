@@ -1,4 +1,4 @@
-package testutil_publisher
+package testutilpublisher
 
 import (
 	"testing"
@@ -8,7 +8,6 @@ import (
 
 func NewProtobufPublisher[U any, T publisher.Msg[U]](t *testing.T, topic string) *publisher.Publisher[T] {
 	pub, err := publisher.New[U, T]()
-
 	if err != nil {
 		t.Error(err)
 	}

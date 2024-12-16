@@ -14,11 +14,11 @@ import (
 	"github.com/muesli/reflow/wrap"
 )
 
-type model_topic_messages struct {
+type modelTopicMessages struct {
 	viewport     viewport.Model
 	mon          monitoring.TopicMon
 	topicType    topicType
-	topicId      string
+	topicID      string
 	subscriber   *subscriber.Subscriber
 	msg          []byte
 	deserializer func([]byte) string
@@ -28,20 +28,20 @@ type msgMsg struct {
 	msg []byte
 }
 
-func NewTopicsMessagesModel() *model_topic_messages {
+func NewTopicsMessagesModel() *modelTopicMessages {
 	viewport := viewport.New(85, 10)
 	subscriber, _ := subscriber.New()
-	return &model_topic_messages{
+	return &modelTopicMessages{
 		viewport:   viewport,
 		subscriber: subscriber,
 	}
 }
 
-func (m *model_topic_messages) Init() tea.Cmd {
+func (m *modelTopicMessages) Init() tea.Cmd {
 	return m.receiveTicks()
 }
 
-func (m *model_topic_messages) Update(msg tea.Msg) tea.Cmd {
+func (m *modelTopicMessages) Update(msg tea.Msg) tea.Cmd {
 	var cmd tea.Cmd
 	switch msg := msg.(type) {
 	case msgMsg:
@@ -53,14 +53,14 @@ func (m *model_topic_messages) Update(msg tea.Msg) tea.Cmd {
 	return cmd
 }
 
-func (m *model_topic_messages) View() string {
+func (m *modelTopicMessages) View() string {
 	s := strings.Builder{}
-	s.WriteString(highlight.Render(m.mon.Topic_name))
+	s.WriteString(highlight.Render(m.mon.TopicName))
 	s.WriteString(
 		fmt.Sprintf(" Messages: %v (%vHz)",
-			m.mon.Data_clock,
+			m.mon.DataClock,
 			// TODO: Conversion that can stringify to KHz, MHz, etc.
-			strconv.FormatFloat(float64(m.mon.Data_freq)/1000.0, 'e', 3, 64)),
+			strconv.FormatFloat(float64(m.mon.DataFreq)/1000.0, 'e', 3, 64)),
 	)
 	s.WriteRune('\n')
 	// Manually wrap the string with museli/reflow to inject newlines
@@ -70,32 +70,32 @@ func (m *model_topic_messages) View() string {
 	return baseStyle.Render(s.String())
 }
 
-func (m *model_topic_messages) Refresh() {
-	m.mon, _ = getTopicFromId(m.topicType, m.topicId)
+func (m *modelTopicMessages) Refresh() {
+	m.mon, _ = getTopicFromID(m.topicType, m.topicID)
 }
 
-func (m *model_topic_messages) ShowTopic(topicId string, topicType topicType) {
-	if m.topicId != topicId {
+func (m *modelTopicMessages) ShowTopic(topicID string, topicType topicType) {
+	if m.topicID != topicID {
 		m.topicType = topicType
-		m.topicId = topicId
-		m.mon, _ = getTopicFromId(m.topicType, m.topicId)
+		m.topicID = topicID
+		m.mon, _ = getTopicFromID(m.topicType, m.topicID)
 		m.createSubscriber()
 	}
 	m.Refresh()
 }
 
-func (m *model_topic_messages) createSubscriber() {
+func (m *modelTopicMessages) createSubscriber() {
 	// (re)create subscriber with new topic type
 	m.subscriber.Delete()
 	subscriber, err := subscriber.New()
 	if err != nil {
 		subscriber.Delete()
-		fmt.Println("Failed to allocate new subscriber")
+		panic(fmt.Errorf("[Topic Messages]: %w", err))
 	}
-	err = subscriber.Create(m.mon.Topic_name, m.mon.Datatype)
+	err = subscriber.Create(m.mon.TopicName, m.mon.Datatype)
 	if err != nil {
 		subscriber.Delete()
-		fmt.Println("Failed to create subscriber!")
+		panic(fmt.Errorf("[Topic Messages]: %w", err))
 	}
 	switch {
 	case m.mon.Datatype.Name == "std::string" && m.mon.Datatype.Encoding == "base":
@@ -107,7 +107,7 @@ func (m *model_topic_messages) createSubscriber() {
 	m.subscriber = subscriber
 }
 
-func (m *model_topic_messages) receiveTicks() tea.Cmd {
+func (m *modelTopicMessages) receiveTicks() tea.Cmd {
 	return func() tea.Msg {
 		switch msg := (<-m.subscriber.Messages).(type) {
 		case []byte:
@@ -117,7 +117,7 @@ func (m *model_topic_messages) receiveTicks() tea.Cmd {
 	}
 }
 
-// Message deserializers
+// Message deserializers.
 func deserializeBasicString(msg []byte) string {
 	return string(msg)
 }

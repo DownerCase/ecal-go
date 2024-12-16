@@ -1,8 +1,7 @@
 package main
 
 import (
-	"fmt"
-	"os"
+	"log"
 	"strings"
 	"time"
 
@@ -18,13 +17,13 @@ type PageModel interface {
 type Page int
 
 const (
-	page_topics Page = iota
-	page_services
-	page_hosts
-	page_processes
-	page_logs
-	page_system
-	page_about
+	pageTopics Page = iota
+	pageServices
+	pageHosts
+	pageProcesses
+	pageLogs
+	pageSystem
+	pageAbout
 )
 
 type model struct {
@@ -34,15 +33,15 @@ type model struct {
 
 func newModel() *model {
 	pagesMap := make(map[Page]PageModel)
-	pagesMap[page_topics] = NewTopicsModel()
-	pagesMap[page_services] = NewServicesModel()
-	pagesMap[page_hosts] = NewHostsModel()
-	pagesMap[page_processes] = NewProcessesModel()
-	pagesMap[page_logs] = NewLogsModel()
-	pagesMap[page_system] = NewConfigModel()
-	pagesMap[page_about] = &PlaceholderModel{"About Placeholder"}
+	pagesMap[pageTopics] = NewTopicsModel()
+	pagesMap[pageServices] = NewServicesModel()
+	pagesMap[pageHosts] = NewHostsModel()
+	pagesMap[pageProcesses] = NewProcessesModel()
+	pagesMap[pageLogs] = NewLogsModel()
+	pagesMap[pageSystem] = NewConfigModel()
+	pagesMap[pageAbout] = &PlaceholderModel{"About Placeholder"}
 	return &model{
-		page:  page_topics,
+		page:  pageTopics,
 		pages: pagesMap,
 	}
 }
@@ -83,19 +82,19 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "q", "ctrl+c":
 			return m, tea.Quit
 		case "1":
-			m.transitionTo(page_topics)
+			m.transitionTo(pageTopics)
 		case "2":
-			m.transitionTo(page_services)
+			m.transitionTo(pageServices)
 		case "3":
-			m.transitionTo(page_hosts)
+			m.transitionTo(pageHosts)
 		case "4":
-			m.transitionTo(page_processes)
+			m.transitionTo(pageProcesses)
 		case "5":
-			m.transitionTo(page_logs)
+			m.transitionTo(pageLogs)
 		case "6":
-			m.transitionTo(page_system)
+			m.transitionTo(pageSystem)
 		case "7":
-			m.transitionTo(page_about)
+			m.transitionTo(pageAbout)
 		default:
 			cmd = m.updatePage(msg)
 		}
@@ -130,7 +129,6 @@ func (m *model) View() string {
 func doCli() {
 	p := tea.NewProgram(newModel())
 	if _, err := p.Run(); err != nil {
-		fmt.Println("Error running program:", err)
-		os.Exit(1)
+		log.Fatal("Error running program:", err)
 	}
 }

@@ -2,7 +2,7 @@ package subscriber
 
 import "C"
 import (
-	"errors"
+	"fmt"
 	"time"
 	"unsafe"
 
@@ -24,7 +24,7 @@ func (p *Subscriber) Receive(timeout time.Duration) (string, error) {
 	case msg := <-p.Messages:
 		return msg.(string), nil
 	case <-time.After(timeout):
-		return "", errors.New("Receive timed out")
+		return "", fmt.Errorf("[Receive]: %w", subscriber.ErrRcvTimeout)
 	}
 }
 

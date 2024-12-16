@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"strconv"
 	"strings"
 
@@ -64,15 +63,15 @@ func (km topicsKeyMap) FullHelp() [][]key.Binding {
 	return append([][]key.Binding{{km.FilterAll, km.FilterPub, km.FilterSub}}, km.KeyMap.FullHelp()...)
 }
 
-type model_topics_main struct {
-	table_topics table.Model
-	keymap       topicsKeyMap
-	help         help.Model
-	filter       entityFilter
+type modelTopicsMain struct {
+	table  table.Model
+	keymap topicsKeyMap
+	help   help.Model
+	filter entityFilter
 }
 
-func NewTopicsMainModel() *model_topics_main {
-	topics_columns := []table.Column{
+func NewTopicsMainModel() *modelTopicsMain {
+	cols := []table.Column{
 		{Title: "ID", Width: 0}, // Zero width ID column to use as identifier
 		{Title: "D", Width: 1},
 		{Title: "Topic", Width: 20},
@@ -83,18 +82,18 @@ func NewTopicsMainModel() *model_topics_main {
 		{Title: "Tick", Width: 4},
 	}
 
-	return &model_topics_main{
-		table_topics: NewTable(topics_columns),
-		keymap:       newTopicsKeyMap(),
-		help:         help.New(),
+	return &modelTopicsMain{
+		table:  NewTable(cols),
+		keymap: newTopicsKeyMap(),
+		help:   help.New(),
 	}
 }
 
-func (m *model_topics_main) Refresh() {
+func (m *modelTopicsMain) Refresh() {
 	m.updateTopicsTable(nil)
 }
 
-func (m *model_topics_main) Update(msg tea.Msg) tea.Cmd {
+func (m *modelTopicsMain) Update(msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch {
@@ -118,14 +117,14 @@ func (m *model_topics_main) Update(msg tea.Msg) tea.Cmd {
 	return nil
 }
 
-func (m *model_topics_main) View() string {
-	return baseStyle.Render(m.table_topics.View()) + "\n" + m.help.View(m.keymap)
+func (m *modelTopicsMain) View() string {
+	return baseStyle.Render(m.table.View()) + "\n" + m.help.View(m.keymap)
 }
 
-func (m *model_topics_main) GetSelectedId() (string, topicType, error) {
-	row := m.table_topics.SelectedRow()
+func (m *modelTopicsMain) GetSelectedID() (string, topicType, error) {
+	row := m.table.SelectedRow()
 	if row == nil {
-		return "", 0, errors.New("No active topics")
+		return "", 0, errEmptyTable
 	}
 	var topicType topicType
 	switch row[1] {
@@ -137,7 +136,7 @@ func (m *model_topics_main) GetSelectedId() (string, topicType, error) {
 	return row[0], topicType, nil
 }
 
-func (m *model_topics_main) updateTopicsTable(msg tea.Msg) {
+func (m *modelTopicsMain) updateTopicsTable(msg tea.Msg) {
 	rows := []table.Row{}
 	entities := monitoring.MonitorNone
 	switch m.filter {
@@ -155,19 +154,19 @@ func (m *model_topics_main) updateTopicsTable(msg tea.Msg) {
 	for _, topic := range mon.Subscribers {
 		rows = append(rows, topicToRow(topic))
 	}
-	m.table_topics.SetRows(rows)
-	m.table_topics, _ = m.table_topics.Update(msg)
+	m.table.SetRows(rows)
+	m.table, _ = m.table.Update(msg)
 }
 
 func topicToRow(topic monitoring.TopicMon) table.Row {
 	return []string{
-		topic.Topic_id,
+		topic.TopicID,
 		strings.ToUpper(topic.Direction[0:1]),
-		topic.Topic_name,
+		topic.TopicName,
 		topic.Datatype.Name,
-		strconv.FormatInt(topic.Data_clock, 10),
-		strconv.FormatInt(int64(topic.Topic_size), 10),
-		strconv.FormatFloat(float64(topic.Data_freq)/1000, 'f', -1, 32),
-		strconv.FormatInt(int64(topic.Registration_clock), 10),
+		strconv.FormatInt(topic.DataClock, 10),
+		strconv.FormatInt(int64(topic.TopicSize), 10),
+		strconv.FormatFloat(float64(topic.DataFreq)/1000, 'f', -1, 32),
+		strconv.FormatInt(int64(topic.RegistrationClock), 10),
 	}
 }

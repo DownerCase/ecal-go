@@ -2,10 +2,16 @@ package main
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/DownerCase/ecal-go/ecal/monitoring"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
+)
+
+var (
+	errNoTopic    = errors.New("no topic")
+	errEmptyTable = errors.New("table empty")
 )
 
 func NewTable(columns []table.Column) table.Model {
@@ -46,12 +52,12 @@ func getTopicMonitoring(topicType topicType) []monitoring.TopicMon {
 	return nil
 }
 
-func getTopicFromId(topicType topicType, id string) (monitoring.TopicMon, error) {
-	topic_list := getTopicMonitoring(topicType)
-	for _, topic := range topic_list {
-		if topic.Topic_id == id {
+func getTopicFromID(topicType topicType, id string) (monitoring.TopicMon, error) {
+	topicList := getTopicMonitoring(topicType)
+	for _, topic := range topicList {
+		if topic.TopicID == id {
 			return topic, nil
 		}
 	}
-	return monitoring.TopicMon{}, errors.New("Unable to find topic")
+	return monitoring.TopicMon{}, fmt.Errorf("[getTopicFromId]: %w", errNoTopic)
 }

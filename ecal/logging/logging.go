@@ -7,6 +7,7 @@ package logging
 //   Log(level, _GoStringPtr(msg), _GoStringLen(msg));
 // }
 import "C"
+
 import (
 	"fmt"
 	"runtime/cgo"
@@ -16,13 +17,13 @@ import (
 type Level uint8
 
 type LogMessage struct {
-	Time      int64
-	Host      string
-	Process   string
-	Unit_name string
-	Content   string
-	Pid       int32
-	Level     Level
+	Time     int64
+	Host     string
+	Process  string
+	UnitName string
+	Content  string
+	Pid      int32
+	Level    Level
 }
 
 const (
@@ -122,7 +123,7 @@ func SetConsoleFilter(levels Level) {
 	C.SetConsoleFilter(C.eCAL_Logging_Filter(levels))
 }
 
-func SetUdpFilter(levels Level) {
+func SetUDPFilter(levels Level) {
 	C.SetUDPFilter(C.eCAL_Logging_Filter(levels))
 }
 

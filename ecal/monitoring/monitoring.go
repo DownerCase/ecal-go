@@ -5,6 +5,7 @@ package monitoring
 //#include "monitoring.h"
 //#cgo CPPFLAGS: -I${SRCDIR}/../types
 import "C"
+
 import (
 	"runtime/cgo"
 	"strconv"
@@ -53,41 +54,41 @@ func (p ProcessSeverity) String() string {
 }
 
 type TopicMon struct {
-	Registration_clock int32 // registration heart beat
-	HostName           string
+	RegistrationClock int32 // registration heart beat
+	HostName          string
 	// host_group         string
 	// pid                int32
 	// process_name       string
-	Unit_name  string
-	Topic_id   string
-	Topic_name string
-	Direction  string
-	Datatype   types.DataType
+	UnitName  string
+	TopicID   string
+	TopicName string
+	Direction string
+	Datatype  types.DataType
 	// TODO: transport layer
-	Topic_size           int32 // Size of messages (bytes)
-	Connections_local    int32
-	Connections_external int32
-	Message_drops        int32
+	TopicSize           int32 // Size of messages (bytes)
+	ConnectionsLocal    int32
+	ConnectionsExternal int32
+	MessageDrops        int32
 	// data_id              int64
-	Data_clock int64
-	Data_freq  int32 // mHz
+	DataClock int64
+	DataFreq  int32 // mHz
 	// attributes
 }
 
 type ProcessMon struct {
-	Registration_clock   int32 // registration heart beat
-	Host_name            string
-	Host_group           string
-	Pid                  int32
-	Process_name         string
-	Unit_name            string
-	Process_parameters   string // Command line args
-	State_severity       ProcessSeverity
-	State_severity_level int32
-	State_info           string
+	RegistrationClock  int32 // registration heart beat
+	HostName           string
+	HostGroup          string
+	Pid                int32
+	ProcessName        string
+	UnitName           string
+	ProcessParameters  string // Command line args
+	StateSeverity      ProcessSeverity
+	StateSeverityLevel int32
+	StateInfo          string
 	// TODO: Time sync?
-	Components_initialized string
-	Runtime_version        string // eCAL Version in use
+	ComponentsInitialized string
+	RuntimeVersion        string // eCAL Version in use
 }
 
 type methodType struct {
@@ -104,7 +105,7 @@ type MethodMon struct {
 
 type ServiceBase struct {
 	Name              string
-	Id                string
+	ID                string
 	Methods           []MethodMon
 	RegistrationClock int32 // registration heart beat
 	HostName          string

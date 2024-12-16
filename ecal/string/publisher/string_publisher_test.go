@@ -3,7 +3,7 @@ package publisher_test
 import (
 	"testing"
 
-	"github.com/DownerCase/ecal-go/internal/ecaltest/string/testutil_publisher"
+	testutilpublisher "github.com/DownerCase/ecal-go/internal/ecaltest/string/testutil_publisher"
 )
 
 func TestStringPublisher(t *testing.T) {

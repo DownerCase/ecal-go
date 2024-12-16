@@ -15,15 +15,15 @@ import (
 
 func main() {
 	// eCAL version as string and semantic version components
-	fmt.Println(ecal.GetVersionString())
-	fmt.Println(ecal.GetVersion())
+	fmt.Println(ecal.GetVersionString()) //nolint:forbidigo
+	fmt.Println(ecal.GetVersion())       //nolint:forbidigo
 
 	// Initialize eCAL with default config, the unit name "Go eCAL",
 	// and the Publisher, Subscriber and Logging components enabled
 	initResult := ecal.Initialize(
 		ecal.NewConfig(),
 		"Go eCAL!",
-		ecal.C_Publisher|ecal.C_Subscriber|ecal.C_Logging,
+		ecal.CPublisher|ecal.CSubscriber|ecal.CLogging,
 	)
 
 	// Enable all logging levels in the console
@@ -51,7 +51,8 @@ func main() {
 	}
 	defer pub.Delete() // Don't forget to delete the publisher when done!
 
-	person := &protos.Person{Id: 0, Name: "John", Email: "john@doe.net",
+	person := &protos.Person{
+		Id: 0, Name: "John", Email: "john@doe.net",
 		Dog:   &protos.Dog{Name: "Pluto"},
 		House: &protos.House{Rooms: 5},
 	}
@@ -60,8 +61,8 @@ func main() {
 		panic("Failed to Create protobuf publisher")
 	}
 
-	string_pub, _ := string_publisher.New()
-	if string_pub.Create("string topic") != nil {
+	stringPublisher, _ := string_publisher.New()
+	if stringPublisher.Create("string topic") != nil {
 		panic("Failed to Create string publisher")
 	}
 
@@ -88,7 +89,7 @@ func main() {
 			logging.Error(err)
 		}
 
-		if err = string_pub.Send("Message ", idx); err != nil {
+		if err = stringPublisher.Send("Message ", idx); err != nil {
 			logging.Error(err)
 		}
 
@@ -101,13 +102,13 @@ func receiveMessages(s *subscriber.Subscriber) {
 	for {
 		msg, err := s.Receive(2 * time.Second)
 		if err == nil {
-			fmt.Println("Received:", msg)
+			fmt.Println("Received:", msg) //nolint:forbidigo
 		} else {
-			fmt.Println(err)
+			fmt.Println(err) //nolint:forbidigo
 		}
 	}
 }
 
-func registrationLogger(id registration.TopicId, event registration.Event) {
-	fmt.Println("Received registration sample:", id)
+func registrationLogger(id registration.TopicID, event registration.Event) {
+	fmt.Println("Received registration sample:", id) //nolint:forbidigo
 }

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"path/filepath"
 	"strconv"
 
@@ -10,11 +9,11 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-type model_processes_main struct {
-	table_processes table.Model
+type modelProcessesMain struct {
+	table table.Model
 }
 
-func NewProcessesMainModel() *model_processes_main {
+func NewProcessesMainModel() *modelProcessesMain {
 	columns := []table.Column{
 		{Title: "PID", Width: 7},
 		{Title: "Name", Width: 33},
@@ -23,49 +22,49 @@ func NewProcessesMainModel() *model_processes_main {
 		{Title: "Tick", Width: 4},
 	}
 
-	return &model_processes_main{
-		table_processes: NewTable(columns),
+	return &modelProcessesMain{
+		table: NewTable(columns),
 	}
 }
 
-func (m *model_processes_main) Update(msg tea.Msg) tea.Cmd {
+func (m *modelProcessesMain) Update(msg tea.Msg) tea.Cmd {
 	return m.updateTable(msg)
 }
 
-func (m *model_processes_main) View() string {
-	return baseStyle.Render(m.table_processes.View()) + "\n" + m.table_processes.HelpView()
+func (m *modelProcessesMain) View() string {
+	return baseStyle.Render(m.table.View()) + "\n" + m.table.HelpView()
 }
 
-func (m *model_processes_main) Refresh() {
+func (m *modelProcessesMain) Refresh() {
 	m.updateTable(nil)
 }
 
-func (m *model_processes_main) getSelectedPid() (int32, error) {
-	row := m.table_processes.SelectedRow()
+func (m *modelProcessesMain) getSelectedPid() (int32, error) {
+	row := m.table.SelectedRow()
 	if row == nil {
-		return 0, errors.New("No processes")
+		return 0, errEmptyTable
 	}
 	pid, err := strconv.ParseInt(row[0], 10, 64)
 	return int32(pid), err
 }
 
-func (m *model_processes_main) updateTable(msg tea.Msg) (cmd tea.Cmd) {
+func (m *modelProcessesMain) updateTable(msg tea.Msg) (cmd tea.Cmd) {
 	rows := []table.Row{}
 	mon := monitoring.GetMonitoring(monitoring.MonitorProcess)
 	for _, proc := range mon.Processes {
 		rows = append(rows, procToRow(proc))
 	}
-	m.table_processes.SetRows(rows)
-	m.table_processes, cmd = m.table_processes.Update(msg)
+	m.table.SetRows(rows)
+	m.table, cmd = m.table.Update(msg)
 	return
 }
 
 func procToRow(proc monitoring.ProcessMon) table.Row {
 	return []string{
 		strconv.FormatInt(int64(proc.Pid), 10),
-		filepath.Base(proc.Process_name),
-		proc.State_severity.String(),
-		proc.State_info,
-		strconv.FormatInt(int64(proc.Registration_clock), 10),
+		filepath.Base(proc.ProcessName),
+		proc.StateSeverity.String(),
+		proc.StateInfo,
+		strconv.FormatInt(int64(proc.RegistrationClock), 10),
 	}
 }

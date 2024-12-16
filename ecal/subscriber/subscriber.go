@@ -10,13 +10,22 @@ package subscriber
 //		const char* const descriptor, size_t descriptor_len
 //	);
 import "C"
+
 import (
 	"errors"
+	"fmt"
 	"runtime/cgo"
 	"time"
 	"unsafe"
 
 	"github.com/DownerCase/ecal-go/ecal/types"
+)
+
+var (
+	ErrFailedAlloc  = errors.New("failed to allocate subscriber")
+	ErrFailedCreate = errors.New("failed to create subscriber")
+	ErrRcvTimeout   = errors.New("timed out")
+	ErrRcvBadType   = errors.New("receive could not handle type")
 )
 
 type Subscriber struct {
@@ -38,7 +47,7 @@ func New() (*Subscriber, error) {
 	sub.handle = handle
 	if !C.NewSubscriber(C.uintptr_t(sub.handle)) {
 		handle.Delete()
-		return nil, errors.New("Failed to allocate new subscriber")
+		return nil, ErrFailedAlloc
 	}
 	return sub, nil
 }
@@ -57,19 +66,19 @@ func (p *Subscriber) Delete() {
 }
 
 func (p *Subscriber) Create(topic string, datatype DataType) error {
-	var descriptor_ptr *C.char = nil
+	var descriptorPtr *C.char = nil
 	if len(datatype.Descriptor) > 0 {
-		descriptor_ptr = (*C.char)(unsafe.Pointer(&datatype.Descriptor[0]))
+		descriptorPtr = (*C.char)(unsafe.Pointer(&datatype.Descriptor[0]))
 	}
 	if !C.GoSubscriberCreate(
 		C.uintptr_t(p.handle),
 		topic,
 		datatype.Name,
 		datatype.Encoding,
-		descriptor_ptr,
+		descriptorPtr,
 		C.size_t(len(datatype.Descriptor)),
 	) {
-		return errors.New("Failed to Create publisher")
+		return ErrFailedCreate
 	}
 	return nil
 }
@@ -80,7 +89,7 @@ func (p *Subscriber) Receive(timeout time.Duration) ([]byte, error) {
 	case msg := <-p.Messages:
 		return msg.([]byte), nil
 	case <-time.After(timeout):
-		return nil, errors.New("Receive timed out")
+		return nil, fmt.Errorf("[Receive]: %w", ErrRcvTimeout)
 	}
 }
 

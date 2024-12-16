@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/DownerCase/ecal-go/ecal/publisher"
-	"github.com/DownerCase/ecal-go/internal/ecaltest/testutil_publisher"
+	testutilpublisher "github.com/DownerCase/ecal-go/internal/ecaltest/testutil_publisher"
 )
 
 func TestNewPublishers(t *testing.T) {
@@ -18,10 +18,9 @@ func TestNewPublishers(t *testing.T) {
 }
 
 func TestPublisher(t *testing.T) {
-	pub := testutil_publisher.NewGenericPublisher(t, "testing")
+	pub := testutilpublisher.NewGenericPublisher(t, "testing")
 	defer pub.Delete()
 	if pub.Messages == nil {
 		t.Error("Message channel nil")
 	}
-
 }

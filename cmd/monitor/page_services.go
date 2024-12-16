@@ -7,68 +7,67 @@ import (
 type ServicesPage int
 
 const (
-	subpage_services_main ServicesPage = iota
-	subpage_services_detailed
+	subpageServicesMain ServicesPage = iota
+	subpageServicesDetailed
 )
 
-type model_services struct {
+type modelServices struct {
 	subpage ServicesPage
 	pages   map[ServicesPage]PageModel
 	NavKeys NavKeyMap
 }
 
-func NewServicesModel() *model_services {
-	return (&model_services{
-		subpage: subpage_services_main,
+func NewServicesModel() *modelServices {
+	return (&modelServices{
+		subpage: subpageServicesMain,
 		pages: map[ServicesPage]PageModel{
-			subpage_services_main:     NewServicesMainModel(),
-			subpage_services_detailed: NewDetailedServiceModel(),
+			subpageServicesMain:     NewServicesMainModel(),
+			subpageServicesDetailed: NewDetailedServiceModel(),
 		},
 		NavKeys: make(NavKeyMap),
 	}).Init()
 }
 
-func (m *model_services) Refresh() {
+func (m *modelServices) Refresh() {
 	m.pages[m.subpage].Refresh()
 }
 
-func (m *model_services) Init() *model_services {
+func (m *modelServices) Init() *modelServices {
 	m.NavKeys["esc"] = func() tea.Cmd { m.navUp(); return nil }
 	m.NavKeys["enter"] = func() tea.Cmd { m.navDown(); return nil }
 	return m
 }
 
-func (m *model_services) Update(msg tea.Msg) tea.Cmd {
+func (m *modelServices) Update(msg tea.Msg) tea.Cmd {
 	if cmd, navigated := m.NavKeys.HandleMsg(msg); navigated {
 		return cmd
 	}
 	return m.pages[m.subpage].Update(msg)
 }
 
-func (m *model_services) View() string {
+func (m *modelServices) View() string {
 	return m.pages[m.subpage].View()
 }
 
-func (m *model_services) navDown() {
+func (m *modelServices) navDown() {
 	switch m.subpage {
-	case subpage_services_main:
-		main := m.pages[subpage_services_main].(*model_services_main)
-		id, isServer, err := main.GetSelectedId()
+	case subpageServicesMain:
+		main := m.pages[subpageServicesMain].(*modelServicesMain)
+		id, isServer, err := main.GetSelectedID()
 		if err != nil {
 			return // Can't transition
 		}
-		detailed := m.pages[subpage_services_detailed].(*model_service_detailed)
+		detailed := m.pages[subpageServicesDetailed].(*modelServiceDetailed)
 		detailed.IsServer = isServer
-		detailed.Id = id
+		detailed.ID = id
 		detailed.Refresh()
-		m.subpage = subpage_services_detailed
-
+		m.subpage = subpageServicesDetailed
 	}
 }
 
-func (m *model_services) navUp() {
+func (m *modelServices) navUp() {
 	switch m.subpage {
-	case subpage_services_detailed:
-		m.subpage = subpage_services_main
+	case subpageServicesDetailed:
+		m.subpage = subpageServicesMain
 	}
 }

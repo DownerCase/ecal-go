@@ -3,18 +3,16 @@ linters:
   disable:
     - exportloopref # Deprecated
     - execinquery # Deprecated
+    - exhaustruct # Very noisy, hard to disable when want zero values
+    - forcetypeassert # If its wrong, we want to know
+    - nlreturn # Not desired
     - gci
     - gocritic
-    - gofumpt
-    - forbidigo
-    - godot
     - godox
     - gomnd
-    - ireturn
-    - exhaustruct
+    - gochecknoglobals
+    - gosec
     - mnd
-    - forcetypeassert
-    - nlreturn
     - nonamedreturns
     - paralleltest
     - predeclared
@@ -23,17 +21,19 @@ linters:
     - varnamelen
     - wrapcheck
     - wsl
-    - err113
-    - stylecheck
-    - gochecknoglobals
     - depguard
     - cyclop
-    - whitespace
     - revive
-    - goimports
-    - gosec
-    - protogetter
     - funlen
     - unparam
     - exhaustive
     - inamedparam
+
+linters-settings:
+  ireturn:
+    allow:
+      - tea.Model
+      - error
+      - stdlib
+      - empty
+      - generic

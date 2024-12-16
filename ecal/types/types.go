@@ -2,15 +2,15 @@ package types
 
 import "C"
 
-type EntityId struct {
-	Entity_id  string
-	Process_id int32
-	Host_name  string
+type EntityID struct {
+	EntityID  string
+	ProcessID int32
+	HostName  string
 }
 
-type TopicId struct {
-	Topic_id   EntityId
-	Topic_name string
+type TopicID struct {
+	TopicID   EntityID
+	TopicName string
 }
 
 type DataType struct {

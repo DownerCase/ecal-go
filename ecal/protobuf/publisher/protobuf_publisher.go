@@ -7,7 +7,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-// Type must be a pointer and implement the proto.Message interface
+// Type must be a pointer and implement the proto.Message interface.
 type Msg[T any] interface {
 	*T
 	proto.Message

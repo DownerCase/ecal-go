@@ -10,12 +10,18 @@ package publisher
 //  const char* const descriptor, size_t descriptor_len
 //);
 import "C"
+
 import (
 	"errors"
 	"runtime/cgo"
 	"unsafe"
 
 	"github.com/DownerCase/ecal-go/ecal/types"
+)
+
+var (
+	errFailedAlloc  = errors.New("failed to allocate publisher")
+	errFailedCreate = errors.New("failed to create publisher")
 )
 
 type DataType = types.DataType
@@ -35,7 +41,7 @@ func New() (*Publisher, error) {
 	pub.handle = handle
 	if !C.NewPublisher(C.uintptr_t(pub.handle)) {
 		handle.Delete()
-		return nil, errors.New("Failed to allocate new publisher")
+		return nil, errFailedAlloc
 	}
 	return &pub, nil
 }
@@ -54,19 +60,19 @@ func (p *Publisher) Delete() {
 }
 
 func (p *Publisher) Create(topic string, datatype DataType) error {
-	var descriptor_ptr *C.char = nil
+	var descriptorPtr *C.char = nil
 	if len(datatype.Descriptor) > 0 {
-		descriptor_ptr = (*C.char)(unsafe.Pointer(&datatype.Descriptor[0]))
+		descriptorPtr = (*C.char)(unsafe.Pointer(&datatype.Descriptor[0]))
 	}
 	if !C.GoPublisherCreate(
 		C.uintptr_t(p.handle),
 		topic,
 		datatype.Name,
 		datatype.Encoding,
-		descriptor_ptr,
+		descriptorPtr,
 		C.size_t(len(datatype.Descriptor)),
 	) {
-		return errors.New("Failed to Create publisher")
+		return errFailedCreate
 	}
 	go p.sendMessages()
 	return nil
