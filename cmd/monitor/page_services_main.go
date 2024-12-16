@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"strconv"
 
 	"github.com/DownerCase/ecal-go/ecal/monitoring"
@@ -42,7 +41,7 @@ func (m *model_services_main) View() string {
 func (m *model_services_main) GetSelectedId() (string, bool, error) {
 	row := m.table_services.SelectedRow()
 	if row == nil {
-		return "", false, errors.New("No processes")
+		return "", false, errEmptyTable
 	}
 	return row[0], row[1] == "S", nil
 }

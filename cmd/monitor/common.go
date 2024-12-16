@@ -2,10 +2,16 @@ package main
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/DownerCase/ecal-go/ecal/monitoring"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
+)
+
+var (
+	errNoTopic    = errors.New("No topic")
+	errEmptyTable = errors.New("Table empty")
 )
 
 func NewTable(columns []table.Column) table.Model {
@@ -53,5 +59,5 @@ func getTopicFromId(topicType topicType, id string) (monitoring.TopicMon, error)
 			return topic, nil
 		}
 	}
-	return monitoring.TopicMon{}, errors.New("Unable to find topic")
+	return monitoring.TopicMon{}, fmt.Errorf("[getTopicFromId]: %w", errNoTopic)
 }

@@ -2,7 +2,6 @@ package subscriber
 
 import "C"
 import (
-	"errors"
 	"fmt"
 	"reflect"
 	"time"
@@ -39,7 +38,7 @@ func (p *Subscriber[U, T]) Receive(timeout time.Duration) (U, error) {
 	select {
 	case msg = <-p.Messages:
 	case <-time.After(timeout):
-		return u, errors.New("Receive timed out")
+		return u, fmt.Errorf("[Receive[%v]()]: %w", reflect.TypeFor[U](), subscriber.ErrRcvTimeout)
 	}
 	switch msg := msg.(type) {
 	case U:
@@ -47,8 +46,7 @@ func (p *Subscriber[U, T]) Receive(timeout time.Duration) (U, error) {
 	case error:
 		return u, msg
 	default:
-		err := fmt.Sprint("Unexpected message type recevied", reflect.TypeOf(msg))
-		return u, errors.New(err)
+		return u, fmt.Errorf("%w: %v", subscriber.ErrRcvBadType, reflect.TypeOf(msg))
 	}
 }
 

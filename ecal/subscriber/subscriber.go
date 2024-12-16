@@ -13,11 +13,19 @@ import "C"
 
 import (
 	"errors"
+	"fmt"
 	"runtime/cgo"
 	"time"
 	"unsafe"
 
 	"github.com/DownerCase/ecal-go/ecal/types"
+)
+
+var (
+	ErrFailedAlloc  = errors.New("Failed to allocate subscriber")
+	ErrFailedCreate = errors.New("Failed to create subscriber")
+	ErrRcvTimeout   = errors.New("Timed out")
+	ErrRcvBadType   = errors.New("Receive could not handle type")
 )
 
 type Subscriber struct {
@@ -39,7 +47,7 @@ func New() (*Subscriber, error) {
 	sub.handle = handle
 	if !C.NewSubscriber(C.uintptr_t(sub.handle)) {
 		handle.Delete()
-		return nil, errors.New("Failed to allocate new subscriber")
+		return nil, ErrFailedAlloc
 	}
 	return sub, nil
 }
@@ -70,7 +78,7 @@ func (p *Subscriber) Create(topic string, datatype DataType) error {
 		descriptor_ptr,
 		C.size_t(len(datatype.Descriptor)),
 	) {
-		return errors.New("Failed to Create publisher")
+		return ErrFailedCreate
 	}
 	return nil
 }
@@ -81,7 +89,7 @@ func (p *Subscriber) Receive(timeout time.Duration) ([]byte, error) {
 	case msg := <-p.Messages:
 		return msg.([]byte), nil
 	case <-time.After(timeout):
-		return nil, errors.New("Receive timed out")
+		return nil, fmt.Errorf("[Receive]: %w", ErrRcvTimeout)
 	}
 }
 

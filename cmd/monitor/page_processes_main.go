@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"path/filepath"
 	"strconv"
 
@@ -43,7 +42,7 @@ func (m *model_processes_main) Refresh() {
 func (m *model_processes_main) getSelectedPid() (int32, error) {
 	row := m.table_processes.SelectedRow()
 	if row == nil {
-		return 0, errors.New("No processes")
+		return 0, errEmptyTable
 	}
 	pid, err := strconv.ParseInt(row[0], 10, 64)
 	return int32(pid), err

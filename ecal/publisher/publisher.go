@@ -19,6 +19,11 @@ import (
 	"github.com/DownerCase/ecal-go/ecal/types"
 )
 
+var (
+	errFailedAlloc  = errors.New("Failed to allocate publisher")
+	errFailedCreate = errors.New("Failed to create publisher")
+)
+
 type DataType = types.DataType
 
 type Publisher struct {
@@ -36,7 +41,7 @@ func New() (*Publisher, error) {
 	pub.handle = handle
 	if !C.NewPublisher(C.uintptr_t(pub.handle)) {
 		handle.Delete()
-		return nil, errors.New("Failed to allocate new publisher")
+		return nil, errFailedAlloc
 	}
 	return &pub, nil
 }
@@ -67,7 +72,7 @@ func (p *Publisher) Create(topic string, datatype DataType) error {
 		descriptor_ptr,
 		C.size_t(len(datatype.Descriptor)),
 	) {
-		return errors.New("Failed to Create publisher")
+		return errFailedCreate
 	}
 	go p.sendMessages()
 	return nil

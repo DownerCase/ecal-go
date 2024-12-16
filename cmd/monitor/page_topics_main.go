@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"strconv"
 	"strings"
 
@@ -125,7 +124,7 @@ func (m *model_topics_main) View() string {
 func (m *model_topics_main) GetSelectedId() (string, topicType, error) {
 	row := m.table_topics.SelectedRow()
 	if row == nil {
-		return "", 0, errors.New("No active topics")
+		return "", 0, errEmptyTable
 	}
 	var topicType topicType
 	switch row[1] {

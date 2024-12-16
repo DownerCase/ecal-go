@@ -23,7 +23,6 @@ linters:
     - varnamelen
     - wrapcheck
     - wsl
-    - err113
     - stylecheck
     - depguard
     - cyclop
