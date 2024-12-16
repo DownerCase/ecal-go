@@ -7,6 +7,7 @@ package logging
 //   Log(level, _GoStringPtr(msg), _GoStringLen(msg));
 // }
 import "C"
+
 import (
 	"fmt"
 	"runtime/cgo"

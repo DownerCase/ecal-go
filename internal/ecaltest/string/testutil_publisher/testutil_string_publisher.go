@@ -8,7 +8,6 @@ import (
 
 func NewStringPublisher(t *testing.T, topic string) *publisher.Publisher {
 	pub, err := publisher.New()
-
 	if err != nil {
 		t.Error(err)
 	}

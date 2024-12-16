@@ -10,6 +10,7 @@ package subscriber
 //		const char* const descriptor, size_t descriptor_len
 //	);
 import "C"
+
 import (
 	"errors"
 	"runtime/cgo"

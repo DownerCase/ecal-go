@@ -15,7 +15,6 @@ type model_topic_detailed struct {
 }
 
 func NewDetailedModel() *model_topic_detailed {
-
 	cols := []table.Column{
 		{Title: "", Width: 14},
 		{Title: "", Width: 67},
@@ -61,12 +60,14 @@ func (m *model_topic_detailed) updateDetailedTable(msg tea.Msg) {
 	rows := []table.Row{
 		{"Datatype", fmt.Sprintf("(%s) %s", t.Datatype.Encoding, t.Datatype.Name)},
 		{"Unit", t.Unit_name},
-		{"Messages",
+		{
+			"Messages",
 			fmt.Sprintf("%v (%v dropped)", t.Data_clock, t.Message_drops),
 		},
 		{"Frequency", strconv.FormatFloat(float64(t.Data_freq)/1000, 'f', -1, 32)},
 		{"Message Size", strconv.FormatInt(int64(t.Topic_size), 10)},
-		{"Connections",
+		{
+			"Connections",
 			fmt.Sprintf("%v local, %v external", t.Connections_local, t.Connections_external),
 		},
 		{"Tick", strconv.FormatInt(int64(t.Registration_clock), 10)},

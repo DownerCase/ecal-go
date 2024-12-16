@@ -5,6 +5,7 @@ package monitoring
 //#include "monitoring.h"
 //#cgo CPPFLAGS: -I${SRCDIR}/../types
 import "C"
+
 import (
 	"runtime/cgo"
 	"strconv"

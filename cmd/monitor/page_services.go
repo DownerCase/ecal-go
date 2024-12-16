@@ -62,7 +62,6 @@ func (m *model_services) navDown() {
 		detailed.Id = id
 		detailed.Refresh()
 		m.subpage = subpage_services_detailed
-
 	}
 }
 

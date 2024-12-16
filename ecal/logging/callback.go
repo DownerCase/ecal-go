@@ -3,6 +3,7 @@ package logging
 //#include "logging.h"
 //#include "types.h"
 import "C"
+
 import (
 	"runtime/cgo"
 	"unsafe"

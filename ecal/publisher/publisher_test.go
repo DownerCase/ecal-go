@@ -23,5 +23,4 @@ func TestPublisher(t *testing.T) {
 	if pub.Messages == nil {
 		t.Error("Message channel nil")
 	}
-
 }

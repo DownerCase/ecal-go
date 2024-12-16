@@ -26,7 +26,6 @@ func TestGetVersion(t *testing.T) {
 }
 
 func TestInitializeFinalize(t *testing.T) {
-
 	if IsInitialized() {
 		t.Error("eCAL pre-initialized...")
 	}

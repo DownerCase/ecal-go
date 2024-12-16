@@ -4,6 +4,7 @@ package ecal
 // #include "core.h"
 // #include <stdlib.h>
 import "C"
+
 import (
 	"runtime/cgo"
 	"unsafe"
@@ -86,6 +87,7 @@ func SetUnitName(unit_name string) bool {
 	defer C.free(unsafe.Pointer(unit_c))
 	return bool(C.SetUnitName(unit_c))
 }
+
 func Ok() bool {
 	return bool(C.Ok())
 }

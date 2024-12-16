@@ -35,7 +35,6 @@ func TestSubscriber(t *testing.T) {
 	go sendMessages(pub)
 	for range 10 {
 		msg, err := sub.Receive(2 * time.Second)
-
 		if err != nil {
 			t.Error(err)
 		}
@@ -66,7 +65,8 @@ func TestSubscriberTimeout(t *testing.T) {
 }
 
 func sendMessages(p *publisher.Publisher[*protos.Person]) {
-	person := &protos.Person{Id: 0, Name: "John", Email: "john@doe.net",
+	person := &protos.Person{
+		Id: 0, Name: "John", Email: "john@doe.net",
 		Dog:   &protos.Dog{Name: "Pluto"},
 		House: &protos.House{Rooms: 5},
 	}

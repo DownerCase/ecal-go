@@ -4,12 +4,13 @@ linters:
     - exportloopref # Deprecated
     - execinquery # Deprecated
     - gci
-    - gocritic
-    - gofumpt
     - forbidigo
+    - gocritic
     - godot
     - godox
     - gomnd
+    - gochecknoglobals
+    - gosec
     - ireturn
     - exhaustruct
     - mnd
@@ -25,12 +26,10 @@ linters:
     - wsl
     - err113
     - stylecheck
-    - gochecknoglobals
     - depguard
     - cyclop
     - whitespace
     - revive
-    - gosec
     - protogetter
     - funlen
     - unparam

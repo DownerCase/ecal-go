@@ -15,7 +15,8 @@ func TestProtobufPublisher(t *testing.T) {
 		t.Error("Message channel nil")
 	}
 
-	person := &protos.Person{Id: 0, Name: "John", Email: "john@doe.net",
+	person := &protos.Person{
+		Id: 0, Name: "John", Email: "john@doe.net",
 		Dog:   &protos.Dog{Name: "Pluto"},
 		House: &protos.House{Rooms: 5},
 	}

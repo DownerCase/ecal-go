@@ -5,6 +5,7 @@ package registration
 //#include "types.h"
 // #cgo CPPFLAGS: -I${SRCDIR}/../types
 import "C"
+
 import (
 	"runtime/cgo"
 
@@ -20,8 +21,10 @@ const (
 
 type QualityFlags uint8
 
-type EntityId = types.EntityId
-type TopicId = types.TopicId
+type (
+	EntityId = types.EntityId
+	TopicId  = types.TopicId
+)
 
 type CallbackToken struct {
 	ecal_token uint
