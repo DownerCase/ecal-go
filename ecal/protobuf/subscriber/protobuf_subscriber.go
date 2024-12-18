@@ -30,6 +30,9 @@ func New[U any, T Msg[U]]() (*Subscriber[U, T], error) {
 	sub, err := subscriber.New()
 	sub.Deserialize = deserialize[U, T]
 	psub := &Subscriber[U, T]{*sub}
+	if err != nil {
+		err = fmt.Errorf("protobuf Subscriber[%v].New(): %w", reflect.TypeFor[T](), err)
+	}
 	return psub, err
 }
 
@@ -58,18 +61,22 @@ func deserialize[U any, T Msg[U]](data unsafe.Pointer, dataLen int) any {
 	var msg U
 	err := proto.Unmarshal(bytesUnsafe, T(&msg))
 	if err != nil {
-		return err
+		return fmt.Errorf("protobuf Subscriber[%v].deserialize(): %w", reflect.TypeFor[T](), err)
 	}
 	return msg
 }
 
 func (s *Subscriber[U, T]) Create(topic string) error {
 	var msg T
-	return s.Subscriber.Create(topic,
+	err := s.Subscriber.Create(topic,
 		subscriber.DataType{
 			Name:       protobuf.GetFullName(msg),
 			Encoding:   "proto",
 			Descriptor: protobuf.GetProtoMessageDescription(msg),
 		},
 	)
+	if err != nil {
+		err = fmt.Errorf("protobuf Subscriber[%v].Create(): %w", reflect.TypeFor[T](), err)
+	}
+	return err
 }

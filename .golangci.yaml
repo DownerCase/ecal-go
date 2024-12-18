@@ -9,11 +9,10 @@ linters:
     - nlreturn # Not desired
     - godox # Yes. The project is in progress
     - depguard # Not desired
+    - varnamelen # Not desired
     - gochecknoglobals
     - nonamedreturns
     - testpackage
-    - varnamelen
-    - wrapcheck
     - wsl
     - cyclop
     - funlen

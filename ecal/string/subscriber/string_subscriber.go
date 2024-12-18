@@ -17,6 +17,9 @@ type Subscriber struct {
 func New() (*Subscriber, error) {
 	sub, err := subscriber.New()
 	sub.Deserialize = deserialize
+	if err != nil {
+		err = fmt.Errorf("string Subscriber.New(): %w", err)
+	}
 	return &Subscriber{*sub}, err
 }
 
@@ -34,10 +37,14 @@ func deserialize(data unsafe.Pointer, dataLen int) any {
 }
 
 func (s *Subscriber) Create(topic string) error {
-	return s.Subscriber.Create(topic,
+	err := s.Subscriber.Create(topic,
 		subscriber.DataType{
 			Name:     "std::string",
 			Encoding: "base",
 		},
 	)
+	if err != nil {
+		err = fmt.Errorf("string Subscriber.Create(): %w", err)
+	}
+	return err
 }
