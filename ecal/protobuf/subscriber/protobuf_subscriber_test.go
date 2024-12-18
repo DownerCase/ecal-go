@@ -1,4 +1,4 @@
-package subscriber
+package subscriber_test
 
 import (
 	"testing"
@@ -6,15 +6,16 @@ import (
 
 	"github.com/DownerCase/ecal-go/ecal"
 	"github.com/DownerCase/ecal-go/ecal/protobuf/publisher"
+	"github.com/DownerCase/ecal-go/ecal/protobuf/subscriber"
 	"github.com/DownerCase/ecal-go/internal/ecaltest"
 	testutilpublisher "github.com/DownerCase/ecal-go/internal/ecaltest/protobuf/testutil_publisher"
 	"github.com/DownerCase/ecal-go/protos"
 )
 
-func newSubscriber[U any, T Msg[U]](t *testing.T, topic string) *Subscriber[U, T] {
+func newSubscriber[U any, T subscriber.Msg[U]](t *testing.T, topic string) *subscriber.Subscriber[U, T] {
 	t.Helper()
 
-	sub, err := New[U, T]()
+	sub, err := subscriber.New[U, T]()
 	if err != nil {
 		t.Error(err)
 	}

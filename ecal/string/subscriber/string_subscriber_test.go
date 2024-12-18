@@ -1,4 +1,4 @@
-package subscriber
+package subscriber_test
 
 import (
 	"reflect"
@@ -7,16 +7,17 @@ import (
 
 	"github.com/DownerCase/ecal-go/ecal"
 	"github.com/DownerCase/ecal-go/ecal/string/publisher"
+	"github.com/DownerCase/ecal-go/ecal/string/subscriber"
 	"github.com/DownerCase/ecal-go/internal/ecaltest"
 	testutilpublisher "github.com/DownerCase/ecal-go/internal/ecaltest/string/testutil_publisher"
 )
 
 const TestMessage = "Test string"
 
-func newSubscriber(t *testing.T, topic string) *Subscriber {
+func newSubscriber(t *testing.T, topic string) *subscriber.Subscriber {
 	t.Helper()
 
-	sub, err := New()
+	sub, err := subscriber.New()
 	if err != nil {
 		t.Error(err)
 	}
