@@ -45,7 +45,7 @@ func (m *modelProcessesMain) getSelectedPid() (int32, error) {
 	if row == nil {
 		return 0, errEmptyTable
 	}
-	pid, err := strconv.ParseInt(row[0], 10, 64)
+	pid, err := strconv.ParseInt(row[0], 10, 32)
 	return int32(pid), err
 }
 

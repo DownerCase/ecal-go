@@ -72,7 +72,7 @@ func main() {
 	}
 	go receiveMessages(sub)
 
-	for idx := range 100 {
+	for idx := range int32(100) {
 		// Check if program has been requested to stop
 		if !ecal.Ok() {
 			logging.Warn("eCAL.Ok() is false; shutting down")
@@ -82,7 +82,7 @@ func main() {
 		logging.Info("Sending message ", idx)
 
 		// Update message to send
-		person.Id = int32(idx)
+		person.Id = idx
 
 		// Serialize and send protobuf message
 		if err := pub.Send(person); err != nil {

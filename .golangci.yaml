@@ -9,7 +9,6 @@ linters:
     - nlreturn # Not desired
     - godox # Yes. The project is in progress
     - gochecknoglobals
-    - gosec
     - nonamedreturns
     - paralleltest
     - predeclared
