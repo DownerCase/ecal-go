@@ -14,6 +14,7 @@ import (
 )
 
 func expectTopicPresent(t *testing.T, ts []TopicMon, topicName string) {
+	t.Helper()
 	if len(ts) == 0 {
 		t.Error("Monitoring returned no topics")
 	}
@@ -50,6 +51,7 @@ func TestPublisherMonitoring(t *testing.T) {
 }
 
 func expectPid(t *testing.T, pid int, procs []ProcessMon) {
+	t.Helper()
 	hostname, err := os.Hostname()
 	if err != nil {
 		t.Error("Could not get hostname")

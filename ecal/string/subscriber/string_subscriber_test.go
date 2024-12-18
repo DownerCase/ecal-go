@@ -14,6 +14,7 @@ import (
 const TestMessage = "Test string"
 
 func newSubscriber(t *testing.T, topic string) *Subscriber {
+	t.Helper()
 	sub, err := New()
 	if err != nil {
 		t.Error(err)

@@ -7,6 +7,7 @@ import (
 )
 
 func NewGenericSubscriber(t *testing.T, topic string) *subscriber.Subscriber {
+	t.Helper()
 	sub, err := subscriber.New()
 	if err != nil {
 		t.Error(err)

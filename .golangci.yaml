@@ -11,7 +11,6 @@ linters:
     - gochecknoglobals
     - nonamedreturns
     - testpackage
-    - thelper
     - varnamelen
     - wrapcheck
     - wsl

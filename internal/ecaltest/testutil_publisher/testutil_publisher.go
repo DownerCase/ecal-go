@@ -7,6 +7,7 @@ import (
 )
 
 func NewGenericPublisher(t *testing.T, topic string) *publisher.Publisher {
+	t.Helper()
 	pub, err := publisher.New()
 	if err != nil {
 		t.Error(err)

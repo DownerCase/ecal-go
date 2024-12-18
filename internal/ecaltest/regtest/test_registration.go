@@ -25,7 +25,8 @@ func EventCallback(topic string, channel chan Callback) func(registration.TopicI
 	}
 }
 
-func expectEvent(event registration.Event, t *testing.T, topic string, channel chan Callback) {
+func expectEvent(t *testing.T, event registration.Event, topic string, channel chan Callback) {
+	t.Helper()
 	var response Callback
 	select {
 	case response = <-channel:
@@ -45,9 +46,11 @@ func expectEvent(event registration.Event, t *testing.T, topic string, channel c
 }
 
 func ExpectNew(t *testing.T, topic string, channel chan Callback) {
-	expectEvent(registration.EntityNew, t, topic, channel)
+	t.Helper()
+	expectEvent(t, registration.EntityNew, topic, channel)
 }
 
 func ExpectDeleted(t *testing.T, topic string, channel chan Callback) {
-	expectEvent(registration.EntityDeleted, t, topic, channel)
+	t.Helper()
+	expectEvent(t, registration.EntityDeleted, topic, channel)
 }

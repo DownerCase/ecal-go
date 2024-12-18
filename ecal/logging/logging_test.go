@@ -11,6 +11,7 @@ import (
 )
 
 func expectMessageIsFromHost(t *testing.T, msg LogMessage) {
+	t.Helper()
 	host, err := os.Hostname()
 	if err != nil && msg.Host != host {
 		t.Error("Host mismatch", host, "!=", msg.Host)
@@ -21,6 +22,7 @@ func expectMessageIsFromHost(t *testing.T, msg LogMessage) {
 }
 
 func receiveMessage(t *testing.T, msg string, level Level) bool {
+	t.Helper()
 	logs := GetLogging()
 
 	for _, rmsg := range logs.Messages {

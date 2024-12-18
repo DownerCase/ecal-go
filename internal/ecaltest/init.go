@@ -7,6 +7,7 @@ import (
 )
 
 func InitEcal(t *testing.T, opts ...ecal.ConfigOption) {
+	t.Helper()
 	initResult := ecal.Initialize(
 		ecal.NewConfig(opts...),
 		"Go eCAL!",

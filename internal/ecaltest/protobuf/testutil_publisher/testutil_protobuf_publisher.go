@@ -7,6 +7,7 @@ import (
 )
 
 func NewProtobufPublisher[U any, T publisher.Msg[U]](t *testing.T, topic string) *publisher.Publisher[T] {
+	t.Helper()
 	pub, err := publisher.New[U, T]()
 	if err != nil {
 		t.Error(err)
