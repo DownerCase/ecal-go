@@ -7,6 +7,7 @@ import (
 )
 
 func TestFullName(t *testing.T) {
+	t.Parallel()
 	expectedName := "pb.People.Person"
 	if fn := GetFullName(&protos.Person{}); fn != expectedName {
 		t.Error("Expected: ", expectedName, " Actual: ", fn)

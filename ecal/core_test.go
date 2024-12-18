@@ -5,6 +5,7 @@ import (
 )
 
 func TestVersionString(t *testing.T) {
+	t.Parallel()
 	version := GetVersionString()
 	if version == "" {
 		t.Error("GetVersionString returned empty string")
@@ -13,6 +14,7 @@ func TestVersionString(t *testing.T) {
 }
 
 func TestVersionDateString(t *testing.T) {
+	t.Parallel()
 	buildDate := GetVersionDateString()
 	if buildDate == "" {
 		t.Error("GetVersionDateString returned empty string")
@@ -21,6 +23,7 @@ func TestVersionDateString(t *testing.T) {
 }
 
 func TestGetVersion(t *testing.T) {
+	t.Parallel()
 	version := GetVersion()
 	t.Log(version)
 }
