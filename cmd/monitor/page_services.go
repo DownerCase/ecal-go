@@ -50,8 +50,7 @@ func (m *modelServices) View() string {
 }
 
 func (m *modelServices) navDown() {
-	switch m.subpage {
-	case subpageServicesMain:
+	if m.subpage == subpageServicesMain {
 		main := m.pages[subpageServicesMain].(*modelServicesMain)
 		id, isServer, err := main.GetSelectedID()
 		if err != nil {
@@ -66,8 +65,7 @@ func (m *modelServices) navDown() {
 }
 
 func (m *modelServices) navUp() {
-	switch m.subpage {
-	case subpageServicesDetailed:
+	if m.subpage == subpageServicesDetailed {
 		m.subpage = subpageServicesMain
 	}
 }

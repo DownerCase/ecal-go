@@ -2,12 +2,12 @@
 package publisher
 
 // #include "publisher.h"
-//bool GoPublisherCreate(
+// bool GoPublisherCreate(
 //  uintptr_t handle,
 //  _GoString_ topic,
 //  _GoString_ name, _GoString_ encoding,
 //  const char* const descriptor, size_t descriptor_len
-//) {
+// ) {
 //  return PublisherCreate(
 //    handle,
 //    _GoStringPtr(topic), _GoStringLen(topic),

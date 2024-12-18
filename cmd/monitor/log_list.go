@@ -70,8 +70,7 @@ func (m *modelLogs) Update(msg tea.Msg) tea.Cmd {
 
 	switch m.subpage {
 	case subpageLoggingMain:
-		switch msg := msg.(type) {
-		case tea.KeyMsg:
+		if msg, ok := msg.(tea.KeyMsg); ok {
 			switch {
 			case key.Matches(msg, m.keymap.Clear):
 				m.table.SetRows([]table.Row{})

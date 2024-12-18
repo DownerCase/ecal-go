@@ -109,8 +109,7 @@ func (m *modelTopicMessages) createSubscriber() {
 
 func (m *modelTopicMessages) receiveTicks() tea.Cmd {
 	return func() tea.Msg {
-		switch msg := (<-m.subscriber.Messages).(type) {
-		case []byte:
+		if msg, ok := (<-m.subscriber.Messages).([]byte); ok {
 			return msgMsg{msg: msg}
 		}
 		return nil

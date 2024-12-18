@@ -28,12 +28,13 @@ func expectEvent(event registration.Event, t *testing.T, topic string, channel c
 		t.Error("Registration timeout")
 		return
 	}
-	if response.ID.TopicName != topic {
+	switch {
+	case response.ID.TopicName != topic:
 		// Should be pre-filtered by callback
 		t.Error("Unexpected event for topic", response.ID.TopicName)
-	} else if response.Event != event {
+	case response.Event != event:
 		t.Error("Expected event", event, "actual", response.Event)
-	} else {
+	default:
 		time.Sleep(50 * time.Millisecond) // Small delay to allow eCAL to finish
 	}
 }

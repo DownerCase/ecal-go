@@ -42,10 +42,10 @@ func (p *Subscriber[U, T]) Receive(timeout time.Duration) (U, error) {
 		return u, fmt.Errorf("[Receive[%v]()]: %w", reflect.TypeFor[U](), subscriber.ErrRcvTimeout)
 	}
 	switch msg := msg.(type) {
-	case U:
-		return msg, nil
 	case error:
 		return u, msg
+	case U:
+		return msg, nil
 	default:
 		return u, fmt.Errorf("%w: %v", subscriber.ErrRcvBadType, reflect.TypeOf(msg))
 	}

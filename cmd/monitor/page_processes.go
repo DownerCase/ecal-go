@@ -50,8 +50,7 @@ func (m *modelProcesses) Refresh() {
 }
 
 func (m *modelProcesses) navDown() {
-	switch m.subpage {
-	case subpageProcMain:
+	if m.subpage == subpageProcMain {
 		main := m.pages[subpageProcMain].(*modelProcessesMain)
 		pid, err := main.getSelectedPid()
 		if err != nil {
@@ -65,8 +64,7 @@ func (m *modelProcesses) navDown() {
 }
 
 func (m *modelProcesses) navUp() {
-	switch m.subpage {
-	case subpageProcDetailed:
+	if m.subpage == subpageProcDetailed {
 		m.subpage = subpageProcMain
 	}
 }

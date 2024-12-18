@@ -33,8 +33,7 @@ func (m *modelProcessDetailed) Init() tea.Cmd {
 
 func (m *modelProcessDetailed) Update(msg tea.Msg) tea.Cmd {
 	var cmd tea.Cmd
-	switch msg := msg.(type) {
-	case tea.KeyMsg:
+	if msg, ok := msg.(tea.KeyMsg); ok {
 		m.table, cmd = m.table.Update(msg)
 	}
 	return cmd

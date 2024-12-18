@@ -2,7 +2,7 @@
 package subscriber
 
 //#include "subscriber.h"
-//bool GoSubscriberCreate(
+// bool GoSubscriberCreate(
 //  uintptr_t handle,
 //  _GoString_ topic,
 //  _GoString_ name, _GoString_ encoding,

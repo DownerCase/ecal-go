@@ -31,8 +31,7 @@ func NewTopicsModel() *modelTopics {
 }
 
 func (m *modelTopics) navDown() {
-	switch m.subpage {
-	case subpageTopicMain:
+	if m.subpage == subpageTopicMain {
 		mainModel := m.pages[subpageTopicMain].(*modelTopicsMain)
 		topic, topicType, err := mainModel.GetSelectedID()
 		if err != nil {
@@ -45,10 +44,7 @@ func (m *modelTopics) navDown() {
 }
 
 func (m *modelTopics) navUp() {
-	switch m.subpage {
-	default:
-		m.subpage = subpageTopicMain
-	}
+	m.subpage = subpageTopicMain
 }
 
 func (m *modelTopics) navMessages() tea.Cmd {
