@@ -13,6 +13,7 @@ import (
 
 func TestPublisherCallback(t *testing.T) {
 	ecaltest.InitEcal(t)
+
 	defer ecal.Finalize()
 
 	topic := "test_reg_pub"
@@ -32,6 +33,7 @@ func TestPublisherCallback(t *testing.T) {
 
 func TestSubscriberCallback(t *testing.T) {
 	ecaltest.InitEcal(t)
+
 	defer ecal.Finalize()
 
 	topic := "test_reg_sub"

@@ -40,6 +40,7 @@ func (m *ModelTopicDetailed) Update(msg tea.Msg) tea.Cmd {
 	if msg, ok := msg.(tea.KeyMsg); ok {
 		m.table, cmd = m.table.Update(msg)
 	}
+
 	return cmd
 }
 

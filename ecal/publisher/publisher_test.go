@@ -20,6 +20,7 @@ func TestNewPublishers(t *testing.T) {
 func TestPublisher(t *testing.T) {
 	pub := testutilpublisher.NewGenericPublisher(t, "testing")
 	defer pub.Delete()
+
 	if pub.Messages == nil {
 		t.Error("Message channel nil")
 	}

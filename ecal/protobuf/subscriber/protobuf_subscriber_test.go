@@ -13,18 +13,22 @@ import (
 
 func newSubscriber[U any, T Msg[U]](t *testing.T, topic string) *Subscriber[U, T] {
 	t.Helper()
+
 	sub, err := New[U, T]()
 	if err != nil {
 		t.Error(err)
 	}
+
 	if err := sub.Create(topic); err != nil {
 		t.Error(err)
 	}
+
 	return sub
 }
 
 func TestSubscriber(t *testing.T) {
 	ecaltest.InitEcal(t)
+
 	defer ecal.Finalize() // Shutdown eCAL at the end of the program
 
 	pub := testutilpublisher.NewProtobufPublisher[protos.Person](t, "testing_protobuf_subscriber")
@@ -34,20 +38,25 @@ func TestSubscriber(t *testing.T) {
 	defer sub.Delete()
 
 	go sendMessages(pub)
+
 	for range 10 {
 		msg, err := sub.Receive(2 * time.Second)
 		if err != nil {
 			t.Error(err)
 		}
+
 		if msg.GetId() != 0 {
 			t.Error("Wrong ID")
 		}
+
 		if msg.GetName() != "John" {
 			t.Error("Wrong name")
 		}
+
 		if msg.GetEmail() != "john@doe.net" {
 			t.Error("Wrong email")
 		}
+
 		if msg.GetDog().GetName() != "Pluto" {
 			t.Error("Wrong dog")
 		}
@@ -56,9 +65,12 @@ func TestSubscriber(t *testing.T) {
 
 func TestSubscriberTimeout(t *testing.T) {
 	ecaltest.InitEcal(t)
+
 	defer ecal.Finalize() // Shutdown eCAL at the end of the program
+
 	sub := newSubscriber[protos.Person](t, "testing_protobuf_subscriber_timeout")
 	defer sub.Delete()
+
 	msg, err := sub.Receive(50 * time.Millisecond)
 	if err == nil {
 		t.Error("Expected timeout, received message:", &msg)
@@ -75,6 +87,7 @@ func sendMessages(p *publisher.Publisher[*protos.Person]) {
 	for !p.IsStopped() {
 		_ = p.Send(person)
 		person.House.Rooms++
+
 		time.Sleep(10 * time.Millisecond)
 	}
 }

@@ -44,20 +44,25 @@ func (m *ModelServicesMain) GetSelectedID() (string, bool, error) {
 	if row == nil {
 		return "", false, errEmptyTable
 	}
+
 	return row[0], row[1] == "S", nil
 }
 
 func (m *ModelServicesMain) updateTable(msg tea.Msg) (cmd tea.Cmd) {
 	rows := []table.Row{}
+
 	mon := monitoring.GetMonitoring(monitoring.MonitorClient | monitoring.MonitorServer)
 	for _, client := range mon.Clients {
 		rows = append(rows, clientToRow(client))
 	}
+
 	for _, server := range mon.Servers {
 		rows = append(rows, serverToRow(server))
 	}
+
 	m.table.SetRows(rows)
 	m.table, cmd = m.table.Update(msg)
+
 	return
 }
 

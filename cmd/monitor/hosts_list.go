@@ -58,21 +58,25 @@ func (m *ModelHosts) updateTable(msg tea.Msg) {
 		host.Publishers++
 		hosts[pub.HostName] = host
 	}
+
 	for _, sub := range mon.Subscribers {
 		host := hosts[sub.HostName]
 		host.Subscribers++
 		hosts[sub.HostName] = host
 	}
+
 	for _, client := range mon.Clients {
 		host := hosts[client.HostName]
 		host.Clients++
 		hosts[client.HostName] = host
 	}
+
 	for _, server := range mon.Servers {
 		host := hosts[server.HostName]
 		host.Servers++
 		hosts[server.HostName] = host
 	}
+
 	for _, proc := range mon.Processes {
 		host := hosts[proc.HostName]
 		host.Processes++
@@ -94,5 +98,6 @@ func hostsToRows(hosts map[string]hostInfo) (rows []table.Row) {
 			strconv.FormatInt(int64(hostInfo.Clients), 10),
 		})
 	}
+
 	return
 }

@@ -114,6 +114,7 @@ func (m *ModelTopicsMain) Update(msg tea.Msg) tea.Cmd {
 	default:
 		m.updateTopicsTable(msg)
 	}
+
 	return nil
 }
 
@@ -126,19 +127,23 @@ func (m *ModelTopicsMain) GetSelectedID() (string, TopicType, error) {
 	if row == nil {
 		return "", 0, errEmptyTable
 	}
+
 	var topicType TopicType
+
 	switch row[1] {
 	case "S":
 		topicType = topicTypeSubscriber
 	case "P":
 		topicType = topicTypePublisher
 	}
+
 	return row[0], topicType, nil
 }
 
 func (m *ModelTopicsMain) updateTopicsTable(msg tea.Msg) {
 	rows := []table.Row{}
 	entities := monitoring.MonitorNone
+
 	switch m.filter {
 	case entityAll:
 		entities = monitoring.MonitorPublisher | monitoring.MonitorSubscriber
@@ -147,13 +152,16 @@ func (m *ModelTopicsMain) updateTopicsTable(msg tea.Msg) {
 	case entityPublisher:
 		entities = monitoring.MonitorPublisher
 	}
+
 	mon := monitoring.GetMonitoring(entities)
 	for _, topic := range mon.Publishers {
 		rows = append(rows, topicToRow(topic))
 	}
+
 	for _, topic := range mon.Subscribers {
 		rows = append(rows, topicToRow(topic))
 	}
+
 	m.table.SetRows(rows)
 	m.table, _ = m.table.Update(msg)
 }

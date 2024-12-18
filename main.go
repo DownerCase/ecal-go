@@ -70,6 +70,7 @@ func main() {
 	if sub.Create("string topic") != nil {
 		panic("Failed to Create string subscriber")
 	}
+
 	go receiveMessages(sub)
 
 	for idx := range int32(100) {

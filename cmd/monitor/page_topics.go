@@ -33,14 +33,18 @@ func NewTopicsModel() *ModelTopics {
 func (m *ModelTopics) navDown() tea.Cmd {
 	if m.subpage == subpageTopicMain {
 		mainModel := m.pages[subpageTopicMain].(*ModelTopicsMain)
+
 		topic, topicType, err := mainModel.GetSelectedID()
 		if err != nil {
 			return nil // Don't' transition
 		}
+
 		detailed := m.pages[subpageTopicDetailed].(*ModelTopicDetailed)
 		detailed.ShowTopic(topic, topicType)
+
 		m.subpage = subpageTopicDetailed
 	}
+
 	return nil
 }
 
@@ -53,14 +57,19 @@ func (m *ModelTopics) navMessages() tea.Cmd {
 	if m.subpage != subpageTopicMain {
 		return nil
 	}
+
 	mainModel := m.pages[subpageTopicMain].(*ModelTopicsMain)
+
 	topic, topicType, err := mainModel.GetSelectedID()
 	if err != nil {
 		return nil // Don't' transition
 	}
+
 	messagesModel := m.pages[subpageTopicMessages].(*ModelTopicMessages)
 	messagesModel.ShowTopic(topic, topicType)
+
 	m.subpage = subpageTopicMessages
+
 	return messagesModel.Init()
 }
 
@@ -72,6 +81,7 @@ func (m *ModelTopics) Init() *ModelTopics {
 	m.NavKeys["esc"] = func() tea.Cmd { return m.navUp() }
 	m.NavKeys["enter"] = func() tea.Cmd { return m.navDown() }
 	m.NavKeys["m"] = func() tea.Cmd { return m.navMessages() }
+
 	return m
 }
 
@@ -79,6 +89,7 @@ func (m *ModelTopics) Update(msg tea.Msg) tea.Cmd {
 	if cmd, navigated := m.NavKeys.HandleMsg(msg); navigated {
 		return cmd
 	}
+
 	return m.pages[m.subpage].Update(msg)
 }
 

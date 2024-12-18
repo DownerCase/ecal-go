@@ -25,6 +25,7 @@ func New[U any, T Msg[U]]() (*Publisher[T], error) {
 	if err != nil {
 		err = fmt.Errorf("protobuf Publisher[%v].New(): %w", reflect.TypeFor[T](), err)
 	}
+
 	return &Publisher[T]{*pub}, err
 }
 
@@ -35,11 +36,13 @@ func (p *Publisher[T]) Send(t T) error {
 	}
 
 	p.Messages <- msg
+
 	return nil
 }
 
 func (p *Publisher[T]) Create(topic string) error {
 	var msg T
+
 	err := p.Publisher.Create(topic,
 		publisher.DataType{
 			Name:       protobuf.GetFullName(msg),
@@ -50,5 +53,6 @@ func (p *Publisher[T]) Create(topic string) error {
 	if err != nil {
 		err = fmt.Errorf("protobuf Publisher[%v].Create(): %w", reflect.TypeFor[T](), err)
 	}
+
 	return err
 }

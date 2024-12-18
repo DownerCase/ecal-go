@@ -40,6 +40,7 @@ func newModel() *model {
 	pagesMap[pageLogs] = NewLogsModel()
 	pagesMap[pageSystem] = NewConfigModel()
 	pagesMap[pageAbout] = &PlaceholderModel{"About Placeholder"}
+
 	return &model{
 		page:  pageTopics,
 		pages: pagesMap,
@@ -73,9 +74,11 @@ func (m *model) Init() tea.Cmd {
 
 func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
+
 	switch msg := msg.(type) {
 	case TickMsg:
 		m.refresh()
+
 		cmd = doTick()
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -101,12 +104,15 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	default:
 		cmd = m.updatePage(msg)
 	}
+
 	return m, cmd
 }
 
 func (m *model) View() string {
 	s := strings.Builder{}
 	s.WriteString(m.pages[m.page].View())
+	s.WriteString("\n")
+
 	tabs := []string{
 		"1: Topics",
 		"2: Services",
@@ -116,13 +122,13 @@ func (m *model) View() string {
 		"6: Config",
 		"7: About",
 	}
-	s.WriteString("\n")
-	page := m.page
-	tabs[page] = highlight.Render(tabs[page])
+	tabs[m.page] = highlight.Render(tabs[m.page])
+
 	for _, tab := range tabs {
 		s.WriteString(tab)
 		s.WriteRune(' ')
 	}
+
 	return s.String()
 }
 

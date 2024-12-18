@@ -36,6 +36,7 @@ func (m *ModelProcessDetailed) Update(msg tea.Msg) tea.Cmd {
 	if msg, ok := msg.(tea.KeyMsg); ok {
 		m.table, cmd = m.table.Update(msg)
 	}
+
 	return cmd
 }
 
@@ -48,15 +49,16 @@ func (m *ModelProcessDetailed) Refresh() {
 }
 
 func (m *ModelProcessDetailed) updateDetailedTable(msg tea.Msg) {
-	mon := monitoring.GetMonitoring(monitoring.MonitorProcess)
 	var p monitoring.ProcessMon
 
+	mon := monitoring.GetMonitoring(monitoring.MonitorProcess)
 	for _, proc := range mon.Processes {
 		if proc.Pid == m.Pid {
 			p = proc
 			break
 		}
 	}
+
 	m.table.Columns()[0].Title = strconv.FormatInt(int64(p.Pid), 10)
 	m.table.Columns()[1].Title = p.ProcessName
 	health := fmt.Sprintf("%s %v", p.StateSeverity.String(), p.StateSeverityLevel)

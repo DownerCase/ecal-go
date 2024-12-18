@@ -33,6 +33,7 @@ func (m *ModelServiceDetailed) Update(msg tea.Msg) tea.Cmd {
 	if msg, ok := msg.(tea.KeyMsg); ok {
 		m.table, cmd = m.table.Update(msg)
 	}
+
 	return cmd
 }
 
@@ -62,6 +63,7 @@ func (m *ModelServiceDetailed) updateDetailedTable(msg tea.Msg) {
 			}
 		}
 	}
+
 	m.table, _ = m.table.Update(msg)
 }
 
@@ -98,5 +100,6 @@ func getMethodRows(b monitoring.ServiceBase) []table.Row {
 			fmt.Sprintf("%s -> %s (Called x%v)", method.RequestType.Type, method.ResponseType.Type, method.CallCount),
 		})
 	}
+
 	return rows
 }

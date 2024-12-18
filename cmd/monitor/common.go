@@ -32,6 +32,7 @@ func (navKeys NavKeyMap) HandleMsg(msg tea.Msg) (cmd tea.Cmd, navigated bool) {
 			return f(), true
 		}
 	}
+
 	return nil, false
 }
 
@@ -49,6 +50,7 @@ func getTopicMonitoring(topicType TopicType) []monitoring.TopicMon {
 	case topicTypePublisher:
 		return monitoring.GetMonitoring(monitoring.MonitorPublisher).Publishers
 	}
+
 	return nil
 }
 
@@ -59,5 +61,6 @@ func getTopicFromID(topicType TopicType, id string) (monitoring.TopicMon, error)
 			return topic, nil
 		}
 	}
+
 	return monitoring.TopicMon{}, fmt.Errorf("[getTopicFromId]: %w", errNoTopic)
 }

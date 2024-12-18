@@ -6,24 +6,29 @@ import (
 
 func TestVersionString(t *testing.T) {
 	t.Parallel()
+
 	version := GetVersionString()
 	if version == "" {
 		t.Error("GetVersionString returned empty string")
 	}
+
 	t.Log(version)
 }
 
 func TestVersionDateString(t *testing.T) {
 	t.Parallel()
+
 	buildDate := GetVersionDateString()
 	if buildDate == "" {
 		t.Error("GetVersionDateString returned empty string")
 	}
+
 	t.Log(buildDate)
 }
 
 func TestGetVersion(t *testing.T) {
 	t.Parallel()
+
 	version := GetVersion()
 	t.Log(version)
 }
@@ -49,6 +54,7 @@ func TestInitializeFinalize(t *testing.T) {
 	if !IsInitialized() {
 		t.Error("IsInitialized return false, expected true")
 	}
+
 	if !IsComponentInitialized(CPublisher) {
 		t.Error("Expected publisheCPublisher to be initialised")
 	}

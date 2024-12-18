@@ -31,6 +31,7 @@ type msgMsg struct {
 func NewTopicsMessagesModel() *ModelTopicMessages {
 	viewport := viewport.New(85, 10)
 	subscriber, _ := subscriber.New()
+
 	return &ModelTopicMessages{
 		viewport:   viewport,
 		subscriber: subscriber,
@@ -43,6 +44,7 @@ func (m *ModelTopicMessages) Init() tea.Cmd {
 
 func (m *ModelTopicMessages) Update(msg tea.Msg) tea.Cmd {
 	var cmd tea.Cmd
+
 	switch msg := msg.(type) {
 	case msgMsg:
 		m.msg = msg.msg
@@ -50,6 +52,7 @@ func (m *ModelTopicMessages) Update(msg tea.Msg) tea.Cmd {
 	default:
 		m.viewport, cmd = m.viewport.Update(msg)
 	}
+
 	return cmd
 }
 
@@ -67,6 +70,7 @@ func (m *ModelTopicMessages) View() string {
 	// that we can scroll against
 	m.viewport.SetContent(wrap.String(m.deserializer(m.msg), m.viewport.Width))
 	s.WriteString(m.viewport.View())
+
 	return baseStyle.Render(s.String())
 }
 
@@ -81,28 +85,33 @@ func (m *ModelTopicMessages) ShowTopic(topicID string, topicType TopicType) {
 		m.mon, _ = getTopicFromID(m.topicType, m.topicID)
 		m.createSubscriber()
 	}
+
 	m.Refresh()
 }
 
 func (m *ModelTopicMessages) createSubscriber() {
 	// (re)create subscriber with new topic type
 	m.subscriber.Delete()
+
 	subscriber, err := subscriber.New()
 	if err != nil {
 		subscriber.Delete()
 		panic(fmt.Errorf("[Topic Messages]: %w", err))
 	}
+
 	err = subscriber.Create(m.mon.TopicName, m.mon.Datatype)
 	if err != nil {
 		subscriber.Delete()
 		panic(fmt.Errorf("[Topic Messages]: %w", err))
 	}
+
 	switch {
 	case m.mon.Datatype.Name == "std::string" && m.mon.Datatype.Encoding == "base":
 		m.deserializer = deserializeBasicString
 	default:
 		m.deserializer = deserializeAsHex
 	}
+
 	m.msg = nil
 	m.subscriber = subscriber
 }
@@ -112,6 +121,7 @@ func (m *ModelTopicMessages) receiveTicks() tea.Cmd {
 		if msg, ok := (<-m.subscriber.Messages).([]byte); ok {
 			return msgMsg{msg: msg}
 		}
+
 		return nil
 	}
 }

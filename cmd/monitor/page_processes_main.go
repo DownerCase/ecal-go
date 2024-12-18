@@ -45,18 +45,23 @@ func (m *ModelProcessesMain) getSelectedPid() (int32, error) {
 	if row == nil {
 		return 0, errEmptyTable
 	}
+
 	pid, err := strconv.ParseInt(row[0], 10, 32)
+
 	return int32(pid), err
 }
 
 func (m *ModelProcessesMain) updateTable(msg tea.Msg) (cmd tea.Cmd) {
 	rows := []table.Row{}
+
 	mon := monitoring.GetMonitoring(monitoring.MonitorProcess)
 	for _, proc := range mon.Processes {
 		rows = append(rows, procToRow(proc))
 	}
+
 	m.table.SetRows(rows)
 	m.table, cmd = m.table.Update(msg)
+
 	return
 }
 

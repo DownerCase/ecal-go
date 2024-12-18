@@ -27,6 +27,7 @@ func EventCallback(topic string, channel chan Callback) func(registration.TopicI
 
 func expectEvent(t *testing.T, event registration.Event, topic string, channel chan Callback) {
 	t.Helper()
+
 	var response Callback
 	select {
 	case response = <-channel:
@@ -34,6 +35,7 @@ func expectEvent(t *testing.T, event registration.Event, topic string, channel c
 		t.Error("Registration timeout")
 		return
 	}
+
 	switch {
 	case response.ID.TopicName != topic:
 		// Should be pre-filtered by callback

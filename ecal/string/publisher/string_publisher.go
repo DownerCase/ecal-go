@@ -15,6 +15,7 @@ func New() (*Publisher, error) {
 	if err != nil {
 		err = fmt.Errorf("string Publisher.New(): %w", err)
 	}
+
 	return &Publisher{*pub}, err
 }
 
@@ -40,5 +41,6 @@ func (p *Publisher) Create(topic string) error {
 	if err != nil {
 		err = fmt.Errorf("string Publisher.Create(): %w", err)
 	}
+
 	return err
 }

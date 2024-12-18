@@ -15,6 +15,7 @@ func NewConfigModel() *ModelConfig {
 	viewport := viewport.New(85, 10)
 	viewport.SetContent(ecal.GetConfig())
 	viewport.Style = baseStyle
+
 	return &ModelConfig{
 		viewport: viewport,
 	}

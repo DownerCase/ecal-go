@@ -80,8 +80,8 @@ func (m *ModelLogs) Update(msg tea.Msg) tea.Cmd {
 			}
 		}
 	case subpageLoggingDetailed:
-		// cmd = m.model_detailed.Update(msg)
 	}
+
 	return cmd
 }
 
@@ -90,8 +90,8 @@ func (m *ModelLogs) View() string {
 	case subpageLoggingMain:
 		return baseStyle.Render(m.table.View()) + "\n" + m.help.View(m.keymap)
 	case subpageLoggingDetailed:
-		// return m.model_detailed.View()
 	}
+
 	return "Invalid page"
 }
 
@@ -111,6 +111,7 @@ func (m *ModelLogs) updateTable(msg tea.Msg) {
 	for _, log := range logs {
 		rows = append(rows, logToRow(log))
 	}
+
 	m.table.SetRows(append(m.table.Rows(), rows...))
 	m.table, _ = m.table.Update(msg)
 }

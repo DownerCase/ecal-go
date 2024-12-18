@@ -15,19 +15,23 @@ import (
 
 func expectTopicPresent(t *testing.T, ts []TopicMon, topicName string) {
 	t.Helper()
+
 	if len(ts) == 0 {
 		t.Error("Monitoring returned no topics")
 	}
+
 	for _, topic := range ts {
 		if topic.TopicName == topicName {
 			return
 		}
 	}
+
 	t.Error("Monitoring does not contain expected topic", topicName, "\nReceived", ts)
 }
 
 func TestPublisherMonitoring(t *testing.T) {
 	ecaltest.InitEcal(t)
+
 	defer ecal.Finalize()
 
 	topic := "test_mon_pub"
@@ -52,23 +56,28 @@ func TestPublisherMonitoring(t *testing.T) {
 
 func expectPid(t *testing.T, pid int, procs []ProcessMon) {
 	t.Helper()
+
 	hostname, err := os.Hostname()
 	if err != nil {
 		t.Error("Could not get hostname")
 	}
+
 	for _, proc := range procs {
 		if pid == int(proc.Pid) {
 			if proc.HostName != hostname {
 				t.Error("Expected hostname", hostname, "got", proc.HostName)
 			}
+
 			return
 		}
 	}
+
 	t.Error("Could not find self in process list")
 }
 
 func TestSubscriberMonitoring(t *testing.T) {
 	ecaltest.InitEcal(t)
+
 	defer ecal.Finalize()
 
 	topic := "test_mon_sub"
@@ -94,7 +103,9 @@ func TestSubscriberMonitoring(t *testing.T) {
 func TestProcessMonitoring(t *testing.T) {
 	// Given: eCAL Initialized
 	ecaltest.InitEcal(t)
+
 	defer ecal.Finalize()
+
 	time.Sleep(1500 * time.Millisecond) // Propagation delay...
 
 	// When: Requesting the processes
