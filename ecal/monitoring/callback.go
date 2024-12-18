@@ -88,8 +88,8 @@ func copyToServiceBase(cbase C.struct_CServiceCommon) ServiceBase {
 	}
 }
 
-func copyToServerMons(cservers []C.struct_CServerMon) (servers []ServerMon) {
-	servers = make([]ServerMon, len(cservers))
+func copyToServerMons(cservers []C.struct_CServerMon) []ServerMon {
+	servers := make([]ServerMon, len(cservers))
 	for idx, cserver := range cservers {
 		servers[idx] = ServerMon{
 			ServiceBase: copyToServiceBase(cserver.base),
@@ -97,17 +97,17 @@ func copyToServerMons(cservers []C.struct_CServerMon) (servers []ServerMon) {
 			PortV1:      uint32(cserver.port_v1),
 		}
 	}
-	return
+	return servers
 }
 
-func copyToClientMons(cclients []C.struct_CClientMon) (clients []ClientMon) {
-	clients = make([]ClientMon, len(cclients))
+func copyToClientMons(cclients []C.struct_CClientMon) []ClientMon {
+	clients := make([]ClientMon, len(cclients))
 	for idx, cclient := range cclients {
 		clients[idx] = ClientMon{
 			ServiceBase: copyToServiceBase(cclient.base),
 		}
 	}
-	return
+	return clients
 }
 
 //export goCopyMonitoring

@@ -87,7 +87,8 @@ func (m *ModelHosts) updateTable(msg tea.Msg) {
 	m.table, _ = m.table.Update(msg)
 }
 
-func hostsToRows(hosts map[string]hostInfo) (rows []table.Row) {
+func hostsToRows(hosts map[string]hostInfo) []table.Row {
+	rows := make([]table.Row, 0)
 	for hostName, hostInfo := range hosts {
 		rows = append(rows, table.Row{
 			hostName,
@@ -99,5 +100,5 @@ func hostsToRows(hosts map[string]hostInfo) (rows []table.Row) {
 		})
 	}
 
-	return
+	return rows
 }
