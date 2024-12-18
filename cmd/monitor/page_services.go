@@ -11,14 +11,14 @@ const (
 	subpageServicesDetailed
 )
 
-type modelServices struct {
+type ModelServices struct {
 	subpage ServicesPage
 	pages   map[ServicesPage]PageModel
 	NavKeys NavKeyMap
 }
 
-func NewServicesModel() *modelServices {
-	return (&modelServices{
+func NewServicesModel() *ModelServices {
+	return (&ModelServices{
 		subpage: subpageServicesMain,
 		pages: map[ServicesPage]PageModel{
 			subpageServicesMain:     NewServicesMainModel(),
@@ -28,35 +28,35 @@ func NewServicesModel() *modelServices {
 	}).Init()
 }
 
-func (m *modelServices) Refresh() {
+func (m *ModelServices) Refresh() {
 	m.pages[m.subpage].Refresh()
 }
 
-func (m *modelServices) Init() *modelServices {
+func (m *ModelServices) Init() *ModelServices {
 	m.NavKeys["esc"] = func() tea.Cmd { m.navUp(); return nil }
 	m.NavKeys["enter"] = func() tea.Cmd { m.navDown(); return nil }
 	return m
 }
 
-func (m *modelServices) Update(msg tea.Msg) tea.Cmd {
+func (m *ModelServices) Update(msg tea.Msg) tea.Cmd {
 	if cmd, navigated := m.NavKeys.HandleMsg(msg); navigated {
 		return cmd
 	}
 	return m.pages[m.subpage].Update(msg)
 }
 
-func (m *modelServices) View() string {
+func (m *ModelServices) View() string {
 	return m.pages[m.subpage].View()
 }
 
-func (m *modelServices) navDown() {
+func (m *ModelServices) navDown() {
 	if m.subpage == subpageServicesMain {
-		main := m.pages[subpageServicesMain].(*modelServicesMain)
+		main := m.pages[subpageServicesMain].(*ModelServicesMain)
 		id, isServer, err := main.GetSelectedID()
 		if err != nil {
 			return // Can't transition
 		}
-		detailed := m.pages[subpageServicesDetailed].(*modelServiceDetailed)
+		detailed := m.pages[subpageServicesDetailed].(*ModelServiceDetailed)
 		detailed.IsServer = isServer
 		detailed.ID = id
 		detailed.Refresh()
@@ -64,7 +64,7 @@ func (m *modelServices) navDown() {
 	}
 }
 
-func (m *modelServices) navUp() {
+func (m *ModelServices) navUp() {
 	if m.subpage == subpageServicesDetailed {
 		m.subpage = subpageServicesMain
 	}

@@ -23,7 +23,7 @@ type logsKeyMap struct {
 	Clear key.Binding
 }
 
-type modelLogs struct {
+type ModelLogs struct {
 	table   table.Model
 	subpage LoggingPage
 	help    help.Model
@@ -49,7 +49,7 @@ func (km logsKeyMap) FullHelp() [][]key.Binding {
 	return append([][]key.Binding{{km.Clear}}, km.KeyMap.FullHelp()...)
 }
 
-func NewLogsModel() *modelLogs {
+func NewLogsModel() *ModelLogs {
 	columns := []table.Column{
 		{Title: "Time", Width: 10},
 		{Title: "Level", Width: 6},
@@ -57,7 +57,7 @@ func NewLogsModel() *modelLogs {
 		{Title: "Message", Width: 46},
 	}
 
-	return &modelLogs{
+	return &ModelLogs{
 		table:   NewTable(columns),
 		subpage: subpageLoggingMain,
 		help:    help.New(),
@@ -65,7 +65,7 @@ func NewLogsModel() *modelLogs {
 	}
 }
 
-func (m *modelLogs) Update(msg tea.Msg) tea.Cmd {
+func (m *ModelLogs) Update(msg tea.Msg) tea.Cmd {
 	var cmd tea.Cmd
 
 	switch m.subpage {
@@ -85,7 +85,7 @@ func (m *modelLogs) Update(msg tea.Msg) tea.Cmd {
 	return cmd
 }
 
-func (m *modelLogs) View() string {
+func (m *ModelLogs) View() string {
 	switch m.subpage {
 	case subpageLoggingMain:
 		return baseStyle.Render(m.table.View()) + "\n" + m.help.View(m.keymap)
@@ -95,7 +95,7 @@ func (m *modelLogs) View() string {
 	return "Invalid page"
 }
 
-func (m *modelLogs) Refresh() {
+func (m *ModelLogs) Refresh() {
 	switch m.subpage {
 	case subpageLoggingDetailed:
 		// m.model_detailed.Refresh()
@@ -104,7 +104,7 @@ func (m *modelLogs) Refresh() {
 	}
 }
 
-func (m *modelLogs) updateTable(msg tea.Msg) {
+func (m *ModelLogs) updateTable(msg tea.Msg) {
 	rows := []table.Row{}
 	logs := logging.GetLogging().Messages
 

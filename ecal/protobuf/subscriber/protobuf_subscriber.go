@@ -33,11 +33,11 @@ func New[U any, T Msg[U]]() (*Subscriber[U, T], error) {
 	return psub, err
 }
 
-func (p *Subscriber[U, T]) Receive(timeout time.Duration) (U, error) {
+func (s *Subscriber[U, T]) Receive(timeout time.Duration) (U, error) {
 	var u U
 	var msg any
 	select {
-	case msg = <-p.Messages:
+	case msg = <-s.Messages:
 	case <-time.After(timeout):
 		return u, fmt.Errorf("[Receive[%v]()]: %w", reflect.TypeFor[U](), subscriber.ErrRcvTimeout)
 	}

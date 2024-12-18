@@ -35,14 +35,14 @@ func (navKeys NavKeyMap) HandleMsg(msg tea.Msg) (cmd tea.Cmd, navigated bool) {
 	return nil, false
 }
 
-type topicType int
+type TopicType int
 
 const (
-	topicTypeSubscriber topicType = iota
+	topicTypeSubscriber TopicType = iota
 	topicTypePublisher
 )
 
-func getTopicMonitoring(topicType topicType) []monitoring.TopicMon {
+func getTopicMonitoring(topicType TopicType) []monitoring.TopicMon {
 	switch topicType {
 	case topicTypeSubscriber:
 		return monitoring.GetMonitoring(monitoring.MonitorSubscriber).Subscribers
@@ -52,7 +52,7 @@ func getTopicMonitoring(topicType topicType) []monitoring.TopicMon {
 	return nil
 }
 
-func getTopicFromID(topicType topicType, id string) (monitoring.TopicMon, error) {
+func getTopicFromID(topicType TopicType, id string) (monitoring.TopicMon, error) {
 	topicList := getTopicMonitoring(topicType)
 	for _, topic := range topicList {
 		if topic.TopicID == id {

@@ -8,15 +8,14 @@ linters:
     - forcetypeassert # If its wrong, we want to know
     - nlreturn # Not desired
     - godox # Yes. The project is in progress
+    - depguard # Not desired
     - gochecknoglobals
     - nonamedreturns
     - testpackage
     - varnamelen
     - wrapcheck
     - wsl
-    - depguard
     - cyclop
-    - revive
     - funlen
     - unparam
     - exhaustive

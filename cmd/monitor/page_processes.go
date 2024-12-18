@@ -11,14 +11,14 @@ const (
 	subpageProcDetailed
 )
 
-type modelProcesses struct {
+type ModelProcesses struct {
 	subpage ProcessesPage
 	pages   map[ProcessesPage]PageModel
 	NavKeys NavKeyMap
 }
 
-func NewProcessesModel() *modelProcesses {
-	return (&modelProcesses{
+func NewProcessesModel() *ModelProcesses {
+	return (&ModelProcesses{
 		subpage: subpageProcMain,
 		pages: map[ProcessesPage]PageModel{
 			subpageProcMain:     NewProcessesMainModel(),
@@ -28,42 +28,42 @@ func NewProcessesModel() *modelProcesses {
 	}).Init()
 }
 
-func (m *modelProcesses) Init() *modelProcesses {
+func (m *ModelProcesses) Init() *ModelProcesses {
 	m.NavKeys["esc"] = func() tea.Cmd { m.navUp(); return nil }
 	m.NavKeys["enter"] = func() tea.Cmd { m.navDown(); return nil }
 	return m
 }
 
-func (m *modelProcesses) Update(msg tea.Msg) tea.Cmd {
+func (m *ModelProcesses) Update(msg tea.Msg) tea.Cmd {
 	if cmd, navigated := m.NavKeys.HandleMsg(msg); navigated {
 		return cmd
 	}
 	return m.pages[m.subpage].Update(msg)
 }
 
-func (m *modelProcesses) View() string {
+func (m *ModelProcesses) View() string {
 	return m.pages[m.subpage].View()
 }
 
-func (m *modelProcesses) Refresh() {
+func (m *ModelProcesses) Refresh() {
 	m.pages[m.subpage].Refresh()
 }
 
-func (m *modelProcesses) navDown() {
+func (m *ModelProcesses) navDown() {
 	if m.subpage == subpageProcMain {
-		main := m.pages[subpageProcMain].(*modelProcessesMain)
+		main := m.pages[subpageProcMain].(*ModelProcessesMain)
 		pid, err := main.getSelectedPid()
 		if err != nil {
 			return // Can't transition
 		}
-		detailed := m.pages[subpageProcDetailed].(*modelProcessDetailed)
+		detailed := m.pages[subpageProcDetailed].(*ModelProcessDetailed)
 		detailed.Pid = pid
 		m.subpage = subpageProcDetailed
 		detailed.Refresh()
 	}
 }
 
-func (m *modelProcesses) navUp() {
+func (m *ModelProcesses) navUp() {
 	if m.subpage == subpageProcDetailed {
 		m.subpage = subpageProcMain
 	}

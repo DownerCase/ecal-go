@@ -66,7 +66,7 @@ func (p *Subscriber) Delete() {
 }
 
 func (p *Subscriber) Create(topic string, datatype DataType) error {
-	var descriptorPtr *C.char = nil
+	var descriptorPtr *C.char
 	if len(datatype.Descriptor) > 0 {
 		descriptorPtr = (*C.char)(unsafe.Pointer(&datatype.Descriptor[0]))
 	}

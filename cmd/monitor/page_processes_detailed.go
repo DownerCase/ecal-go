@@ -10,28 +10,28 @@ import (
 	"github.com/DownerCase/ecal-go/ecal/monitoring"
 )
 
-type modelProcessDetailed struct {
+type ModelProcessDetailed struct {
 	table table.Model
 	Pid   int32
 }
 
-func NewDetailedProcessModel() *modelProcessDetailed {
+func NewDetailedProcessModel() *ModelProcessDetailed {
 	cols := []table.Column{
 		{Title: "", Width: 10},
 		{Title: "", Width: 67},
 	}
 
-	return &modelProcessDetailed{
+	return &ModelProcessDetailed{
 		table: NewTable(cols),
 		Pid:   0,
 	}
 }
 
-func (m *modelProcessDetailed) Init() tea.Cmd {
+func (m *ModelProcessDetailed) Init() tea.Cmd {
 	return nil
 }
 
-func (m *modelProcessDetailed) Update(msg tea.Msg) tea.Cmd {
+func (m *ModelProcessDetailed) Update(msg tea.Msg) tea.Cmd {
 	var cmd tea.Cmd
 	if msg, ok := msg.(tea.KeyMsg); ok {
 		m.table, cmd = m.table.Update(msg)
@@ -39,15 +39,15 @@ func (m *modelProcessDetailed) Update(msg tea.Msg) tea.Cmd {
 	return cmd
 }
 
-func (m *modelProcessDetailed) View() string {
+func (m *ModelProcessDetailed) View() string {
 	return baseStyle.Render(m.table.View()) + "\n" + m.table.HelpView()
 }
 
-func (m *modelProcessDetailed) Refresh() {
+func (m *ModelProcessDetailed) Refresh() {
 	m.updateDetailedTable(nil)
 }
 
-func (m *modelProcessDetailed) updateDetailedTable(msg tea.Msg) {
+func (m *ModelProcessDetailed) updateDetailedTable(msg tea.Msg) {
 	mon := monitoring.GetMonitoring(monitoring.MonitorProcess)
 	var p monitoring.ProcessMon
 

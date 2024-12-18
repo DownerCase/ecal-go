@@ -20,9 +20,9 @@ func New() (*Subscriber, error) {
 	return &Subscriber{*sub}, err
 }
 
-func (p *Subscriber) Receive(timeout time.Duration) (string, error) {
+func (s *Subscriber) Receive(timeout time.Duration) (string, error) {
 	select {
-	case msg := <-p.Messages:
+	case msg := <-s.Messages:
 		return msg.(string), nil
 	case <-time.After(timeout):
 		return "", fmt.Errorf("[Receive]: %w", subscriber.ErrRcvTimeout)

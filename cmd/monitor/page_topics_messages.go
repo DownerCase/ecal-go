@@ -14,10 +14,10 @@ import (
 	"github.com/DownerCase/ecal-go/ecal/subscriber"
 )
 
-type modelTopicMessages struct {
+type ModelTopicMessages struct {
 	viewport     viewport.Model
 	mon          monitoring.TopicMon
-	topicType    topicType
+	topicType    TopicType
 	topicID      string
 	subscriber   *subscriber.Subscriber
 	msg          []byte
@@ -28,20 +28,20 @@ type msgMsg struct {
 	msg []byte
 }
 
-func NewTopicsMessagesModel() *modelTopicMessages {
+func NewTopicsMessagesModel() *ModelTopicMessages {
 	viewport := viewport.New(85, 10)
 	subscriber, _ := subscriber.New()
-	return &modelTopicMessages{
+	return &ModelTopicMessages{
 		viewport:   viewport,
 		subscriber: subscriber,
 	}
 }
 
-func (m *modelTopicMessages) Init() tea.Cmd {
+func (m *ModelTopicMessages) Init() tea.Cmd {
 	return m.receiveTicks()
 }
 
-func (m *modelTopicMessages) Update(msg tea.Msg) tea.Cmd {
+func (m *ModelTopicMessages) Update(msg tea.Msg) tea.Cmd {
 	var cmd tea.Cmd
 	switch msg := msg.(type) {
 	case msgMsg:
@@ -53,7 +53,7 @@ func (m *modelTopicMessages) Update(msg tea.Msg) tea.Cmd {
 	return cmd
 }
 
-func (m *modelTopicMessages) View() string {
+func (m *ModelTopicMessages) View() string {
 	s := strings.Builder{}
 	s.WriteString(highlight.Render(m.mon.TopicName))
 	s.WriteString(
@@ -70,11 +70,11 @@ func (m *modelTopicMessages) View() string {
 	return baseStyle.Render(s.String())
 }
 
-func (m *modelTopicMessages) Refresh() {
+func (m *ModelTopicMessages) Refresh() {
 	m.mon, _ = getTopicFromID(m.topicType, m.topicID)
 }
 
-func (m *modelTopicMessages) ShowTopic(topicID string, topicType topicType) {
+func (m *ModelTopicMessages) ShowTopic(topicID string, topicType TopicType) {
 	if m.topicID != topicID {
 		m.topicType = topicType
 		m.topicID = topicID
@@ -84,7 +84,7 @@ func (m *modelTopicMessages) ShowTopic(topicID string, topicType topicType) {
 	m.Refresh()
 }
 
-func (m *modelTopicMessages) createSubscriber() {
+func (m *ModelTopicMessages) createSubscriber() {
 	// (re)create subscriber with new topic type
 	m.subscriber.Delete()
 	subscriber, err := subscriber.New()
@@ -107,7 +107,7 @@ func (m *modelTopicMessages) createSubscriber() {
 	m.subscriber = subscriber
 }
 
-func (m *modelTopicMessages) receiveTicks() tea.Cmd {
+func (m *ModelTopicMessages) receiveTicks() tea.Cmd {
 	return func() tea.Msg {
 		if msg, ok := (<-m.subscriber.Messages).([]byte); ok {
 			return msgMsg{msg: msg}
