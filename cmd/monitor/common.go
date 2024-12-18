@@ -26,7 +26,7 @@ func NewTable(columns []table.Column) table.Model {
 
 type NavKeyMap map[string]func() tea.Cmd
 
-func (navKeys NavKeyMap) HandleMsg(msg tea.Msg) (cmd tea.Cmd, navigated bool) {
+func (navKeys NavKeyMap) HandleMsg(msg tea.Msg) (tea.Cmd, bool) {
 	if msg, ok := msg.(tea.KeyMsg); ok {
 		if f, ok := navKeys[msg.String()]; ok {
 			return f(), true

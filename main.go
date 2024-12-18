@@ -51,12 +51,6 @@ func main() {
 	}
 	defer pub.Delete() // Don't forget to delete the publisher when done!
 
-	person := &protos.Person{
-		Id: 0, Name: "John", Email: "john@doe.net",
-		Dog:   &protos.Dog{Name: "Pluto"},
-		House: &protos.House{Rooms: 5},
-	}
-
 	if pub.Create("person") != nil {
 		panic("Failed to Create protobuf publisher")
 	}
@@ -73,7 +67,21 @@ func main() {
 
 	go receiveMessages(sub)
 
-	for idx := range int32(100) {
+	sendMessages(100, stringPublisher, pub)
+}
+
+func sendMessages(
+	numToSend int32,
+	stringPublisher *string_publisher.Publisher,
+	pub *publisher.Publisher[*protos.Person],
+) {
+	person := &protos.Person{
+		Id: 0, Name: "John", Email: "john@doe.net",
+		Dog:   &protos.Dog{Name: "Pluto"},
+		House: &protos.House{Rooms: 5},
+	}
+
+	for idx := range numToSend {
 		// Check if program has been requested to stop
 		if !ecal.Ok() {
 			logging.Warn("eCAL.Ok() is false; shutting down")
@@ -90,7 +98,7 @@ func main() {
 			logging.Error(err)
 		}
 
-		if err = stringPublisher.Send("Message ", idx); err != nil {
+		if err := stringPublisher.Send("Message ", idx); err != nil {
 			logging.Error(err)
 		}
 

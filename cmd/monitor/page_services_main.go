@@ -48,7 +48,7 @@ func (m *ModelServicesMain) GetSelectedID() (string, bool, error) {
 	return row[0], row[1] == "S", nil
 }
 
-func (m *ModelServicesMain) updateTable(msg tea.Msg) (cmd tea.Cmd) {
+func (m *ModelServicesMain) updateTable(msg tea.Msg) tea.Cmd {
 	rows := []table.Row{}
 
 	mon := monitoring.GetMonitoring(monitoring.MonitorClient | monitoring.MonitorServer)
@@ -60,10 +60,12 @@ func (m *ModelServicesMain) updateTable(msg tea.Msg) (cmd tea.Cmd) {
 		rows = append(rows, serverToRow(server))
 	}
 
+	var cmd tea.Cmd
+
 	m.table.SetRows(rows)
 	m.table, cmd = m.table.Update(msg)
 
-	return
+	return cmd
 }
 
 func serviceToRow(service monitoring.ServiceBase) table.Row {

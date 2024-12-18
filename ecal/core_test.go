@@ -1,13 +1,15 @@
-package ecal
+package ecal_test
 
 import (
 	"testing"
+
+	"github.com/DownerCase/ecal-go/ecal"
 )
 
 func TestVersionString(t *testing.T) {
 	t.Parallel()
 
-	version := GetVersionString()
+	version := ecal.GetVersionString()
 	if version == "" {
 		t.Error("GetVersionString returned empty string")
 	}
@@ -18,7 +20,7 @@ func TestVersionString(t *testing.T) {
 func TestVersionDateString(t *testing.T) {
 	t.Parallel()
 
-	buildDate := GetVersionDateString()
+	buildDate := ecal.GetVersionDateString()
 	if buildDate == "" {
 		t.Error("GetVersionDateString returned empty string")
 	}
@@ -29,16 +31,16 @@ func TestVersionDateString(t *testing.T) {
 func TestGetVersion(t *testing.T) {
 	t.Parallel()
 
-	version := GetVersion()
+	version := ecal.GetVersion()
 	t.Log(version)
 }
 
 func TestInitializeFinalize(t *testing.T) {
-	if IsInitialized() {
+	if ecal.IsInitialized() {
 		t.Error("eCAL pre-initialized...")
 	}
 
-	initResult := Initialize(NewConfig(), "go_test", CDefault)
+	initResult := ecal.Initialize(ecal.NewConfig(), "go_test", ecal.CDefault)
 	if initResult == 1 {
 		t.Fatal("eCAL already initialized")
 	} else if initResult != 0 {
@@ -46,44 +48,44 @@ func TestInitializeFinalize(t *testing.T) {
 	}
 
 	// Test double initialization
-	secondInit := Initialize(NewConfig(), "go_test2", CPublisher)
+	secondInit := ecal.Initialize(ecal.NewConfig(), "go_test2", ecal.CPublisher)
 	if secondInit != 1 {
 		t.Errorf("Second initialize returned %v", secondInit)
 	}
 
-	if !IsInitialized() {
+	if !ecal.IsInitialized() {
 		t.Error("IsInitialized return false, expected true")
 	}
 
-	if !IsComponentInitialized(CPublisher) {
+	if !ecal.IsComponentInitialized(ecal.CPublisher) {
 		t.Error("Expected publisheCPublisher to be initialised")
 	}
 
-	if !SetUnitName("go_test_set_name") {
+	if !ecal.SetUnitName("go_test_set_name") {
 		t.Error("Failed to set unit name")
 	}
 
-	if !Ok() {
+	if !ecal.Ok() {
 		t.Error("eCAL not Ok")
 	}
 
-	finalizeResult := Finalize()
+	finalizeResult := ecal.Finalize()
 	if finalizeResult != 0 {
 		t.Errorf("Failed to finalize with error %v", finalizeResult)
 	}
 
-	secondFinalize := Finalize()
+	secondFinalize := ecal.Finalize()
 	// We've called Initialize twice so 2 calls to Finalize are needed
 	if secondFinalize != 0 {
 		t.Errorf("Second finalize returned %v", secondFinalize)
 	}
 
-	thirdFinalize := Finalize()
+	thirdFinalize := ecal.Finalize()
 	if thirdFinalize != 1 {
 		t.Errorf("Expected Finalize to already be done, recevied %v", thirdFinalize)
 	}
 
-	if Ok() {
+	if ecal.Ok() {
 		t.Error("eCAL Ok after being finalized")
 	}
 }

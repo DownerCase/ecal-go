@@ -1,4 +1,4 @@
-package monitoring
+package monitoring_test
 
 import (
 	"os"
@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/DownerCase/ecal-go/ecal"
+	"github.com/DownerCase/ecal-go/ecal/monitoring"
 	"github.com/DownerCase/ecal-go/ecal/registration"
 	"github.com/DownerCase/ecal-go/internal/ecaltest"
 	"github.com/DownerCase/ecal-go/internal/ecaltest/regtest"
@@ -13,7 +14,7 @@ import (
 	testutilsubscriber "github.com/DownerCase/ecal-go/internal/ecaltest/testutil_subscriber"
 )
 
-func expectTopicPresent(t *testing.T, ts []TopicMon, topicName string) {
+func expectTopicPresent(t *testing.T, ts []monitoring.TopicMon, topicName string) {
 	t.Helper()
 
 	if len(ts) == 0 {
@@ -41,7 +42,7 @@ func TestPublisherMonitoring(t *testing.T) {
 	pub := testutilpublisher.NewGenericPublisher(t, topic)
 	defer pub.Delete()
 
-	mon := GetMonitoring(MonitorHost)
+	mon := monitoring.GetMonitoring(monitoring.MonitorHost)
 	if len(mon.Publishers) > 0 {
 		t.Error("Monitoring returned publishers when not requested")
 	}
@@ -50,11 +51,11 @@ func TestPublisherMonitoring(t *testing.T) {
 	regtest.ExpectNew(t, topic, channel)
 
 	// Get its info
-	mon = GetMonitoring(MonitorPublisher)
+	mon = monitoring.GetMonitoring(monitoring.MonitorPublisher)
 	expectTopicPresent(t, mon.Publishers, topic)
 }
 
-func expectPid(t *testing.T, pid int, procs []ProcessMon) {
+func expectPid(t *testing.T, pid int, procs []monitoring.ProcessMon) {
 	t.Helper()
 
 	hostname, err := os.Hostname()
@@ -87,7 +88,7 @@ func TestSubscriberMonitoring(t *testing.T) {
 	sub := testutilsubscriber.NewGenericSubscriber(t, topic)
 	defer sub.Delete()
 
-	mon := GetMonitoring(MonitorHost)
+	mon := monitoring.GetMonitoring(monitoring.MonitorHost)
 	if len(mon.Publishers) > 0 {
 		t.Error("Monitoring returned publishers when not requested")
 	}
@@ -96,7 +97,7 @@ func TestSubscriberMonitoring(t *testing.T) {
 	regtest.ExpectNew(t, topic, channel)
 
 	// Get its info
-	mon = GetMonitoring(MonitorSubscriber)
+	mon = monitoring.GetMonitoring(monitoring.MonitorSubscriber)
 	expectTopicPresent(t, mon.Subscribers, topic)
 }
 
@@ -109,7 +110,7 @@ func TestProcessMonitoring(t *testing.T) {
 	time.Sleep(1500 * time.Millisecond) // Propagation delay...
 
 	// When: Requesting the processes
-	mon := GetMonitoring(MonitorProcess)
+	mon := monitoring.GetMonitoring(monitoring.MonitorProcess)
 
 	// Expect: This program
 	expectPid(t, os.Getpid(), mon.Processes)

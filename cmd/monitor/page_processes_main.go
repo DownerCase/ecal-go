@@ -51,7 +51,7 @@ func (m *ModelProcessesMain) getSelectedPid() (int32, error) {
 	return int32(pid), err
 }
 
-func (m *ModelProcessesMain) updateTable(msg tea.Msg) (cmd tea.Cmd) {
+func (m *ModelProcessesMain) updateTable(msg tea.Msg) tea.Cmd {
 	rows := []table.Row{}
 
 	mon := monitoring.GetMonitoring(monitoring.MonitorProcess)
@@ -59,10 +59,12 @@ func (m *ModelProcessesMain) updateTable(msg tea.Msg) (cmd tea.Cmd) {
 		rows = append(rows, procToRow(proc))
 	}
 
+	var cmd tea.Cmd
+
 	m.table.SetRows(rows)
 	m.table, cmd = m.table.Update(msg)
 
-	return
+	return cmd
 }
 
 func procToRow(proc monitoring.ProcessMon) table.Row {
