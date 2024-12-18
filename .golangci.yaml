@@ -17,7 +17,6 @@ linters:
     - wsl
     - cyclop
     - funlen
-    - exhaustive
     - inamedparam
 
 linters-settings:

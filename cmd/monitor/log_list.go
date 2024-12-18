@@ -99,7 +99,7 @@ func (m *ModelLogs) Refresh() {
 	switch m.subpage {
 	case subpageLoggingDetailed:
 		// m.model_detailed.Refresh()
-	default:
+	case subpageLoggingMain:
 		m.updateTable(nil)
 	}
 }
