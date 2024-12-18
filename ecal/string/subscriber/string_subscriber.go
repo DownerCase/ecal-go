@@ -29,8 +29,8 @@ func (p *Subscriber) Receive(timeout time.Duration) (string, error) {
 	}
 }
 
-func deserialize(data unsafe.Pointer, len int) any {
-	return C.GoStringN((*C.char)(data), C.int(len))
+func deserialize(data unsafe.Pointer, dataLen int) any {
+	return C.GoStringN((*C.char)(data), C.int(dataLen))
 }
 
 func (s *Subscriber) Create(topic string) error {

@@ -10,7 +10,6 @@ linters:
     - godox # Yes. The project is in progress
     - gochecknoglobals
     - nonamedreturns
-    - predeclared
     - testpackage
     - thelper
     - varnamelen
