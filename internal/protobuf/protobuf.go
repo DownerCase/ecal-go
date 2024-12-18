@@ -2,6 +2,7 @@ package protobuf
 
 import (
 	"log"
+	"slices"
 
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protodesc"
@@ -9,13 +10,11 @@ import (
 	"google.golang.org/protobuf/types/descriptorpb"
 )
 
-func hasFile(fset *descriptorpb.FileDescriptorSet, fname string) bool {
-	for _, file := range fset.GetFile() {
-		if file.GetName() == fname {
-			return true
-		}
-	}
-	return false
+func hasFile(fsetFile []*descriptorpb.FileDescriptorProto, fname string) bool {
+	return slices.ContainsFunc(
+		fsetFile,
+		func(f *descriptorpb.FileDescriptorProto) bool { return f.GetName() == fname },
+	)
 }
 
 func getFileDescriptor(desc protoreflect.MessageDescriptor, fset *descriptorpb.FileDescriptorSet) {
@@ -26,6 +25,7 @@ func getFileDescriptor(desc protoreflect.MessageDescriptor, fset *descriptorpb.F
 	fdesc := desc.ParentFile()
 	imports := fdesc.Imports()
 
+	// TODO: Iterate services after the enums
 	for i := range imports.Len() {
 		sfdesc := imports.Get(i)
 
@@ -36,21 +36,19 @@ func getFileDescriptor(desc protoreflect.MessageDescriptor, fset *descriptorpb.F
 
 		// Iterate enums
 		if sfdesc.Enums().Len() > 0 {
-			edesc := sfdesc.Enums().Get(0)
-			efdesc := edesc.ParentFile()
-			if !hasFile(fset, efdesc.Path()) {
+			efdesc := sfdesc.Enums().Get(0).ParentFile()
+			if !hasFile(fset.GetFile(), efdesc.Path()) {
 				// Add the file to the set
 				fset.File = append(fset.File, protodesc.ToFileDescriptorProto(efdesc))
 			}
 		}
-
-		// TODO: Iterate services
 	}
 
-	if hasFile(fset, fdesc.Path()) {
+	if hasFile(fset.GetFile(), fdesc.Path()) {
 		// File already added to descriptor set, continue
 		return
 	}
+
 	fset.File = append(fset.File, protodesc.ToFileDescriptorProto(fdesc))
 
 	// Add fields
@@ -63,11 +61,13 @@ func GetProtoMessageDescription(msg proto.Message) []byte {
 	desc := msg.ProtoReflect().Descriptor()
 	pset := descriptorpb.FileDescriptorSet{}
 	getFileDescriptor(desc, &pset)
+
 	bytes, err := proto.Marshal(&pset)
 	if err != nil {
 		log.Println("WARN: GetProtoMessageDescription failed to marshal file descriptor set", err)
 		return nil
 	}
+
 	return bytes
 }
 

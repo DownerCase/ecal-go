@@ -3,31 +3,18 @@ linters:
   disable:
     - exportloopref # Deprecated
     - execinquery # Deprecated
+    - gomnd # Deprecated name of mnd
     - exhaustruct # Very noisy, hard to disable when want zero values
     - forcetypeassert # If its wrong, we want to know
     - nlreturn # Not desired
-    - gci
-    - gocritic
-    - godox
-    - gomnd
+    - godox # Yes. The project is in progress
+    - depguard # Not desired
+    - varnamelen # Not desired
     - gochecknoglobals
-    - gosec
-    - mnd
     - nonamedreturns
-    - paralleltest
-    - predeclared
     - testpackage
-    - thelper
-    - varnamelen
-    - wrapcheck
-    - wsl
-    - depguard
     - cyclop
-    - revive
     - funlen
-    - unparam
-    - exhaustive
-    - inamedparam
 
 linters-settings:
   ireturn:
@@ -37,3 +24,15 @@ linters-settings:
       - stdlib
       - empty
       - generic
+  gci:
+    sections:
+      - standard
+      - default
+      - localmodule
+  mnd:
+    ignored-files:
+      - 'monitor/.*.go' # UI code has many magic layout numbers...
+      - 'main.go' # Main file allowed, as it is example code
+  paralleltest:
+    # eCAL uses global state, any test using Initialize can't be run in parallel
+    ignore-missing: true

@@ -66,7 +66,7 @@ func (p *Subscriber) Delete() {
 }
 
 func (p *Subscriber) Create(topic string, datatype DataType) error {
-	var descriptorPtr *C.char = nil
+	var descriptorPtr *C.char
 	if len(datatype.Descriptor) > 0 {
 		descriptorPtr = (*C.char)(unsafe.Pointer(&datatype.Descriptor[0]))
 	}
@@ -94,8 +94,8 @@ func (p *Subscriber) Receive(timeout time.Duration) ([]byte, error) {
 }
 
 // Deserialize straight from the eCAL internal buffer to our Go []byte
-func deserializer(data unsafe.Pointer, len int) any {
-	return C.GoBytes(data, C.int(len))
+func deserializer(data unsafe.Pointer, dataLen int) any {
+	return C.GoBytes(data, C.int(dataLen))
 }
 
 // This function is called by the C code whenever a new message is received
@@ -103,11 +103,11 @@ func deserializer(data unsafe.Pointer, len int) any {
 // If the subscriber Receive is not waiting the incoming message will be dropped
 //
 //export goReceiveCallback
-func goReceiveCallback(handle C.uintptr_t, data unsafe.Pointer, len C.long) {
+func goReceiveCallback(handle C.uintptr_t, data unsafe.Pointer, dataLen C.long) {
 	h := cgo.Handle(handle)
 	sub := h.Value().(*Subscriber)
 	select {
-	case sub.Messages <- sub.Deserialize(data, int(len)):
+	case sub.Messages <- sub.Deserialize(data, int(dataLen)):
 	default:
 	}
 }

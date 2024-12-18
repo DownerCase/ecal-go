@@ -12,6 +12,10 @@ type Publisher struct {
 
 func New() (*Publisher, error) {
 	pub, err := publisher.New()
+	if err != nil {
+		err = fmt.Errorf("string Publisher.New(): %w", err)
+	}
+
 	return &Publisher{*pub}, err
 }
 
@@ -28,10 +32,15 @@ func (p *Publisher) Sendf(format string, a ...any) error {
 }
 
 func (p *Publisher) Create(topic string) error {
-	return p.Publisher.Create(topic,
+	err := p.Publisher.Create(topic,
 		publisher.DataType{
 			Name:     "std::string",
 			Encoding: "base",
 		},
 	)
+	if err != nil {
+		err = fmt.Errorf("string Publisher.Create(): %w", err)
+	}
+
+	return err
 }

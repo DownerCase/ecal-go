@@ -4,16 +4,17 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"github.com/DownerCase/ecal-go/ecal/monitoring"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
+
+	"github.com/DownerCase/ecal-go/ecal/monitoring"
 )
 
-type modelProcessesMain struct {
+type ModelProcessesMain struct {
 	table table.Model
 }
 
-func NewProcessesMainModel() *modelProcessesMain {
+func NewProcessesMainModel() *ModelProcessesMain {
 	columns := []table.Column{
 		{Title: "PID", Width: 7},
 		{Title: "Name", Width: 33},
@@ -22,40 +23,45 @@ func NewProcessesMainModel() *modelProcessesMain {
 		{Title: "Tick", Width: 4},
 	}
 
-	return &modelProcessesMain{
+	return &ModelProcessesMain{
 		table: NewTable(columns),
 	}
 }
 
-func (m *modelProcessesMain) Update(msg tea.Msg) tea.Cmd {
+func (m *ModelProcessesMain) Update(msg tea.Msg) tea.Cmd {
 	return m.updateTable(msg)
 }
 
-func (m *modelProcessesMain) View() string {
+func (m *ModelProcessesMain) View() string {
 	return baseStyle.Render(m.table.View()) + "\n" + m.table.HelpView()
 }
 
-func (m *modelProcessesMain) Refresh() {
+func (m *ModelProcessesMain) Refresh() {
 	m.updateTable(nil)
 }
 
-func (m *modelProcessesMain) getSelectedPid() (int32, error) {
+func (m *ModelProcessesMain) getSelectedPid() (int32, error) {
 	row := m.table.SelectedRow()
 	if row == nil {
 		return 0, errEmptyTable
 	}
-	pid, err := strconv.ParseInt(row[0], 10, 64)
+
+	pid, err := strconv.ParseInt(row[0], 10, 32)
+
 	return int32(pid), err
 }
 
-func (m *modelProcessesMain) updateTable(msg tea.Msg) (cmd tea.Cmd) {
+func (m *ModelProcessesMain) updateTable(msg tea.Msg) (cmd tea.Cmd) {
 	rows := []table.Row{}
+
 	mon := monitoring.GetMonitoring(monitoring.MonitorProcess)
 	for _, proc := range mon.Processes {
 		rows = append(rows, procToRow(proc))
 	}
+
 	m.table.SetRows(rows)
 	m.table, cmd = m.table.Update(msg)
+
 	return
 }
 

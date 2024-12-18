@@ -8,51 +8,51 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-type modelTopicDetailed struct {
+type ModelTopicDetailed struct {
 	table     table.Model
 	id        string    `exhaustruct:"optional"`
-	topicType topicType `exhaustruct:"optional"`
+	topicType TopicType `exhaustruct:"optional"`
 }
 
-func NewDetailedModel() *modelTopicDetailed {
+func NewDetailedModel() *ModelTopicDetailed {
 	cols := []table.Column{
 		{Title: "", Width: 14},
 		{Title: "", Width: 67},
 	}
 
-	return &modelTopicDetailed{
+	return &ModelTopicDetailed{
 		table: NewTable(cols),
 	}
 }
 
-func (m *modelTopicDetailed) ShowTopic(topicID string, topicType topicType) {
+func (m *ModelTopicDetailed) ShowTopic(topicID string, topicType TopicType) {
 	m.id = topicID
 	m.topicType = topicType
 	m.updateDetailedTable(nil)
 }
 
-func (m *modelTopicDetailed) Init() tea.Cmd {
+func (m *ModelTopicDetailed) Init() tea.Cmd {
 	return nil
 }
 
-func (m *modelTopicDetailed) Update(msg tea.Msg) tea.Cmd {
+func (m *ModelTopicDetailed) Update(msg tea.Msg) tea.Cmd {
 	var cmd tea.Cmd
-	switch msg := msg.(type) {
-	case tea.KeyMsg:
+	if msg, ok := msg.(tea.KeyMsg); ok {
 		m.table, cmd = m.table.Update(msg)
 	}
+
 	return cmd
 }
 
-func (m *modelTopicDetailed) View() string {
+func (m *ModelTopicDetailed) View() string {
 	return baseStyle.Render(m.table.View()) + "\n" + m.table.HelpView()
 }
 
-func (m *modelTopicDetailed) Refresh() {
+func (m *ModelTopicDetailed) Refresh() {
 	m.updateDetailedTable(nil)
 }
 
-func (m *modelTopicDetailed) updateDetailedTable(msg tea.Msg) {
+func (m *ModelTopicDetailed) updateDetailedTable(msg tea.Msg) {
 	t, _ := getTopicFromID(m.topicType, m.id)
 	m.table.Columns()[0].Title = t.Direction
 	m.table.Columns()[1].Title = t.TopicName

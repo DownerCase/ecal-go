@@ -4,12 +4,12 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/DownerCase/ecal-go/ecal/monitoring"
-
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
+
+	"github.com/DownerCase/ecal-go/ecal/monitoring"
 )
 
 type topicsKeyMap struct {
@@ -63,14 +63,14 @@ func (km topicsKeyMap) FullHelp() [][]key.Binding {
 	return append([][]key.Binding{{km.FilterAll, km.FilterPub, km.FilterSub}}, km.KeyMap.FullHelp()...)
 }
 
-type modelTopicsMain struct {
+type ModelTopicsMain struct {
 	table  table.Model
 	keymap topicsKeyMap
 	help   help.Model
 	filter entityFilter
 }
 
-func NewTopicsMainModel() *modelTopicsMain {
+func NewTopicsMainModel() *ModelTopicsMain {
 	cols := []table.Column{
 		{Title: "ID", Width: 0}, // Zero width ID column to use as identifier
 		{Title: "D", Width: 1},
@@ -82,18 +82,18 @@ func NewTopicsMainModel() *modelTopicsMain {
 		{Title: "Tick", Width: 4},
 	}
 
-	return &modelTopicsMain{
+	return &ModelTopicsMain{
 		table:  NewTable(cols),
 		keymap: newTopicsKeyMap(),
 		help:   help.New(),
 	}
 }
 
-func (m *modelTopicsMain) Refresh() {
+func (m *ModelTopicsMain) Refresh() {
 	m.updateTopicsTable(nil)
 }
 
-func (m *modelTopicsMain) Update(msg tea.Msg) tea.Cmd {
+func (m *ModelTopicsMain) Update(msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch {
@@ -114,31 +114,36 @@ func (m *modelTopicsMain) Update(msg tea.Msg) tea.Cmd {
 	default:
 		m.updateTopicsTable(msg)
 	}
+
 	return nil
 }
 
-func (m *modelTopicsMain) View() string {
+func (m *ModelTopicsMain) View() string {
 	return baseStyle.Render(m.table.View()) + "\n" + m.help.View(m.keymap)
 }
 
-func (m *modelTopicsMain) GetSelectedID() (string, topicType, error) {
+func (m *ModelTopicsMain) GetSelectedID() (string, TopicType, error) {
 	row := m.table.SelectedRow()
 	if row == nil {
 		return "", 0, errEmptyTable
 	}
-	var topicType topicType
+
+	var topicType TopicType
+
 	switch row[1] {
 	case "S":
 		topicType = topicTypeSubscriber
 	case "P":
 		topicType = topicTypePublisher
 	}
+
 	return row[0], topicType, nil
 }
 
-func (m *modelTopicsMain) updateTopicsTable(msg tea.Msg) {
+func (m *ModelTopicsMain) updateTopicsTable(msg tea.Msg) {
 	rows := []table.Row{}
 	entities := monitoring.MonitorNone
+
 	switch m.filter {
 	case entityAll:
 		entities = monitoring.MonitorPublisher | monitoring.MonitorSubscriber
@@ -147,13 +152,16 @@ func (m *modelTopicsMain) updateTopicsTable(msg tea.Msg) {
 	case entityPublisher:
 		entities = monitoring.MonitorPublisher
 	}
+
 	mon := monitoring.GetMonitoring(entities)
 	for _, topic := range mon.Publishers {
 		rows = append(rows, topicToRow(topic))
 	}
+
 	for _, topic := range mon.Subscribers {
 		rows = append(rows, topicToRow(topic))
 	}
+
 	m.table.SetRows(rows)
 	m.table, _ = m.table.Update(msg)
 }

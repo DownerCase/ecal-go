@@ -3,16 +3,17 @@ package main
 import (
 	"strconv"
 
-	"github.com/DownerCase/ecal-go/ecal/monitoring"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
+
+	"github.com/DownerCase/ecal-go/ecal/monitoring"
 )
 
-type modelHosts struct {
+type ModelHosts struct {
 	table table.Model
 }
 
-func NewHostsModel() *modelHosts {
+func NewHostsModel() *ModelHosts {
 	columns := []table.Column{
 		{Title: "Host", Width: 28},
 		{Title: "Processes", Width: 9},
@@ -22,21 +23,21 @@ func NewHostsModel() *modelHosts {
 		{Title: "Clients", Width: 7},
 	}
 
-	return &modelHosts{
+	return &ModelHosts{
 		table: NewTable(columns),
 	}
 }
 
-func (m *modelHosts) Update(msg tea.Msg) tea.Cmd {
-	m.updateTable(nil)
+func (m *ModelHosts) Update(msg tea.Msg) tea.Cmd {
+	m.updateTable(msg)
 	return nil
 }
 
-func (m *modelHosts) View() string {
+func (m *ModelHosts) View() string {
 	return baseStyle.Render(m.table.View()) + "\n" + m.table.HelpView()
 }
 
-func (m *modelHosts) Refresh() {
+func (m *ModelHosts) Refresh() {
 	m.updateTable(nil)
 }
 
@@ -48,33 +49,37 @@ type hostInfo struct {
 	Processes   int
 }
 
-func (m *modelHosts) updateTable(msg tea.Msg) {
+func (m *ModelHosts) updateTable(msg tea.Msg) {
 	mon := monitoring.GetMonitoring(monitoring.MonitorAll)
 
 	hosts := make(map[string]hostInfo)
 	for _, pub := range mon.Publishers {
 		host := hosts[pub.HostName]
-		host.Publishers += 1
+		host.Publishers++
 		hosts[pub.HostName] = host
 	}
+
 	for _, sub := range mon.Subscribers {
 		host := hosts[sub.HostName]
-		host.Subscribers += 1
+		host.Subscribers++
 		hosts[sub.HostName] = host
 	}
+
 	for _, client := range mon.Clients {
 		host := hosts[client.HostName]
-		host.Clients += 1
+		host.Clients++
 		hosts[client.HostName] = host
 	}
+
 	for _, server := range mon.Servers {
 		host := hosts[server.HostName]
-		host.Servers += 1
+		host.Servers++
 		hosts[server.HostName] = host
 	}
+
 	for _, proc := range mon.Processes {
 		host := hosts[proc.HostName]
-		host.Processes += 1
+		host.Processes++
 		hosts[proc.HostName] = host
 	}
 
@@ -93,5 +98,6 @@ func hostsToRows(hosts map[string]hostInfo) (rows []table.Row) {
 			strconv.FormatInt(int64(hostInfo.Clients), 10),
 		})
 	}
+
 	return
 }

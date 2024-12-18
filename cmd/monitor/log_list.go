@@ -3,11 +3,12 @@ package main
 import (
 	"time"
 
-	"github.com/DownerCase/ecal-go/ecal/logging"
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
+
+	"github.com/DownerCase/ecal-go/ecal/logging"
 )
 
 type LoggingPage int
@@ -22,7 +23,7 @@ type logsKeyMap struct {
 	Clear key.Binding
 }
 
-type modelLogs struct {
+type ModelLogs struct {
 	table   table.Model
 	subpage LoggingPage
 	help    help.Model
@@ -48,7 +49,7 @@ func (km logsKeyMap) FullHelp() [][]key.Binding {
 	return append([][]key.Binding{{km.Clear}}, km.KeyMap.FullHelp()...)
 }
 
-func NewLogsModel() *modelLogs {
+func NewLogsModel() *ModelLogs {
 	columns := []table.Column{
 		{Title: "Time", Width: 10},
 		{Title: "Level", Width: 6},
@@ -56,7 +57,7 @@ func NewLogsModel() *modelLogs {
 		{Title: "Message", Width: 46},
 	}
 
-	return &modelLogs{
+	return &ModelLogs{
 		table:   NewTable(columns),
 		subpage: subpageLoggingMain,
 		help:    help.New(),
@@ -64,13 +65,12 @@ func NewLogsModel() *modelLogs {
 	}
 }
 
-func (m *modelLogs) Update(msg tea.Msg) tea.Cmd {
+func (m *ModelLogs) Update(msg tea.Msg) tea.Cmd {
 	var cmd tea.Cmd
 
 	switch m.subpage {
 	case subpageLoggingMain:
-		switch msg := msg.(type) {
-		case tea.KeyMsg:
+		if msg, ok := msg.(tea.KeyMsg); ok {
 			switch {
 			case key.Matches(msg, m.keymap.Clear):
 				m.table.SetRows([]table.Row{})
@@ -80,37 +80,38 @@ func (m *modelLogs) Update(msg tea.Msg) tea.Cmd {
 			}
 		}
 	case subpageLoggingDetailed:
-		// cmd = m.model_detailed.Update(msg)
 	}
+
 	return cmd
 }
 
-func (m *modelLogs) View() string {
+func (m *ModelLogs) View() string {
 	switch m.subpage {
 	case subpageLoggingMain:
 		return baseStyle.Render(m.table.View()) + "\n" + m.help.View(m.keymap)
 	case subpageLoggingDetailed:
-		// return m.model_detailed.View()
 	}
+
 	return "Invalid page"
 }
 
-func (m *modelLogs) Refresh() {
+func (m *ModelLogs) Refresh() {
 	switch m.subpage {
 	case subpageLoggingDetailed:
 		// m.model_detailed.Refresh()
-	default:
+	case subpageLoggingMain:
 		m.updateTable(nil)
 	}
 }
 
-func (m *modelLogs) updateTable(msg tea.Msg) {
+func (m *ModelLogs) updateTable(msg tea.Msg) {
 	rows := []table.Row{}
 	logs := logging.GetLogging().Messages
 
 	for _, log := range logs {
 		rows = append(rows, logToRow(log))
 	}
+
 	m.table.SetRows(append(m.table.Rows(), rows...))
 	m.table, _ = m.table.Update(msg)
 }

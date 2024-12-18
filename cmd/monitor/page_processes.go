@@ -11,14 +11,14 @@ const (
 	subpageProcDetailed
 )
 
-type modelProcesses struct {
+type ModelProcesses struct {
 	subpage ProcessesPage
 	pages   map[ProcessesPage]PageModel
 	NavKeys NavKeyMap
 }
 
-func NewProcessesModel() *modelProcesses {
-	return (&modelProcesses{
+func NewProcessesModel() *ModelProcesses {
+	return (&ModelProcesses{
 		subpage: subpageProcMain,
 		pages: map[ProcessesPage]PageModel{
 			subpageProcMain:     NewProcessesMainModel(),
@@ -28,45 +28,52 @@ func NewProcessesModel() *modelProcesses {
 	}).Init()
 }
 
-func (m *modelProcesses) Init() *modelProcesses {
-	m.NavKeys["esc"] = func() tea.Cmd { m.navUp(); return nil }
-	m.NavKeys["enter"] = func() tea.Cmd { m.navDown(); return nil }
+func (m *ModelProcesses) Init() *ModelProcesses {
+	m.NavKeys["esc"] = func() tea.Cmd { return m.navUp() }
+	m.NavKeys["enter"] = func() tea.Cmd { return m.navDown() }
+
 	return m
 }
 
-func (m *modelProcesses) Update(msg tea.Msg) tea.Cmd {
+func (m *ModelProcesses) Update(msg tea.Msg) tea.Cmd {
 	if cmd, navigated := m.NavKeys.HandleMsg(msg); navigated {
 		return cmd
 	}
+
 	return m.pages[m.subpage].Update(msg)
 }
 
-func (m *modelProcesses) View() string {
+func (m *ModelProcesses) View() string {
 	return m.pages[m.subpage].View()
 }
 
-func (m *modelProcesses) Refresh() {
+func (m *ModelProcesses) Refresh() {
 	m.pages[m.subpage].Refresh()
 }
 
-func (m *modelProcesses) navDown() {
-	switch m.subpage {
-	case subpageProcMain:
-		main := m.pages[subpageProcMain].(*modelProcessesMain)
+func (m *ModelProcesses) navDown() tea.Cmd {
+	if m.subpage == subpageProcMain {
+		main := m.pages[subpageProcMain].(*ModelProcessesMain)
+
 		pid, err := main.getSelectedPid()
 		if err != nil {
-			return // Can't transition
+			return nil // Can't transition
 		}
-		detailed := m.pages[subpageProcDetailed].(*modelProcessDetailed)
+
+		detailed := m.pages[subpageProcDetailed].(*ModelProcessDetailed)
 		detailed.Pid = pid
 		m.subpage = subpageProcDetailed
+
 		detailed.Refresh()
 	}
+
+	return nil
 }
 
-func (m *modelProcesses) navUp() {
-	switch m.subpage {
-	case subpageProcDetailed:
+func (m *ModelProcesses) navUp() tea.Cmd {
+	if m.subpage == subpageProcDetailed {
 		m.subpage = subpageProcMain
 	}
+
+	return nil
 }

@@ -4,9 +4,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/DownerCase/ecal-go/ecal/monitoring"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
+
+	"github.com/DownerCase/ecal-go/ecal/monitoring"
 )
 
 var (
@@ -26,38 +27,40 @@ func NewTable(columns []table.Column) table.Model {
 type NavKeyMap map[string]func() tea.Cmd
 
 func (navKeys NavKeyMap) HandleMsg(msg tea.Msg) (cmd tea.Cmd, navigated bool) {
-	switch msg := msg.(type) {
-	case tea.KeyMsg:
+	if msg, ok := msg.(tea.KeyMsg); ok {
 		if f, ok := navKeys[msg.String()]; ok {
 			return f(), true
 		}
 	}
+
 	return nil, false
 }
 
-type topicType int
+type TopicType int
 
 const (
-	topicTypeSubscriber topicType = iota
+	topicTypeSubscriber TopicType = iota
 	topicTypePublisher
 )
 
-func getTopicMonitoring(topicType topicType) []monitoring.TopicMon {
+func getTopicMonitoring(topicType TopicType) []monitoring.TopicMon {
 	switch topicType {
 	case topicTypeSubscriber:
 		return monitoring.GetMonitoring(monitoring.MonitorSubscriber).Subscribers
 	case topicTypePublisher:
 		return monitoring.GetMonitoring(monitoring.MonitorPublisher).Publishers
 	}
+
 	return nil
 }
 
-func getTopicFromID(topicType topicType, id string) (monitoring.TopicMon, error) {
+func getTopicFromID(topicType TopicType, id string) (monitoring.TopicMon, error) {
 	topicList := getTopicMonitoring(topicType)
 	for _, topic := range topicList {
 		if topic.TopicID == id {
 			return topic, nil
 		}
 	}
+
 	return monitoring.TopicMon{}, fmt.Errorf("[getTopicFromId]: %w", errNoTopic)
 }

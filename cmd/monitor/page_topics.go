@@ -12,14 +12,14 @@ const (
 	subpageTopicMessages // TODO: Not implemented
 )
 
-type modelTopics struct {
+type ModelTopics struct {
 	subpage TopicsPage
 	pages   map[TopicsPage]PageModel
 	NavKeys NavKeyMap
 }
 
-func NewTopicsModel() *modelTopics {
-	return (&modelTopics{
+func NewTopicsModel() *ModelTopics {
+	return (&ModelTopics{
 		subpage: subpageTopicMain,
 		pages: map[TopicsPage]PageModel{
 			subpageTopicMain:     NewTopicsMainModel(),
@@ -30,60 +30,69 @@ func NewTopicsModel() *modelTopics {
 	}).Init()
 }
 
-func (m *modelTopics) navDown() {
-	switch m.subpage {
-	case subpageTopicMain:
-		mainModel := m.pages[subpageTopicMain].(*modelTopicsMain)
+func (m *ModelTopics) navDown() tea.Cmd {
+	if m.subpage == subpageTopicMain {
+		mainModel := m.pages[subpageTopicMain].(*ModelTopicsMain)
+
 		topic, topicType, err := mainModel.GetSelectedID()
 		if err != nil {
-			return // Don't' transition
+			return nil // Don't' transition
 		}
-		detailed := m.pages[subpageTopicDetailed].(*modelTopicDetailed)
+
+		detailed := m.pages[subpageTopicDetailed].(*ModelTopicDetailed)
 		detailed.ShowTopic(topic, topicType)
+
 		m.subpage = subpageTopicDetailed
 	}
+
+	return nil
 }
 
-func (m *modelTopics) navUp() {
-	switch m.subpage {
-	default:
-		m.subpage = subpageTopicMain
-	}
+func (m *ModelTopics) navUp() tea.Cmd {
+	m.subpage = subpageTopicMain
+	return nil
 }
 
-func (m *modelTopics) navMessages() tea.Cmd {
+func (m *ModelTopics) navMessages() tea.Cmd {
 	if m.subpage != subpageTopicMain {
 		return nil
 	}
-	mainModel := m.pages[subpageTopicMain].(*modelTopicsMain)
+
+	mainModel := m.pages[subpageTopicMain].(*ModelTopicsMain)
+
 	topic, topicType, err := mainModel.GetSelectedID()
 	if err != nil {
 		return nil // Don't' transition
 	}
-	messagesModel := m.pages[subpageTopicMessages].(*modelTopicMessages)
+
+	messagesModel := m.pages[subpageTopicMessages].(*ModelTopicMessages)
 	messagesModel.ShowTopic(topic, topicType)
+
 	m.subpage = subpageTopicMessages
+
 	return messagesModel.Init()
 }
 
-func (m *modelTopics) Refresh() {
+func (m *ModelTopics) Refresh() {
 	m.pages[m.subpage].Refresh()
 }
 
-func (m *modelTopics) Init() *modelTopics {
-	m.NavKeys["esc"] = func() tea.Cmd { m.navUp(); return nil }
-	m.NavKeys["enter"] = func() tea.Cmd { m.navDown(); return nil }
+func (m *ModelTopics) Init() *ModelTopics {
+	m.NavKeys["esc"] = func() tea.Cmd { return m.navUp() }
+	m.NavKeys["enter"] = func() tea.Cmd { return m.navDown() }
 	m.NavKeys["m"] = func() tea.Cmd { return m.navMessages() }
+
 	return m
 }
 
-func (m *modelTopics) Update(msg tea.Msg) tea.Cmd {
+func (m *ModelTopics) Update(msg tea.Msg) tea.Cmd {
 	if cmd, navigated := m.NavKeys.HandleMsg(msg); navigated {
 		return cmd
 	}
+
 	return m.pages[m.subpage].Update(msg)
 }
 
-func (m *modelTopics) View() string {
+func (m *ModelTopics) View() string {
 	return m.pages[m.subpage].View()
 }

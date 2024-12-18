@@ -3,16 +3,17 @@ package main
 import (
 	"strconv"
 
-	"github.com/DownerCase/ecal-go/ecal/monitoring"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
+
+	"github.com/DownerCase/ecal-go/ecal/monitoring"
 )
 
-type modelServicesMain struct {
+type ModelServicesMain struct {
 	table table.Model
 }
 
-func NewServicesMainModel() *modelServicesMain {
+func NewServicesMainModel() *ModelServicesMain {
 	cols := []table.Column{
 		{Title: "ID", Width: 0}, // Hidden unique ID
 		{Title: "T", Width: 1},  // Type (Client/Server)
@@ -21,42 +22,47 @@ func NewServicesMainModel() *modelServicesMain {
 		{Title: "Tick", Width: 4},
 	}
 
-	return &modelServicesMain{
+	return &ModelServicesMain{
 		table: NewTable(cols),
 	}
 }
 
-func (m *modelServicesMain) Refresh() {
+func (m *ModelServicesMain) Refresh() {
 	m.updateTable(nil)
 }
 
-func (m *modelServicesMain) Update(msg tea.Msg) tea.Cmd {
+func (m *ModelServicesMain) Update(msg tea.Msg) tea.Cmd {
 	return m.updateTable(msg)
 }
 
-func (m *modelServicesMain) View() string {
+func (m *ModelServicesMain) View() string {
 	return baseStyle.Render(m.table.View()) + "\n" + m.table.HelpView()
 }
 
-func (m *modelServicesMain) GetSelectedID() (string, bool, error) {
+func (m *ModelServicesMain) GetSelectedID() (string, bool, error) {
 	row := m.table.SelectedRow()
 	if row == nil {
 		return "", false, errEmptyTable
 	}
+
 	return row[0], row[1] == "S", nil
 }
 
-func (m *modelServicesMain) updateTable(msg tea.Msg) (cmd tea.Cmd) {
+func (m *ModelServicesMain) updateTable(msg tea.Msg) (cmd tea.Cmd) {
 	rows := []table.Row{}
+
 	mon := monitoring.GetMonitoring(monitoring.MonitorClient | monitoring.MonitorServer)
 	for _, client := range mon.Clients {
 		rows = append(rows, clientToRow(client))
 	}
+
 	for _, server := range mon.Servers {
 		rows = append(rows, serverToRow(server))
 	}
+
 	m.table.SetRows(rows)
 	m.table, cmd = m.table.Update(msg)
+
 	return
 }
 

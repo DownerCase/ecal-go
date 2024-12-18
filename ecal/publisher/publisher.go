@@ -3,12 +3,12 @@ package publisher
 // #cgo LDFLAGS: -lecal_core
 // #cgo CPPFLAGS: -I${SRCDIR}/../../
 //#include "publisher.h"
-//bool GoPublisherCreate(
+// bool GoPublisherCreate(
 //  uintptr_t handle,
 //  _GoString_ topic,
 //  _GoString_ name, _GoString_ encoding,
 //  const char* const descriptor, size_t descriptor_len
-//);
+// );
 import "C"
 
 import (
@@ -60,7 +60,7 @@ func (p *Publisher) Delete() {
 }
 
 func (p *Publisher) Create(topic string, datatype DataType) error {
-	var descriptorPtr *C.char = nil
+	var descriptorPtr *C.char
 	if len(datatype.Descriptor) > 0 {
 		descriptorPtr = (*C.char)(unsafe.Pointer(&datatype.Descriptor[0]))
 	}
