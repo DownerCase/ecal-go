@@ -1,6 +1,7 @@
 package subscriber
 
 import "C"
+
 import (
 	"fmt"
 	"time"

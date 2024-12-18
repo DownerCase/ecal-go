@@ -1,10 +1,10 @@
 package publisher
 
 import (
+	"google.golang.org/protobuf/proto"
+
 	"github.com/DownerCase/ecal-go/ecal/publisher"
 	"github.com/DownerCase/ecal-go/internal/protobuf"
-
-	"google.golang.org/protobuf/proto"
 )
 
 // Type must be a pointer and implement the proto.Message interface.

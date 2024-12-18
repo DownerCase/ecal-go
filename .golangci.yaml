@@ -6,7 +6,6 @@ linters:
     - exhaustruct # Very noisy, hard to disable when want zero values
     - forcetypeassert # If its wrong, we want to know
     - nlreturn # Not desired
-    - gci
     - gocritic
     - godox
     - gomnd
@@ -37,3 +36,8 @@ linters-settings:
       - stdlib
       - empty
       - generic
+  gci:
+    sections:
+      - standard
+      - default
+      - localmodule

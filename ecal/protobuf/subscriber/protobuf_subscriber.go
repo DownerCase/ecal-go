@@ -1,16 +1,17 @@
 package subscriber
 
 import "C"
+
 import (
 	"fmt"
 	"reflect"
 	"time"
 	"unsafe"
 
+	"google.golang.org/protobuf/proto"
+
 	"github.com/DownerCase/ecal-go/ecal/subscriber"
 	"github.com/DownerCase/ecal-go/internal/protobuf"
-
-	"google.golang.org/protobuf/proto"
 )
 
 // Type must be a pointer and implement the proto.Message interface
