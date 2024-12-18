@@ -14,7 +14,6 @@ linters:
     - nonamedreturns
     - testpackage
     - cyclop
-    - funlen
 
 linters-settings:
   ireturn:
