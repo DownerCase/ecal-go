@@ -28,9 +28,6 @@ func newSubscriber(t *testing.T, topic string) *Subscriber {
 	return sub
 }
 
-// Export for testing.
-var NewSubscriber = newSubscriber
-
 func TestSubscriber(t *testing.T) {
 	ecaltest.InitEcal(t)
 

@@ -10,12 +10,16 @@ linters:
     - godox # Yes. The project is in progress
     - depguard # Not desired
     - varnamelen # Not desired
-    - gochecknoglobals
+    - cyclop # Flags big simple switch statements
     - nonamedreturns
     - testpackage
-    - cyclop
 
 linters-settings:
+  gci:
+    sections:
+      - standard
+      - default
+      - localmodule
   ireturn:
     allow:
       - tea.Model
@@ -23,11 +27,6 @@ linters-settings:
       - stdlib
       - empty
       - generic
-  gci:
-    sections:
-      - standard
-      - default
-      - localmodule
   mnd:
     ignored-files:
       - 'monitor/.*.go' # UI code has many magic layout numbers...
@@ -35,3 +34,9 @@ linters-settings:
   paralleltest:
     # eCAL uses global state, any test using Initialize can't be run in parallel
     ignore-missing: true
+
+issues:
+  exclude-rules:
+    - path: monitor/styles.go
+      linters:
+        - gochecknoglobals

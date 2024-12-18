@@ -12,7 +12,9 @@ import (
 	testutilsubscriber "github.com/DownerCase/ecal-go/internal/ecaltest/testutil_subscriber"
 )
 
-var TestMessage = []byte{4, 15, 80}
+func GetTestMessage() []byte {
+	return []byte{4, 15, 80}
+}
 
 func TestSubscriber(t *testing.T) {
 	ecaltest.InitEcal(t)
@@ -26,6 +28,8 @@ func TestSubscriber(t *testing.T) {
 	defer sub.Delete()
 
 	go sendMessages(pub)
+
+	TestMessage := GetTestMessage()
 
 	for range 10 {
 		// TODO: Reduce the propagation delay for when the subscriber gets
@@ -64,6 +68,7 @@ func TestSubscriberTimeout(t *testing.T) {
 }
 
 func sendMessages(p *publisher.Publisher) {
+	TestMessage := GetTestMessage()
 	for !p.IsStopped() {
 		p.Messages <- TestMessage
 
