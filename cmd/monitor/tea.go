@@ -10,7 +10,7 @@ import (
 
 type PageModel interface {
 	Refresh()
-	Update(tea.Msg) tea.Cmd
+	Update(msg tea.Msg) tea.Cmd
 	View() string
 }
 
