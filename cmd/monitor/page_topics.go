@@ -30,21 +30,23 @@ func NewTopicsModel() *ModelTopics {
 	}).Init()
 }
 
-func (m *ModelTopics) navDown() {
+func (m *ModelTopics) navDown() tea.Cmd {
 	if m.subpage == subpageTopicMain {
 		mainModel := m.pages[subpageTopicMain].(*ModelTopicsMain)
 		topic, topicType, err := mainModel.GetSelectedID()
 		if err != nil {
-			return // Don't' transition
+			return nil // Don't' transition
 		}
 		detailed := m.pages[subpageTopicDetailed].(*ModelTopicDetailed)
 		detailed.ShowTopic(topic, topicType)
 		m.subpage = subpageTopicDetailed
 	}
+	return nil
 }
 
-func (m *ModelTopics) navUp() {
+func (m *ModelTopics) navUp() tea.Cmd {
 	m.subpage = subpageTopicMain
+	return nil
 }
 
 func (m *ModelTopics) navMessages() tea.Cmd {
@@ -67,8 +69,8 @@ func (m *ModelTopics) Refresh() {
 }
 
 func (m *ModelTopics) Init() *ModelTopics {
-	m.NavKeys["esc"] = func() tea.Cmd { m.navUp(); return nil }
-	m.NavKeys["enter"] = func() tea.Cmd { m.navDown(); return nil }
+	m.NavKeys["esc"] = func() tea.Cmd { return m.navUp() }
+	m.NavKeys["enter"] = func() tea.Cmd { return m.navDown() }
 	m.NavKeys["m"] = func() tea.Cmd { return m.navMessages() }
 	return m
 }

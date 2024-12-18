@@ -29,8 +29,8 @@ func NewProcessesModel() *ModelProcesses {
 }
 
 func (m *ModelProcesses) Init() *ModelProcesses {
-	m.NavKeys["esc"] = func() tea.Cmd { m.navUp(); return nil }
-	m.NavKeys["enter"] = func() tea.Cmd { m.navDown(); return nil }
+	m.NavKeys["esc"] = func() tea.Cmd { return m.navUp() }
+	m.NavKeys["enter"] = func() tea.Cmd { return m.navDown() }
 	return m
 }
 
@@ -49,22 +49,24 @@ func (m *ModelProcesses) Refresh() {
 	m.pages[m.subpage].Refresh()
 }
 
-func (m *ModelProcesses) navDown() {
+func (m *ModelProcesses) navDown() tea.Cmd {
 	if m.subpage == subpageProcMain {
 		main := m.pages[subpageProcMain].(*ModelProcessesMain)
 		pid, err := main.getSelectedPid()
 		if err != nil {
-			return // Can't transition
+			return nil // Can't transition
 		}
 		detailed := m.pages[subpageProcDetailed].(*ModelProcessDetailed)
 		detailed.Pid = pid
 		m.subpage = subpageProcDetailed
 		detailed.Refresh()
 	}
+	return nil
 }
 
-func (m *ModelProcesses) navUp() {
+func (m *ModelProcesses) navUp() tea.Cmd {
 	if m.subpage == subpageProcDetailed {
 		m.subpage = subpageProcMain
 	}
+	return nil
 }

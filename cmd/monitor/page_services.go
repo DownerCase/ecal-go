@@ -33,8 +33,8 @@ func (m *ModelServices) Refresh() {
 }
 
 func (m *ModelServices) Init() *ModelServices {
-	m.NavKeys["esc"] = func() tea.Cmd { m.navUp(); return nil }
-	m.NavKeys["enter"] = func() tea.Cmd { m.navDown(); return nil }
+	m.NavKeys["esc"] = func() tea.Cmd { return m.navUp() }
+	m.NavKeys["enter"] = func() tea.Cmd { return m.navDown() }
 	return m
 }
 
@@ -49,12 +49,12 @@ func (m *ModelServices) View() string {
 	return m.pages[m.subpage].View()
 }
 
-func (m *ModelServices) navDown() {
+func (m *ModelServices) navDown() tea.Cmd {
 	if m.subpage == subpageServicesMain {
 		main := m.pages[subpageServicesMain].(*ModelServicesMain)
 		id, isServer, err := main.GetSelectedID()
 		if err != nil {
-			return // Can't transition
+			return nil // Can't transition
 		}
 		detailed := m.pages[subpageServicesDetailed].(*ModelServiceDetailed)
 		detailed.IsServer = isServer
@@ -62,10 +62,12 @@ func (m *ModelServices) navDown() {
 		detailed.Refresh()
 		m.subpage = subpageServicesDetailed
 	}
+	return nil
 }
 
-func (m *ModelServices) navUp() {
+func (m *ModelServices) navUp() tea.Cmd {
 	if m.subpage == subpageServicesDetailed {
 		m.subpage = subpageServicesMain
 	}
+	return nil
 }
