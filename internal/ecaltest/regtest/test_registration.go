@@ -7,6 +7,11 @@ import (
 	"github.com/DownerCase/ecal-go/ecal/registration"
 )
 
+const (
+	RegistrationTimeout  = 3 * time.Second
+	SynchronizationDelay = 50 * time.Millisecond
+)
+
 type Callback struct {
 	Event registration.Event
 	ID    registration.TopicID
@@ -24,7 +29,7 @@ func expectEvent(event registration.Event, t *testing.T, topic string, channel c
 	var response Callback
 	select {
 	case response = <-channel:
-	case <-time.After(3 * time.Second):
+	case <-time.After(RegistrationTimeout):
 		t.Error("Registration timeout")
 		return
 	}
@@ -35,7 +40,7 @@ func expectEvent(event registration.Event, t *testing.T, topic string, channel c
 	case response.Event != event:
 		t.Error("Expected event", event, "actual", response.Event)
 	default:
-		time.Sleep(50 * time.Millisecond) // Small delay to allow eCAL to finish
+		time.Sleep(SynchronizationDelay) // Small delay to allow eCAL to finish
 	}
 }
 

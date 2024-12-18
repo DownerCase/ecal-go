@@ -3,14 +3,13 @@ linters:
   disable:
     - exportloopref # Deprecated
     - execinquery # Deprecated
+    - gomnd # Deprecated name of mnd
     - exhaustruct # Very noisy, hard to disable when want zero values
     - forcetypeassert # If its wrong, we want to know
     - nlreturn # Not desired
-    - godox
-    - gomnd
+    - godox # Yes. The project is in progress
     - gochecknoglobals
     - gosec
-    - mnd
     - nonamedreturns
     - paralleltest
     - predeclared
@@ -40,3 +39,7 @@ linters-settings:
       - standard
       - default
       - localmodule
+  mnd:
+    ignored-files:
+      - 'monitor/.*.go' # UI code has many magic layout numbers...
+      - 'main.go' # Main file allowed, as it is example code
