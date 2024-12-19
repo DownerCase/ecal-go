@@ -22,14 +22,7 @@ void receive_callback(
 
 } // namespace
 
-bool NewSubscriber(uintptr_t handle) {
-  const auto [it, added] = subscribers.emplace(handle);
-  return added;
-}
-
-bool DestroySubscriber(uintptr_t handle) { return subscribers.erase(handle); }
-
-bool SubscriberCreate(
+bool NewSubscriber(
     uintptr_t handle,
     const char *const topic,
     size_t topic_len,
@@ -40,16 +33,20 @@ bool SubscriberCreate(
     const char *const datatype_descriptor,
     size_t datatype_descriptor_len
 ) {
-  auto *subscriber = subscribers.find(handle);
-  if (subscriber == nullptr) {
+
+  const auto [it, added] = subscribers.emplace(
+      handle,
+      std::string(topic, topic_len),
+      eCAL::SDataTypeInformation{
+          std::string(datatype_name, datatype_name_len),
+          std::string(datatype_encoding, datatype_encoding_len),
+          std::string(datatype_descriptor, datatype_descriptor_len)
+      }
+  );
+  if (!added) {
     return false;
   }
-  const auto created = subscriber->Create(
-      std::string(topic, topic_len),
-      {std::string(datatype_name, datatype_name_len),
-       std::string(datatype_encoding, datatype_encoding_len),
-       std::string(datatype_descriptor, datatype_descriptor_len)}
-  );
+
   const auto bound_callback = [handle](
                                   const eCAL::Registration::STopicId &_topic,
                                   const eCAL::SDataTypeInformation &_datatype,
@@ -57,6 +54,7 @@ bool SubscriberCreate(
                               ) {
     receive_callback(handle, _topic, _datatype, _data);
   };
-  subscriber->AddReceiveCallback(bound_callback);
-  return created;
+  return (*it).second.SetReceiveCallback(bound_callback);
 }
+
+bool DestroySubscriber(uintptr_t handle) { return subscribers.erase(handle); }
