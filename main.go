@@ -42,23 +42,19 @@ func main() {
 	logging.Infof("eCAL ok: %t", ecal.Ok())
 
 	// Create new protobuf publisher
-	pub, err := publisher.New[protos.Person]()
+	pub, err := publisher.New[protos.Person]("person")
 	if err != nil {
 		panic("Failed to make new publisher")
 	}
 	defer pub.Delete() // Don't forget to delete the publisher when done!
 
-	if pub.Create("person") != nil {
-		panic("Failed to Create protobuf publisher")
+	stringPublisher, err := string_publisher.New("string topic")
+	if err != nil {
+		panic("Failed to make string publisher")
 	}
 
-	stringPublisher, _ := string_publisher.New()
-	if stringPublisher.Create("string topic") != nil {
-		panic("Failed to Create string publisher")
-	}
-
-	sub, _ := subscriber.New()
-	if sub.Create("string topic") != nil {
+	sub, err := subscriber.New("string topic")
+	if err != nil {
 		panic("Failed to Create string subscriber")
 	}
 
