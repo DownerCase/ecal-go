@@ -3,7 +3,7 @@ package subscriber
 // #cgo LDFLAGS: -lecal_core
 // #cgo CPPFLAGS: -I${SRCDIR}/../../
 // #include "subscriber.h"
-//	bool GoSubscriberCreate(
+//	bool GoNewSubscriber(
 //		uintptr_t handle,
 //		_GoString_ topic,
 //		_GoString_ name, _GoString_ encoding,
@@ -22,10 +22,9 @@ import (
 )
 
 var (
-	ErrFailedAlloc  = errors.New("failed to allocate subscriber")
-	ErrFailedCreate = errors.New("failed to create subscriber")
-	ErrRcvTimeout   = errors.New("timed out")
-	ErrRcvBadType   = errors.New("receive could not handle type")
+	ErrFailedNew  = errors.New("failed to create new subscriber")
+	ErrRcvTimeout = errors.New("timed out")
+	ErrRcvBadType = errors.New("receive could not handle type")
 )
 
 type Subscriber struct {
@@ -37,7 +36,7 @@ type Subscriber struct {
 
 type DataType = types.DataType
 
-func New() (*Subscriber, error) {
+func New(topic string, datatype DataType) (*Subscriber, error) {
 	sub := &Subscriber{
 		Messages:    make(chan any),
 		stopped:     false,
@@ -45,10 +44,24 @@ func New() (*Subscriber, error) {
 	}
 	handle := cgo.NewHandle(sub)
 	sub.handle = handle
-	if !C.NewSubscriber(C.uintptr_t(sub.handle)) {
-		handle.Delete()
-		return nil, ErrFailedAlloc
+
+	var descriptorPtr *C.char
+	if len(datatype.Descriptor) > 0 {
+		descriptorPtr = (*C.char)(unsafe.Pointer(&datatype.Descriptor[0]))
 	}
+
+	if !C.GoNewSubscriber(
+		C.uintptr_t(sub.handle),
+		topic,
+		datatype.Name,
+		datatype.Encoding,
+		descriptorPtr,
+		C.size_t(len(datatype.Descriptor)),
+	) {
+		handle.Delete()
+		return nil, ErrFailedNew
+	}
+
 	return sub, nil
 }
 
@@ -63,24 +76,6 @@ func (p *Subscriber) Delete() {
 	}
 	// Deleted, clear handle
 	p.handle.Delete()
-}
-
-func (p *Subscriber) Create(topic string, datatype DataType) error {
-	var descriptorPtr *C.char
-	if len(datatype.Descriptor) > 0 {
-		descriptorPtr = (*C.char)(unsafe.Pointer(&datatype.Descriptor[0]))
-	}
-	if !C.GoSubscriberCreate(
-		C.uintptr_t(p.handle),
-		topic,
-		datatype.Name,
-		datatype.Encoding,
-		descriptorPtr,
-		C.size_t(len(datatype.Descriptor)),
-	) {
-		return ErrFailedCreate
-	}
-	return nil
 }
 
 // Receive a new message from the eCAL receive callback
