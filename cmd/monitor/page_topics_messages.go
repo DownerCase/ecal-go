@@ -30,11 +30,9 @@ type msgMsg struct {
 
 func NewTopicsMessagesModel() *ModelTopicMessages {
 	viewport := viewport.New(85, 10)
-	subscriber, _ := subscriber.New()
 
 	return &ModelTopicMessages{
-		viewport:   viewport,
-		subscriber: subscriber,
+		viewport: viewport,
 	}
 }
 
@@ -93,13 +91,7 @@ func (m *ModelTopicMessages) createSubscriber() {
 	// (re)create subscriber with new topic type
 	m.subscriber.Delete()
 
-	subscriber, err := subscriber.New()
-	if err != nil {
-		subscriber.Delete()
-		panic(fmt.Errorf("[Topic Messages]: %w", err))
-	}
-
-	err = subscriber.Create(m.mon.TopicName, m.mon.Datatype)
+	subscriber, err := subscriber.New(m.mon.TopicName, m.mon.Datatype)
 	if err != nil {
 		subscriber.Delete()
 		panic(fmt.Errorf("[Topic Messages]: %w", err))

@@ -14,8 +14,13 @@ type Subscriber struct {
 	subscriber.Subscriber
 }
 
-func New() (*Subscriber, error) {
-	sub, err := subscriber.New()
+func New(topic string) (*Subscriber, error) {
+	sub, err := subscriber.New(topic,
+		subscriber.DataType{
+			Name:     "std::string",
+			Encoding: "base",
+		},
+	)
 	sub.Deserialize = deserialize
 	if err != nil {
 		err = fmt.Errorf("string Subscriber.New(): %w", err)
@@ -34,17 +39,4 @@ func (s *Subscriber) Receive(timeout time.Duration) (string, error) {
 
 func deserialize(data unsafe.Pointer, dataLen int) any {
 	return C.GoStringN((*C.char)(data), C.int(dataLen))
-}
-
-func (s *Subscriber) Create(topic string) error {
-	err := s.Subscriber.Create(topic,
-		subscriber.DataType{
-			Name:     "std::string",
-			Encoding: "base",
-		},
-	)
-	if err != nil {
-		err = fmt.Errorf("string Subscriber.Create(): %w", err)
-	}
-	return err
 }

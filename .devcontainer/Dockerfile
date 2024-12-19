@@ -24,7 +24,7 @@ RUN apt-get update && apt-get install --no-install-recommends  -y\
 # This is needed over shallow clone for the tag-based auto-versioning
 # Reset added to ensure the same commit is always used, even if master advances
 RUN git clone --single-branch --filter=tree:0 --branch master https://github.com/eclipse-ecal/ecal.git /ecal \
-    && git -C ./ecal reset --hard 7ba8e0a80328b0fbc2924eaca40e98669f7933bc
+    && git -C ./ecal reset --hard 00f8ef0a2af296911e7de661e9c5f61a68abf809
 WORKDIR /ecal
 
 # Only download the submodules for dependencies not available as system packages

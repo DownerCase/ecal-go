@@ -9,12 +9,8 @@ import (
 func NewGenericPublisher(t *testing.T, topic string) *publisher.Publisher {
 	t.Helper()
 
-	pub, err := publisher.New()
+	pub, err := publisher.New(topic, publisher.DataType{})
 	if err != nil {
-		t.Error(err)
-	}
-
-	if err := pub.Create(topic, publisher.DataType{}); err != nil {
 		t.Error(err)
 	}
 

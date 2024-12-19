@@ -26,8 +26,15 @@ type Subscriber[U any, T Msg[U]] struct {
 	subscriber.Subscriber
 }
 
-func New[U any, T Msg[U]]() (*Subscriber[U, T], error) {
-	sub, err := subscriber.New()
+func New[U any, T Msg[U]](topic string) (*Subscriber[U, T], error) {
+	var msg T
+	sub, err := subscriber.New(topic,
+		subscriber.DataType{
+			Name:       protobuf.GetFullName(msg),
+			Encoding:   "proto",
+			Descriptor: protobuf.GetProtoMessageDescription(msg),
+		},
+	)
 	sub.Deserialize = deserialize[U, T]
 	psub := &Subscriber[U, T]{*sub}
 	if err != nil {
@@ -64,19 +71,4 @@ func deserialize[U any, T Msg[U]](data unsafe.Pointer, dataLen int) any {
 		return fmt.Errorf("protobuf Subscriber[%v].deserialize(): %w", reflect.TypeFor[T](), err)
 	}
 	return msg
-}
-
-func (s *Subscriber[U, T]) Create(topic string) error {
-	var msg T
-	err := s.Subscriber.Create(topic,
-		subscriber.DataType{
-			Name:       protobuf.GetFullName(msg),
-			Encoding:   "proto",
-			Descriptor: protobuf.GetProtoMessageDescription(msg),
-		},
-	)
-	if err != nil {
-		err = fmt.Errorf("protobuf Subscriber[%v].Create(): %w", reflect.TypeFor[T](), err)
-	}
-	return err
 }

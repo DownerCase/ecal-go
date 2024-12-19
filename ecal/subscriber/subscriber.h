@@ -9,10 +9,7 @@
 extern "C" {
 #endif
 
-bool NewSubscriber(uintptr_t handle);
-bool DestroySubscriber(uintptr_t handle);
-
-bool SubscriberCreate(
+bool NewSubscriber(
     uintptr_t handle,
     const char *const topic,
     size_t topic_len,
@@ -23,6 +20,8 @@ bool SubscriberCreate(
     const char *const datatype_descriptor,
     size_t datatype_descriptor_len
 );
+
+bool DestroySubscriber(uintptr_t handle);
 
 #ifdef __cplusplus
 }

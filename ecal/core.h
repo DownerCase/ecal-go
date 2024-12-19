@@ -26,12 +26,12 @@ const char *GetVersionString(void);
 const char *GetVersionDateString(void);
 struct version GetVersion(void);
 
-int Initialize(
+bool Initialize(
     struct CConfig *config,
     const char *unit_name,
     unsigned int components
 );
-int Finalize(void);
+bool Finalize(void);
 bool IsInitialized(void);
 bool IsComponentInitialized(unsigned int component);
 bool SetUnitName(const char *unit_name);

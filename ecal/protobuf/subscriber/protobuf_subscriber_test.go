@@ -15,12 +15,8 @@ import (
 func newSubscriber[U any, T subscriber.Msg[U]](t *testing.T, topic string) *subscriber.Subscriber[U, T] {
 	t.Helper()
 
-	sub, err := subscriber.New[U, T]()
+	sub, err := subscriber.New[U, T](topic)
 	if err != nil {
-		t.Error(err)
-	}
-
-	if err := sub.Create(topic); err != nil {
 		t.Error(err)
 	}
 

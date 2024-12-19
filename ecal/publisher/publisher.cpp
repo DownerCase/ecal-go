@@ -8,14 +8,9 @@ namespace {
 handle_map<eCAL::CPublisher> publishers{};
 } // namespace
 
-bool NewPublisher(uintptr_t handle) {
-  const auto [it, added] = publishers.emplace(handle);
-  return added;
-}
-
 bool DestroyPublisher(uintptr_t handle) { return publishers.erase(handle); }
 
-bool PublisherCreate(
+bool NewPublisher(
     uintptr_t handle,
     const char *const topic,
     size_t topic_len,
@@ -26,16 +21,16 @@ bool PublisherCreate(
     const char *const datatype_descriptor,
     size_t datatype_descriptor_len
 ) {
-  auto *publisher = publishers.find(handle);
-  if (publisher == nullptr) {
-    return false;
-  }
-  return publisher->Create(
+  const auto [it, added] = publishers.emplace(
+      handle,
       std::string(topic, topic_len),
-      {std::string(datatype_name, datatype_name_len),
-       std::string(datatype_encoding, datatype_encoding_len),
-       std::string(datatype_descriptor, datatype_descriptor_len)}
+      eCAL::SDataTypeInformation{
+          std::string(datatype_name, datatype_name_len),
+          std::string(datatype_encoding, datatype_encoding_len),
+          std::string(datatype_descriptor, datatype_descriptor_len)
+      }
   );
+  return added;
 }
 
 void PublisherSend(uintptr_t handle, void *buf, size_t len) {

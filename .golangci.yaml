@@ -2,8 +2,6 @@ linters:
   enable-all: true
   disable:
     - exportloopref # Deprecated
-    - execinquery # Deprecated
-    - gomnd # Deprecated name of mnd
     - exhaustruct # Very noisy, hard to disable when want zero values
     - forcetypeassert # If its wrong, we want to know
     - nlreturn # Not desired

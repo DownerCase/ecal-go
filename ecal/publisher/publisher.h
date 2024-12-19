@@ -9,10 +9,7 @@
 extern "C" {
 #endif
 
-bool NewPublisher(uintptr_t handle);
-bool DestroyPublisher(uintptr_t handle);
-
-bool PublisherCreate(
+bool NewPublisher(
     uintptr_t handle,
     const char *const topic,
     size_t topic_len,
@@ -23,6 +20,8 @@ bool PublisherCreate(
     const char *const datatype_descriptor,
     size_t datatype_descriptor_len
 );
+bool DestroyPublisher(uintptr_t handle);
+
 void PublisherSend(uintptr_t handle, void *buf, size_t len);
 
 #ifdef __cplusplus

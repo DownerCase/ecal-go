@@ -118,15 +118,3 @@ func Debug(a ...any) {
 func Debugf(format string, a ...any) {
 	Logf(LevelDebug, format, a...)
 }
-
-func SetConsoleFilter(levels Level) {
-	C.SetConsoleFilter(C.eCAL_Logging_Filter(levels))
-}
-
-func SetUDPFilter(levels Level) {
-	C.SetUDPFilter(C.eCAL_Logging_Filter(levels))
-}
-
-func SetFileFilter(levels Level) {
-	C.SetFileFilter(C.eCAL_Logging_Filter(levels))
-}

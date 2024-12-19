@@ -1,15 +1,17 @@
 package publisher_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/DownerCase/ecal-go/ecal/publisher"
+	"github.com/DownerCase/ecal-go/ecal/types"
 	testutilpublisher "github.com/DownerCase/ecal-go/internal/ecaltest/testutil_publisher"
 )
 
 func TestNewPublishers(t *testing.T) {
-	for range 100 {
-		ptr, err := publisher.New()
+	for i := range 100 {
+		ptr, err := publisher.New(fmt.Sprintf("testPubTopic-%v", i), types.DataType{})
 		if err != nil {
 			t.Error(err)
 		}

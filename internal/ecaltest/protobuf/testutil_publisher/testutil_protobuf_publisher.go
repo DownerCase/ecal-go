@@ -9,12 +9,8 @@ import (
 func NewProtobufPublisher[U any, T publisher.Msg[U]](t *testing.T, topic string) *publisher.Publisher[T] {
 	t.Helper()
 
-	pub, err := publisher.New[U, T]()
+	pub, err := publisher.New[U, T](topic)
 	if err != nil {
-		t.Error(err)
-	}
-
-	if err := pub.Create(topic); err != nil {
 		t.Error(err)
 	}
 

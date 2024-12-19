@@ -17,12 +17,8 @@ const TestMessage = "Test string"
 func newSubscriber(t *testing.T, topic string) *subscriber.Subscriber {
 	t.Helper()
 
-	sub, err := subscriber.New()
+	sub, err := subscriber.New(topic)
 	if err != nil {
-		t.Error(err)
-	}
-
-	if err := sub.Create(topic); err != nil {
 		t.Error(err)
 	}
 
