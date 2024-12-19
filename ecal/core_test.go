@@ -40,17 +40,13 @@ func TestInitializeFinalize(t *testing.T) {
 		t.Error("eCAL pre-initialized...")
 	}
 
-	initResult := ecal.Initialize(ecal.NewConfig(), "go_test", ecal.CDefault)
-	if initResult == 1 {
-		t.Fatal("eCAL already initialized")
-	} else if initResult != 0 {
-		t.Fatalf("eCAL failed to initialize with error %v", initResult)
+	if !ecal.Initialize(ecal.NewConfig(), "go_test", ecal.CDefault) {
+		t.Fatalf("eCAL failed to initialize with error")
 	}
 
 	// Test double initialization
-	secondInit := ecal.Initialize(ecal.NewConfig(), "go_test2", ecal.CPublisher)
-	if secondInit != 1 {
-		t.Errorf("Second initialize returned %v", secondInit)
+	if ecal.Initialize(ecal.NewConfig(), "go_test2", ecal.CPublisher) {
+		t.Errorf("Second initialize returned")
 	}
 
 	if !ecal.IsInitialized() {
@@ -69,20 +65,17 @@ func TestInitializeFinalize(t *testing.T) {
 		t.Error("eCAL not Ok")
 	}
 
-	finalizeResult := ecal.Finalize()
-	if finalizeResult != 0 {
-		t.Errorf("Failed to finalize with error %v", finalizeResult)
+	if !ecal.Finalize() {
+		t.Errorf("Failed to finalize")
 	}
 
-	secondFinalize := ecal.Finalize()
 	// We've called Initialize twice so 2 calls to Finalize are needed
-	if secondFinalize != 0 {
-		t.Errorf("Second finalize returned %v", secondFinalize)
+	if !ecal.Finalize() {
+		t.Errorf("Expected second finalize to be successful")
 	}
 
-	thirdFinalize := ecal.Finalize()
-	if thirdFinalize != 1 {
-		t.Errorf("Expected Finalize to already be done, recevied %v", thirdFinalize)
+	if ecal.Finalize() {
+		t.Errorf("Expected Finalize to already be done")
 	}
 
 	if ecal.Ok() {

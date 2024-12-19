@@ -59,7 +59,7 @@ func GetVersion() C.struct_version {
 	return C.GetVersion()
 }
 
-func Initialize(config Config, unitName string, components uint) int {
+func Initialize(config Config, unitName string, components uint) bool {
 	cconfig := C.struct_CConfig{
 		logging: C.struct_CConfigLogging{
 			receive_enabled: C.bool(config.Logging.ReceiveEnabled),
@@ -67,11 +67,11 @@ func Initialize(config Config, unitName string, components uint) int {
 	}
 	unitNameC := C.CString(unitName)
 	defer C.free(unsafe.Pointer(unitNameC))
-	return int(C.Initialize(&cconfig, unitNameC, C.uint(components)))
+	return bool(C.Initialize(&cconfig, unitNameC, C.uint(components)))
 }
 
-func Finalize() int {
-	return int(C.Finalize())
+func Finalize() bool {
+	return bool(C.Finalize())
 }
 
 func IsInitialized() bool {
