@@ -3,7 +3,7 @@ package publisher
 // #cgo LDFLAGS: -lecal_core
 // #cgo CPPFLAGS: -I${SRCDIR}/../../
 //#include "publisher.h"
-// bool GoPublisherCreate(
+// bool GoNewPublisher(
 //  uintptr_t handle,
 //  _GoString_ topic,
 //  _GoString_ name, _GoString_ encoding,
@@ -19,10 +19,7 @@ import (
 	"github.com/DownerCase/ecal-go/ecal/types"
 )
 
-var (
-	errFailedAlloc  = errors.New("failed to allocate publisher")
-	errFailedCreate = errors.New("failed to create publisher")
-)
+var ErrFailedNew = errors.New("failed to create new publisher")
 
 type DataType = types.DataType
 
@@ -32,18 +29,32 @@ type Publisher struct {
 	stopped  bool
 }
 
-func New() (*Publisher, error) {
-	pub := Publisher{
+func New(topic string, datatype DataType) (*Publisher, error) {
+	pub := &Publisher{
 		Messages: make(chan []byte),
 		stopped:  false,
 	}
 	handle := cgo.NewHandle(pub)
 	pub.handle = handle
-	if !C.NewPublisher(C.uintptr_t(pub.handle)) {
-		handle.Delete()
-		return nil, errFailedAlloc
+
+	var descriptorPtr *C.char
+	if len(datatype.Descriptor) > 0 {
+		descriptorPtr = (*C.char)(unsafe.Pointer(&datatype.Descriptor[0]))
 	}
-	return &pub, nil
+
+	if !C.GoNewPublisher(
+		C.uintptr_t(pub.handle),
+		topic,
+		datatype.Name,
+		datatype.Encoding,
+		descriptorPtr,
+		C.size_t(len(datatype.Descriptor)),
+	) {
+		handle.Delete()
+		return nil, ErrFailedNew
+	}
+	go pub.sendMessages()
+	return pub, nil
 }
 
 func (p *Publisher) Delete() {
@@ -57,25 +68,6 @@ func (p *Publisher) Delete() {
 	}
 	// Deleted, clear handle
 	p.handle = 0
-}
-
-func (p *Publisher) Create(topic string, datatype DataType) error {
-	var descriptorPtr *C.char
-	if len(datatype.Descriptor) > 0 {
-		descriptorPtr = (*C.char)(unsafe.Pointer(&datatype.Descriptor[0]))
-	}
-	if !C.GoPublisherCreate(
-		C.uintptr_t(p.handle),
-		topic,
-		datatype.Name,
-		datatype.Encoding,
-		descriptorPtr,
-		C.size_t(len(datatype.Descriptor)),
-	) {
-		return errFailedCreate
-	}
-	go p.sendMessages()
-	return nil
 }
 
 func (p *Publisher) IsStopped() bool {
