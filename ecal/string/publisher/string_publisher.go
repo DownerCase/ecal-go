@@ -10,8 +10,13 @@ type Publisher struct {
 	publisher.Publisher
 }
 
-func New() (*Publisher, error) {
-	pub, err := publisher.New()
+func New(topic string) (*Publisher, error) {
+	pub, err := publisher.New(topic,
+		publisher.DataType{
+			Name:     "std::string",
+			Encoding: "base",
+		},
+	)
 	if err != nil {
 		err = fmt.Errorf("string Publisher.New(): %w", err)
 	}
@@ -29,18 +34,4 @@ func (p *Publisher) Send(msg ...any) error {
 func (p *Publisher) Sendf(format string, a ...any) error {
 	p.Messages <- []byte(fmt.Sprintf(format, a...))
 	return nil
-}
-
-func (p *Publisher) Create(topic string) error {
-	err := p.Publisher.Create(topic,
-		publisher.DataType{
-			Name:     "std::string",
-			Encoding: "base",
-		},
-	)
-	if err != nil {
-		err = fmt.Errorf("string Publisher.Create(): %w", err)
-	}
-
-	return err
 }
