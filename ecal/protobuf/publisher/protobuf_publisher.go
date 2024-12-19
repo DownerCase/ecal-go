@@ -20,8 +20,16 @@ type Publisher[T proto.Message] struct {
 	publisher.Publisher
 }
 
-func New[U any, T Msg[U]]() (*Publisher[T], error) {
-	pub, err := publisher.New()
+func New[U any, T Msg[U]](topic string) (*Publisher[T], error) {
+	var msg T
+
+	pub, err := publisher.New(topic,
+		publisher.DataType{
+			Name:       protobuf.GetFullName(msg),
+			Encoding:   "proto",
+			Descriptor: protobuf.GetProtoMessageDescription(msg),
+		},
+	)
 	if err != nil {
 		err = fmt.Errorf("protobuf Publisher[%v].New(): %w", reflect.TypeFor[T](), err)
 	}
@@ -38,21 +46,4 @@ func (p *Publisher[T]) Send(t T) error {
 	p.Messages <- msg
 
 	return nil
-}
-
-func (p *Publisher[T]) Create(topic string) error {
-	var msg T
-
-	err := p.Publisher.Create(topic,
-		publisher.DataType{
-			Name:       protobuf.GetFullName(msg),
-			Encoding:   "proto",
-			Descriptor: protobuf.GetProtoMessageDescription(msg),
-		},
-	)
-	if err != nil {
-		err = fmt.Errorf("protobuf Publisher[%v].Create(): %w", reflect.TypeFor[T](), err)
-	}
-
-	return err
 }
