@@ -26,9 +26,6 @@ func main() {
 		ecal.CPublisher|ecal.CSubscriber|ecal.CLogging,
 	)
 
-	// Enable all logging levels in the console
-	logging.SetConsoleFilter(logging.LevelAll)
-
 	// Log a message
 	logging.Log(logging.LevelInfo, "Initialized: ", initResult)
 

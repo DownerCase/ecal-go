@@ -17,10 +17,6 @@ struct CLogging {
 
 void Log(enum eCAL_Logging_eLogLevel level, const char *const msg, size_t len);
 
-void SetFileFilter(eCAL_Logging_Filter filter_bitset);
-void SetUDPFilter(eCAL_Logging_Filter filter_bitset);
-void SetConsoleFilter(eCAL_Logging_Filter filter_bitset);
-
 void GetLogging(uintptr_t handle);
 
 #ifdef __cplusplus
