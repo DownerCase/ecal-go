@@ -111,6 +111,6 @@ func receiveMessages(s *subscriber.Subscriber) {
 	}
 }
 
-func registrationLogger(id registration.TopicID, _ registration.Event) {
+func registrationLogger(id ecal.TopicID, _ registration.Event) {
 	fmt.Println("Received registration sample:", id) //nolint:forbidigo
 }

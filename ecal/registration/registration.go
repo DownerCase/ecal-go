@@ -20,17 +20,12 @@ const (
 	EntityDeleted Event = 1
 )
 
-type (
-	EntityID = ecal.EntityID
-	TopicID  = ecal.TopicID
-)
-
 type CallbackToken struct {
 	ecalToken uint
 	goHandle  cgo.Handle
 }
 
-func AddPublisherEventCallback(callback func(TopicID, Event)) CallbackToken {
+func AddPublisherEventCallback(callback func(ecal.TopicID, Event)) CallbackToken {
 	handle := cgo.NewHandle(callback)
 	ecalToken := C.AddPublisherEventCallback(C.uintptr_t(handle))
 	token := CallbackToken{
@@ -45,7 +40,7 @@ func RemPublisherCallback(token CallbackToken) {
 	token.goHandle.Delete()
 }
 
-func AddSubscriberEventCallback(callback func(TopicID, Event)) CallbackToken {
+func AddSubscriberEventCallback(callback func(ecal.TopicID, Event)) CallbackToken {
 	handle := cgo.NewHandle(callback)
 	ecalToken := C.AddSubscriberEventCallback(C.uintptr_t(handle))
 	token := CallbackToken{
@@ -60,9 +55,9 @@ func RemSubscriberCallback(token CallbackToken) {
 	token.goHandle.Delete()
 }
 
-func toTopicID(id *C.struct_CTopicId) TopicID {
-	return TopicID{
-		TopicID: EntityID{
+func toTopicID(id *C.struct_CTopicId) ecal.TopicID {
+	return ecal.TopicID{
+		TopicID: ecal.EntityID{
 			EntityID:  C.GoString(id.topic_id.entity_id),
 			ProcessID: int32(id.topic_id.process_id),
 			HostName:  C.GoString(id.topic_id.host_name),
@@ -74,7 +69,7 @@ func toTopicID(id *C.struct_CTopicId) TopicID {
 //export goTopicEventCallback
 func goTopicEventCallback(handle C.uintptr_t, id C.struct_CTopicId, event C.uint8_t) {
 	h := cgo.Handle(handle)
-	f, ok := h.Value().(func(TopicID, Event))
+	f, ok := h.Value().(func(ecal.TopicID, Event))
 	if !ok {
 		log.Panic("Invalid handle passed to registration callback")
 	}
