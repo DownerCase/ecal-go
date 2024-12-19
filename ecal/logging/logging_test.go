@@ -7,7 +7,6 @@ import (
 
 	"github.com/DownerCase/ecal-go/ecal"
 	"github.com/DownerCase/ecal-go/ecal/logging"
-	_ "github.com/DownerCase/ecal-go/ecal/types"
 	"github.com/DownerCase/ecal-go/internal/ecaltest"
 )
 

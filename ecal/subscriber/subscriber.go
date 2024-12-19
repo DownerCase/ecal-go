@@ -18,7 +18,7 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/DownerCase/ecal-go/ecal/types"
+	"github.com/DownerCase/ecal-go/ecal"
 )
 
 var (
@@ -34,7 +34,7 @@ type Subscriber struct {
 	Deserialize func(unsafe.Pointer, int) any
 }
 
-type DataType = types.DataType
+type DataType = ecal.DataType
 
 func New(topic string, datatype DataType) (*Subscriber, error) {
 	sub := &Subscriber{

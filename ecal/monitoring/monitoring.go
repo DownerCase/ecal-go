@@ -3,14 +3,14 @@ package monitoring
 //#cgo LDFLAGS: -lecal_core
 //#include <ecal/ecal_process_severity.h>
 //#include "monitoring.h"
-//#cgo CPPFLAGS: -I${SRCDIR}/../types
+//#cgo CPPFLAGS: -I${SRCDIR}/..
 import "C"
 
 import (
 	"runtime/cgo"
 	"strconv"
 
-	"github.com/DownerCase/ecal-go/ecal/types"
+	"github.com/DownerCase/ecal-go/ecal"
 )
 
 type MonitorEntity uint
@@ -63,7 +63,7 @@ type TopicMon struct {
 	TopicID   string
 	TopicName string
 	Direction string
-	Datatype  types.DataType
+	Datatype  ecal.DataType
 	// TODO: transport layer
 	TopicSize           int32 // Size of messages (bytes)
 	ConnectionsLocal    int32

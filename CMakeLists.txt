@@ -6,23 +6,16 @@ find_package(eCAL CONFIG REQUIRED)
 add_library(utils INTERFACE)
 target_include_directories(utils INTERFACE .)
 
-add_library(ecal_go_types)
-target_sources(ecal_go_types PRIVATE
-  ./ecal/types/types.h
-  ./ecal/types/types.hpp
-  ./ecal/types/types.cpp
-)
-target_include_directories(ecal_go_types
-  PUBLIC ./ecal/types
-)
-target_link_libraries(ecal_go_types PRIVATE eCAL::core)
-
 add_library(ecal_go_core)
 target_sources(ecal_go_core PRIVATE
   ./ecal/core.h
   ./ecal/core.cpp
+  ./ecal/types.h
+  ./ecal/types.hpp
+  ./ecal/types.cpp
 )
 target_link_libraries(ecal_go_core PRIVATE eCAL::core)
+target_include_directories(ecal_go_core PUBLIC ./ecal)
 
 add_library(ecal_go_publisher)
 target_sources(ecal_go_publisher PRIVATE
@@ -43,26 +36,25 @@ target_sources(ecal_go_logging PRIVATE
   ./ecal/logging/logging.h
   ./ecal/logging/logging.cpp
 )
-target_link_libraries(ecal_go_logging PRIVATE eCAL::core ecal_go_types)
+target_link_libraries(ecal_go_logging PRIVATE eCAL::core ecal_go_core)
 
 add_library(ecal_go_registration)
 target_sources(ecal_go_registration PRIVATE
   ./ecal/registration/registration.h
   ./ecal/registration/registration.cpp
 )
-target_link_libraries(ecal_go_registration PRIVATE eCAL::core ecal_go_types)
+target_link_libraries(ecal_go_registration PRIVATE eCAL::core ecal_go_core)
 
 add_library(ecal_go_monitoring)
 target_sources(ecal_go_monitoring PRIVATE
   ./ecal/monitoring/monitoring.h
   ./ecal/monitoring/monitoring.cpp
 )
-target_link_libraries(ecal_go_monitoring PRIVATE eCAL::core ecal_go_types)
+target_link_libraries(ecal_go_monitoring PRIVATE eCAL::core ecal_go_core)
 
 # Subpackages that use cgo
 set(subpackages
   "ecal"
-  "ecal/types"
   "ecal/publisher"
   "ecal/subscriber"
   "ecal/logging"
