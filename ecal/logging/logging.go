@@ -1,6 +1,6 @@
 package logging
 
-// #cgo CPPFLAGS: -I${SRCDIR}/../types
+// #cgo CPPFLAGS: -I${SRCDIR}/..
 // #include <ecal/ecal_log_level.h>
 // #include "logging.h"
 // void GoLog(enum eCAL_Logging_eLogLevel level, _GoString_ msg) {
