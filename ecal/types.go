@@ -1,6 +1,4 @@
-package types
-
-import "C"
+package ecal
 
 type EntityID struct {
 	EntityID  string

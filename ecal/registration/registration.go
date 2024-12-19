@@ -3,14 +3,14 @@ package registration
 // #cgo LDFLAGS: -lecal_core
 //#include "registration.h"
 //#include "types.h"
-// #cgo CPPFLAGS: -I${SRCDIR}/../types
+// #cgo CPPFLAGS: -I${SRCDIR}/..
 import "C"
 
 import (
 	"log"
 	"runtime/cgo"
 
-	"github.com/DownerCase/ecal-go/ecal/types"
+	"github.com/DownerCase/ecal-go/ecal"
 )
 
 type Event uint8
@@ -20,21 +20,14 @@ const (
 	EntityDeleted Event = 1
 )
 
-type QualityFlags uint8
-
 type (
-	EntityID = types.EntityID
-	TopicID  = types.TopicID
+	EntityID = ecal.EntityID
+	TopicID  = ecal.TopicID
 )
 
 type CallbackToken struct {
 	ecalToken uint
 	goHandle  cgo.Handle
-}
-
-type QualityTopicInfo struct {
-	Datatype     types.DataType
-	QualityFlags QualityFlags
 }
 
 func AddPublisherEventCallback(callback func(TopicID, Event)) CallbackToken {

@@ -16,12 +16,12 @@ import (
 	"runtime/cgo"
 	"unsafe"
 
-	"github.com/DownerCase/ecal-go/ecal/types"
+	"github.com/DownerCase/ecal-go/ecal"
 )
 
 var ErrFailedNew = errors.New("failed to create new publisher")
 
-type DataType = types.DataType
+type DataType = ecal.DataType
 
 type Publisher struct {
 	Messages chan []byte

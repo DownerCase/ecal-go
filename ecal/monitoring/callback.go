@@ -7,7 +7,7 @@ import (
 	"runtime/cgo"
 	"unsafe"
 
-	"github.com/DownerCase/ecal-go/ecal/types"
+	"github.com/DownerCase/ecal-go/ecal"
 )
 
 func copyToTopicMons(ctopics []C.struct_CTopicMon) []TopicMon {
@@ -22,7 +22,7 @@ func copyToTopicMons(ctopics []C.struct_CTopicMon) []TopicMon {
 			TopicSize:         int32(pub.topic_size),
 			UnitName:          C.GoString(pub.unit_name),
 			Direction:         C.GoString(pub.direction),
-			Datatype: types.DataType{
+			Datatype: ecal.DataType{
 				Name:     C.GoString(pub.datatype.name),
 				Encoding: C.GoString(pub.datatype.encoding),
 			},
