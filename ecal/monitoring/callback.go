@@ -36,6 +36,7 @@ func copyToTopicMons(ctopics []C.struct_CTopicMon) []TopicMon {
 			HostName:            C.GoString(pub.host_name),
 		}
 	}
+
 	return topics
 }
 
@@ -56,6 +57,7 @@ func copyToProcessMons(cprocs []C.struct_CProcessMon) []ProcessMon {
 			RuntimeVersion:        C.GoString(proc.runtime), // eCAL Version in use
 		}
 	}
+
 	return procs
 }
 
@@ -69,6 +71,7 @@ func copyToMethodMons(cmethods []C.struct_CMethodMon) []MethodMon {
 			CallCount:    int64(cmethod.call_count),
 		}
 	}
+
 	return methods
 }
 
@@ -95,6 +98,7 @@ func copyToServerMons(cservers []C.struct_CServerMon) []ServerMon {
 			PortV1:      uint32(cserver.port_v1),
 		}
 	}
+
 	return servers
 }
 
@@ -105,6 +109,7 @@ func copyToClientMons(cclients []C.struct_CClientMon) []ClientMon {
 			ServiceBase: copyToServiceBase(cclient.base),
 		}
 	}
+
 	return clients
 }
 

@@ -135,5 +135,6 @@ func GetMonitoring(entities MonitorEntity) Monitoring {
 	// via the handle
 	C.GetMonitoring(C.uintptr_t(handle), C.uint(entities))
 	handle.Delete()
+
 	return mon
 }

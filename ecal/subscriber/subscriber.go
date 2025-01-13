@@ -70,6 +70,7 @@ func (p *Subscriber) Delete() {
 		p.stopped = true
 		close(p.Messages)
 	}
+
 	if !bool(C.DestroySubscriber(C.uintptr_t(p.handle))) {
 		// "Failed to delete subscriber"
 		return
@@ -78,7 +79,7 @@ func (p *Subscriber) Delete() {
 	p.handle.Delete()
 }
 
-// Receive a new message from the eCAL receive callback
+// Receive a new message from the eCAL receive callback.
 func (p *Subscriber) Receive(timeout time.Duration) ([]byte, error) {
 	select {
 	case msg := <-p.Messages:
@@ -88,7 +89,7 @@ func (p *Subscriber) Receive(timeout time.Duration) ([]byte, error) {
 	}
 }
 
-// Deserialize straight from the eCAL internal buffer to our Go []byte
+// Deserialize straight from the eCAL internal buffer to our Go []byte.
 func deserializer(data unsafe.Pointer, dataLen int) any {
 	return C.GoBytes(data, C.int(dataLen))
 }

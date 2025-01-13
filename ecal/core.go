@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	// eCAL Components
+	// eCAL Components.
 	CNone       uint = 0x000
 	CPublisher  uint = 0x001
 	CSubscriber uint = 0x002
@@ -38,6 +38,7 @@ func NewConfig(opts ...ConfigOption) Config {
 	for _, opt := range opts {
 		opt(&cfg)
 	}
+
 	return cfg
 }
 
@@ -65,8 +66,11 @@ func Initialize(config Config, unitName string, components uint) bool {
 			receive_enabled: C.bool(config.Logging.ReceiveEnabled),
 		},
 	}
+
 	unitNameC := C.CString(unitName)
+
 	defer C.free(unsafe.Pointer(unitNameC))
+
 	return bool(C.Initialize(&cconfig, unitNameC, C.uint(components)))
 }
 
@@ -84,7 +88,9 @@ func IsComponentInitialized(component uint) bool {
 
 func SetUnitName(unitName string) bool {
 	unitNameC := C.CString(unitName)
+
 	defer C.free(unsafe.Pointer(unitNameC))
+
 	return bool(C.SetUnitName(unitNameC))
 }
 
@@ -96,8 +102,10 @@ func Ok() bool {
 // is planned to be removed!
 func GetConfig() string {
 	var cfg string
+
 	handle := cgo.NewHandle(&cfg)
 	defer handle.Delete()
 	C.GetConfig(C.uintptr_t(handle))
+
 	return cfg
 }

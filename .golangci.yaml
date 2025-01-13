@@ -16,6 +16,8 @@ linters-settings:
       - standard
       - default
       - localmodule
+  gomoddirectives:
+    replace-local: true
   ireturn:
     allow:
       - tea.Model
