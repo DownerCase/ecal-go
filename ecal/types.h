@@ -11,10 +11,10 @@ extern "C" {
 #endif
 
 struct CEntityId {
-  const char *entity_id;
+  uint64_t entity_id;
   const char *host_name;
   int32_t process_id;
-  char _PADDING[4];
+  char PADDING[4];
 };
 
 struct CTopicId {
@@ -33,7 +33,7 @@ struct CDatatype {
 struct CTopicMon {
   const char *unit_name;
   const char *host_name;
-  const char *topic_id;
+  uint64_t topic_id;
   const char *topic_name;
   const char *direction;
   struct CDatatype datatype;
@@ -64,16 +64,14 @@ struct CProcessMon {
 
 struct CMethodMon {
   const char *name;
-  const char *request_name;
-  const char *request_desc;
-  const char *response_name;
-  const char *response_desc;
+  struct CDatatype req_datatype;
+  struct CDatatype resp_datatype;
   int64_t call_count;
 };
 
 struct CServiceCommon {
   const char *name;
-  const char *id;
+  uint64_t id;
   const struct CMethodMon *methods;
   size_t methods_len;
   const char *host_name;
