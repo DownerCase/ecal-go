@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -122,10 +123,10 @@ func (m *ModelTopicsMain) View() string {
 	return baseStyle.Render(m.table.View()) + "\n" + m.help.View(m.keymap)
 }
 
-func (m *ModelTopicsMain) GetSelectedID() (string, TopicType, error) {
+func (m *ModelTopicsMain) GetSelectedID() (uint64, TopicType, error) {
 	row := m.table.SelectedRow()
 	if row == nil {
-		return "", 0, errEmptyTable
+		return 0, 0, errEmptyTable
 	}
 
 	var topicType TopicType
@@ -137,7 +138,12 @@ func (m *ModelTopicsMain) GetSelectedID() (string, TopicType, error) {
 		topicType = topicTypePublisher
 	}
 
-	return row[0], topicType, nil
+	id, err := strconv.ParseUint(row[0], 10, 64)
+	if err != nil {
+		err = fmt.Errorf("topics - GetSelectedID(): %w", err)
+	}
+
+	return id, topicType, err
 }
 
 func (m *ModelTopicsMain) updateTopicsTable(msg tea.Msg) {
@@ -168,7 +174,7 @@ func (m *ModelTopicsMain) updateTopicsTable(msg tea.Msg) {
 
 func topicToRow(topic monitoring.TopicMon) table.Row {
 	return []string{
-		topic.TopicID,
+		strconv.FormatUint(topic.TopicID, 10),
 		strings.ToUpper(topic.Direction[0:1]),
 		topic.TopicName,
 		topic.Datatype.Name,

@@ -10,7 +10,7 @@ import (
 
 type ModelTopicDetailed struct {
 	table     table.Model
-	id        string    `exhaustruct:"optional"`
+	id        uint64    `exhaustruct:"optional"`
 	topicType TopicType `exhaustruct:"optional"`
 }
 
@@ -25,7 +25,7 @@ func NewDetailedModel() *ModelTopicDetailed {
 	}
 }
 
-func (m *ModelTopicDetailed) ShowTopic(topicID string, topicType TopicType) {
+func (m *ModelTopicDetailed) ShowTopic(topicID uint64, topicType TopicType) {
 	m.id = topicID
 	m.topicType = topicType
 	m.updateDetailedTable(nil)

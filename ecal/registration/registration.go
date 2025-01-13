@@ -58,7 +58,7 @@ func RemSubscriberCallback(token CallbackToken) {
 func toTopicID(id *C.struct_CTopicId) ecal.TopicID {
 	return ecal.TopicID{
 		TopicID: ecal.EntityID{
-			EntityID:  C.GoString(id.topic_id.entity_id),
+			EntityID:  uint64(id.topic_id.entity_id),
 			ProcessID: int32(id.topic_id.process_id),
 			HostName:  C.GoString(id.topic_id.host_name),
 		},

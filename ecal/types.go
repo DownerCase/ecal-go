@@ -1,7 +1,7 @@
 package ecal
 
 type EntityID struct {
-	EntityID  string
+	EntityID  uint64
 	ProcessID int32
 	HostName  string
 }

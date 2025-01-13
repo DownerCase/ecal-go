@@ -60,7 +60,7 @@ type TopicMon struct {
 	// pid                int32
 	// process_name       string
 	UnitName  string
-	TopicID   string
+	TopicID   uint64
 	TopicName string
 	Direction string
 	Datatype  ecal.DataType
@@ -91,21 +91,16 @@ type ProcessMon struct {
 	RuntimeVersion        string // eCAL Version in use
 }
 
-type methodType struct {
-	Type       string
-	Descriptor string
-}
-
 type MethodMon struct {
 	Name         string
-	RequestType  methodType
-	ResponseType methodType
+	RequestType  ecal.DataType
+	ResponseType ecal.DataType
 	CallCount    int64
 }
 
 type ServiceBase struct {
 	Name              string
-	ID                string
+	ID                uint64
 	Methods           []MethodMon
 	RegistrationClock int32 // registration heart beat
 	HostName          string

@@ -18,7 +18,7 @@ type ModelTopicMessages struct {
 	viewport     viewport.Model
 	mon          monitoring.TopicMon
 	topicType    TopicType
-	topicID      string
+	topicID      uint64
 	subscriber   *subscriber.Subscriber
 	msg          []byte
 	deserializer func([]byte) string
@@ -76,7 +76,7 @@ func (m *ModelTopicMessages) Refresh() {
 	m.mon, _ = getTopicFromID(m.topicType, m.topicID)
 }
 
-func (m *ModelTopicMessages) ShowTopic(topicID string, topicType TopicType) {
+func (m *ModelTopicMessages) ShowTopic(topicID uint64, topicType TopicType) {
 	if m.topicID != topicID {
 		m.topicType = topicType
 		m.topicID = topicID

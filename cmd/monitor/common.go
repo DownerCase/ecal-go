@@ -54,7 +54,7 @@ func getTopicMonitoring(topicType TopicType) []monitoring.TopicMon {
 	return nil
 }
 
-func getTopicFromID(topicType TopicType, id string) (monitoring.TopicMon, error) {
+func getTopicFromID(topicType TopicType, id uint64) (monitoring.TopicMon, error) {
 	topicList := getTopicMonitoring(topicType)
 	for _, topic := range topicList {
 		if topic.TopicID == id {
