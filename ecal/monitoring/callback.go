@@ -10,28 +10,33 @@ import (
 	"github.com/DownerCase/ecal-go/ecal"
 )
 
+func copyToDatatype(datatype C.struct_CDatatype) ecal.DataType {
+	return ecal.DataType{
+		Name:     C.GoString(datatype.name),
+		Encoding: C.GoString(datatype.encoding),
+	}
+}
+
 func copyToTopicMons(ctopics []C.struct_CTopicMon) []TopicMon {
 	topics := make([]TopicMon, len(ctopics))
 	for idx, pub := range ctopics {
 		topics[idx] = TopicMon{
-			TopicID:           C.GoString(pub.topic_id),
-			RegistrationClock: int32(pub.registration_clock),
-			TopicName:         C.GoString(pub.topic_name),
-			DataClock:         int64(pub.data_clock),
-			DataFreq:          int32(pub.data_freq),
-			TopicSize:         int32(pub.topic_size),
-			UnitName:          C.GoString(pub.unit_name),
-			Direction:         C.GoString(pub.direction),
-			Datatype: ecal.DataType{
-				Name:     C.GoString(pub.datatype.name),
-				Encoding: C.GoString(pub.datatype.encoding),
-			},
+			TopicID:             uint64(pub.topic_id),
+			RegistrationClock:   int32(pub.registration_clock),
+			TopicName:           C.GoString(pub.topic_name),
+			DataClock:           int64(pub.data_clock),
+			DataFreq:            int32(pub.data_freq),
+			TopicSize:           int32(pub.topic_size),
+			UnitName:            C.GoString(pub.unit_name),
+			Direction:           C.GoString(pub.direction),
+			Datatype:            copyToDatatype(pub.datatype),
 			ConnectionsLocal:    int32(pub.connections_local),
 			ConnectionsExternal: int32(pub.connections_external),
 			MessageDrops:        int32(pub.message_drops),
 			HostName:            C.GoString(pub.host_name),
 		}
 	}
+
 	return topics
 }
 
@@ -52,6 +57,7 @@ func copyToProcessMons(cprocs []C.struct_CProcessMon) []ProcessMon {
 			RuntimeVersion:        C.GoString(proc.runtime), // eCAL Version in use
 		}
 	}
+
 	return procs
 }
 
@@ -59,25 +65,20 @@ func copyToMethodMons(cmethods []C.struct_CMethodMon) []MethodMon {
 	methods := make([]MethodMon, len(cmethods))
 	for idx, cmethod := range cmethods {
 		methods[idx] = MethodMon{
-			Name: C.GoString(cmethod.name),
-			RequestType: methodType{
-				Type:       C.GoString(cmethod.request_name),
-				Descriptor: C.GoString(cmethod.request_desc),
-			},
-			ResponseType: methodType{
-				Type:       C.GoString(cmethod.response_name),
-				Descriptor: C.GoString(cmethod.response_desc),
-			},
-			CallCount: int64(cmethod.call_count),
+			Name:         C.GoString(cmethod.name),
+			RequestType:  copyToDatatype(cmethod.req_datatype),
+			ResponseType: copyToDatatype(cmethod.resp_datatype),
+			CallCount:    int64(cmethod.call_count),
 		}
 	}
+
 	return methods
 }
 
 func copyToServiceBase(cbase C.struct_CServiceCommon) ServiceBase {
 	return ServiceBase{
 		Name:              C.GoString(cbase.name),
-		ID:                C.GoString(cbase.id),
+		ID:                uint64(cbase.id),
 		RegistrationClock: int32(cbase.registration_clock),
 		HostName:          C.GoString(cbase.host_name),
 		Process:           C.GoString(cbase.process_name),
@@ -97,6 +98,7 @@ func copyToServerMons(cservers []C.struct_CServerMon) []ServerMon {
 			PortV1:      uint32(cserver.port_v1),
 		}
 	}
+
 	return servers
 }
 
@@ -107,6 +109,7 @@ func copyToClientMons(cclients []C.struct_CClientMon) []ClientMon {
 			ServiceBase: copyToServiceBase(cclient.base),
 		}
 	}
+
 	return clients
 }
 

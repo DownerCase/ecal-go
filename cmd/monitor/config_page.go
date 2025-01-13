@@ -1,10 +1,9 @@
 package main
 
 import (
+	"github.com/DownerCase/ecal-go/ecal"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
-
-	"github.com/DownerCase/ecal-go/ecal"
 )
 
 type ModelConfig struct {

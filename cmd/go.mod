@@ -1,4 +1,4 @@
-module cmd
+module github.com/DownerCase/ecal-go/cmd
 
 go 1.23.2
 

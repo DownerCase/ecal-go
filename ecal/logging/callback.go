@@ -22,6 +22,7 @@ func copyToLogMessages(cmsgs []C.struct_CLogMessage) []LogMessage {
 			Level:    Level(msg.level),
 		}
 	}
+
 	return msgs
 }
 

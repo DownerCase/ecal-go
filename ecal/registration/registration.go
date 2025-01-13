@@ -32,6 +32,7 @@ func AddPublisherEventCallback(callback func(ecal.TopicID, Event)) CallbackToken
 		ecalToken: uint(ecalToken),
 		goHandle:  handle,
 	}
+
 	return token
 }
 
@@ -47,6 +48,7 @@ func AddSubscriberEventCallback(callback func(ecal.TopicID, Event)) CallbackToke
 		ecalToken: uint(ecalToken),
 		goHandle:  handle,
 	}
+
 	return token
 }
 
@@ -58,7 +60,7 @@ func RemSubscriberCallback(token CallbackToken) {
 func toTopicID(id *C.struct_CTopicId) ecal.TopicID {
 	return ecal.TopicID{
 		TopicID: ecal.EntityID{
-			EntityID:  C.GoString(id.topic_id.entity_id),
+			EntityID:  uint64(id.topic_id.entity_id),
 			ProcessID: int32(id.topic_id.process_id),
 			HostName:  C.GoString(id.topic_id.host_name),
 		},
@@ -69,9 +71,11 @@ func toTopicID(id *C.struct_CTopicId) ecal.TopicID {
 //export goTopicEventCallback
 func goTopicEventCallback(handle C.uintptr_t, id C.struct_CTopicId, event C.uint8_t) {
 	h := cgo.Handle(handle)
+
 	f, ok := h.Value().(func(ecal.TopicID, Event))
 	if !ok {
 		log.Panic("Invalid handle passed to registration callback")
 	}
+
 	f(toTopicID(&id), Event(event))
 }

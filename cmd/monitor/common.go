@@ -4,10 +4,9 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/DownerCase/ecal-go/ecal/monitoring"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
-
-	"github.com/DownerCase/ecal-go/ecal/monitoring"
 )
 
 var (
@@ -54,7 +53,7 @@ func getTopicMonitoring(topicType TopicType) []monitoring.TopicMon {
 	return nil
 }
 
-func getTopicFromID(topicType TopicType, id string) (monitoring.TopicMon, error) {
+func getTopicFromID(topicType TopicType, id uint64) (monitoring.TopicMon, error) {
 	topicList := getTopicMonitoring(topicType)
 	for _, topic := range topicList {
 		if topic.TopicID == id {

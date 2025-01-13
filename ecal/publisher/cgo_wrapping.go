@@ -16,4 +16,5 @@ package publisher
 //    descriptor, descriptor_len
 //  );
 //}
+//// C preamble.
 import "C"

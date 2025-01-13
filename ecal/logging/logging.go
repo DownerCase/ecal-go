@@ -6,6 +6,7 @@ package logging
 // void GoLog(enum eCAL_Logging_eLogLevel level, _GoString_ msg) {
 //   Log(level, _GoStringPtr(msg), _GoStringLen(msg));
 // }
+//// C preamble.
 import "C"
 
 import (
@@ -76,6 +77,7 @@ func GetLogging() Logging {
 	handle := cgo.NewHandle(&logs)
 	C.GetLogging(C.uintptr_t(handle))
 	handle.Delete()
+
 	return logs
 }
 

@@ -4,15 +4,14 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/DownerCase/ecal-go/ecal/monitoring"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
-
-	"github.com/DownerCase/ecal-go/ecal/monitoring"
 )
 
 type ModelServiceDetailed struct {
 	table    table.Model
-	ID       string
+	ID       uint64
 	IsServer bool
 }
 
@@ -24,7 +23,7 @@ func NewDetailedServiceModel() *ModelServiceDetailed {
 
 	return &ModelServiceDetailed{
 		table: NewTable(cols),
-		ID:    "",
+		ID:    0,
 	}
 }
 
@@ -97,7 +96,7 @@ func getMethodRows(b monitoring.ServiceBase) []table.Row {
 	for _, method := range b.Methods {
 		rows = append(rows, table.Row{
 			method.Name,
-			fmt.Sprintf("%s -> %s (Called x%v)", method.RequestType.Type, method.ResponseType.Type, method.CallCount),
+			fmt.Sprintf("%v -> %v (Called x%v)", method.RequestType.Name, method.ResponseType.Name, method.CallCount),
 		})
 	}
 

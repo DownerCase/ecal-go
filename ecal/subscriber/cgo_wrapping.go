@@ -16,4 +16,5 @@ package subscriber
 //      descriptor, descriptor_len
 //    );
 //}
+//// C preamble.
 import "C"

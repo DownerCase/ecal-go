@@ -21,10 +21,12 @@ func New(topic string) (*Subscriber, error) {
 			Encoding: "base",
 		},
 	)
-	sub.Deserialize = deserialize
 	if err != nil {
 		err = fmt.Errorf("string Subscriber.New(): %w", err)
 	}
+
+	sub.Deserialize = deserialize
+
 	return &Subscriber{*sub}, err
 }
 

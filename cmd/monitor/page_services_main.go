@@ -1,12 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"strconv"
 
+	"github.com/DownerCase/ecal-go/ecal/monitoring"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
-
-	"github.com/DownerCase/ecal-go/ecal/monitoring"
 )
 
 type ModelServicesMain struct {
@@ -39,13 +39,18 @@ func (m *ModelServicesMain) View() string {
 	return baseStyle.Render(m.table.View()) + "\n" + m.table.HelpView()
 }
 
-func (m *ModelServicesMain) GetSelectedID() (string, bool, error) {
+func (m *ModelServicesMain) GetSelectedID() (uint64, bool, error) {
 	row := m.table.SelectedRow()
 	if row == nil {
-		return "", false, errEmptyTable
+		return 0, false, errEmptyTable
 	}
 
-	return row[0], row[1] == "S", nil
+	id, err := strconv.ParseUint(row[0], 10, 64)
+	if err != nil {
+		err = fmt.Errorf("services - GetSelectedID() %w", err)
+	}
+
+	return id, row[1] == "S", err
 }
 
 func (m *ModelServicesMain) updateTable(msg tea.Msg) tea.Cmd {
@@ -78,14 +83,14 @@ func serviceToRow(service monitoring.ServiceBase) table.Row {
 
 func clientToRow(client monitoring.ClientMon) table.Row {
 	return append(
-		[]string{client.ID, "C"},
+		[]string{strconv.FormatUint(client.ID, 10), "C"},
 		serviceToRow(client.ServiceBase)...,
 	)
 }
 
 func serverToRow(server monitoring.ServerMon) table.Row {
 	return append(
-		[]string{server.ID, "S"},
+		[]string{strconv.FormatUint(server.ID, 10), "S"},
 		serviceToRow(server.ServiceBase)...,
 	)
 }

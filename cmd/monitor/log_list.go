@@ -3,12 +3,11 @@ package main
 import (
 	"time"
 
+	"github.com/DownerCase/ecal-go/ecal/logging"
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
-
-	"github.com/DownerCase/ecal-go/ecal/logging"
 )
 
 type LoggingPage int

@@ -2,13 +2,14 @@ package publisher
 
 // #cgo LDFLAGS: -lecal_core
 // #cgo CPPFLAGS: -I${SRCDIR}/../../
-//#include "publisher.h"
+// #include "publisher.h"
 // bool GoNewPublisher(
 //  uintptr_t handle,
 //  _GoString_ topic,
 //  _GoString_ name, _GoString_ encoding,
 //  const char* const descriptor, size_t descriptor_len
 // );
+// // C preamble.
 import "C"
 
 import (
@@ -53,7 +54,9 @@ func New(topic string, datatype DataType) (*Publisher, error) {
 		handle.Delete()
 		return nil, ErrFailedNew
 	}
+
 	go pub.sendMessages()
+
 	return pub, nil
 }
 
@@ -62,6 +65,7 @@ func (p *Publisher) Delete() {
 		p.stopped = true
 		close(p.Messages)
 	}
+
 	if !bool(C.DestroyPublisher(C.uintptr_t(p.handle))) {
 		// "Failed to delete publisher"
 		return

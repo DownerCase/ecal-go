@@ -15,7 +15,7 @@ int safe_len(size_t str_len) {
 template <class T> CServiceCommon toServiceCommon(const T &t) {
   return {
       t.sname.c_str(),
-      t.sid.c_str(),
+      t.sid,
       nullptr, // Methods are filled in a separate pass
       t.methods.size(),
       t.hname.c_str(),
@@ -43,7 +43,7 @@ CDatatype toCType(const eCAL::SDataTypeInformation &datatype) {
 CTopicId toCType(const eCAL::Registration::STopicId &id) {
   return {
       {
-          id.topic_id.entity_id.data(),
+          id.topic_id.entity_id,
           id.topic_id.host_name.data(),
           id.topic_id.process_id,
           {},
@@ -56,7 +56,7 @@ CTopicMon toCType(const eCAL::Monitoring::STopicMon &topic) {
   return {
       topic.uname.c_str(),
       topic.hname.c_str(),
-      topic.tid.c_str(),
+      topic.tid,
       topic.tname.c_str(),
       topic.direction.c_str(),
       toCType(topic.tdatatype),
@@ -111,10 +111,8 @@ CServerMon toCType(const eCAL::Monitoring::SServerMon &server) {
 CMethodMon toCType(const eCAL::Monitoring::SMethodMon &method) {
   return {
       method.mname.c_str(),
-      method.req_type.c_str(),
-      method.req_desc.c_str(),
-      method.resp_type.c_str(),
-      method.resp_desc.c_str(),
+      toCType(method.req_datatype),
+      toCType(method.resp_datatype),
       method.call_count
   };
 }
