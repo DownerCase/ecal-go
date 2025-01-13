@@ -6,12 +6,11 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/DownerCase/ecal-go/ecal/monitoring"
+	"github.com/DownerCase/ecal-go/ecal/subscriber"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/muesli/reflow/wrap"
-
-	"github.com/DownerCase/ecal-go/ecal/monitoring"
-	"github.com/DownerCase/ecal-go/ecal/subscriber"
 )
 
 type ModelTopicMessages struct {

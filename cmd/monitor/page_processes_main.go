@@ -4,10 +4,9 @@ import (
 	"path/filepath"
 	"strconv"
 
+	"github.com/DownerCase/ecal-go/ecal/monitoring"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
-
-	"github.com/DownerCase/ecal-go/ecal/monitoring"
 )
 
 type ModelProcessesMain struct {
