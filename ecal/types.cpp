@@ -42,18 +42,6 @@ CDatatype toCType(const eCAL::SDataTypeInformation &datatype) {
   };
 }
 
-CTopicId toCType(const eCAL::Registration::STopicId &id) {
-  return {
-      {
-          id.topic_id.entity_id,
-          id.topic_id.host_name.data(),
-          id.topic_id.process_id,
-          {},
-      },
-      id.topic_name.data()
-  };
-}
-
 CTopicMon toCType(const eCAL::Monitoring::STopicMon &topic) {
   return {
       topic.uname.c_str(),

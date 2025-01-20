@@ -9,7 +9,6 @@
 #include "types.h"
 
 CDatatype toCType(const eCAL::SDataTypeInformation &datatype);
-CTopicId toCType(const eCAL::Registration::STopicId &id);
 CTopicMon toCType(const eCAL::Monitoring::STopicMon &topic);
 CProcessMon toCType(const eCAL::Monitoring::SProcessMon &proc);
 CClientMon toCType(const eCAL::Monitoring::SClientMon &client);

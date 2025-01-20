@@ -8,6 +8,18 @@
 extern "C" {
 #endif
 
+struct CEntityId {
+  uint64_t entity_id;
+  const char *host_name;
+  int32_t process_id;
+  char PADDING[4];
+};
+
+struct CTopicId {
+  struct CEntityId topic_id;
+  const char *topic_name;
+};
+
 size_t AddPublisherEventCallback(uintptr_t handle);
 void RemPublisherEventCallback(size_t handle);
 
