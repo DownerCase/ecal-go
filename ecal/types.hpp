@@ -19,16 +19,26 @@ CServerMon toCType(const eCAL::Monitoring::SServerMon &server);
 CMethodMon toCType(const eCAL::Monitoring::SMethodMon &method);
 
 template <
+    template <typename> typename DstContainerT,
+    typename DstT,
+    template <typename> typename SrcContainerT,
+    typename SrcT>
+std::vector<DstT>
+containerTo(const SrcContainerT<SrcT> &src, DstT (*proj)(const SrcT &)) {
+  DstContainerT<DstT> dst{};
+  dst.reserve(src.size());
+  for (const auto &ecaltype : src) {
+    dst.emplace_back(proj(ecaltype));
+  }
+  return dst;
+}
+
+template <
     typename CType,
     typename EcalType,
     template <typename> typename Container>
 std::vector<CType> toCTypes(const Container<EcalType> &ecaltypes) {
-  std::vector<CType> ctypes{};
-  ctypes.reserve(ecaltypes.size());
-  for (const auto &ecaltype : ecaltypes) {
-    ctypes.emplace_back(toCType(ecaltype));
-  }
-  return ctypes;
+  return containerTo<std::vector>(ecaltypes, toCType);
 }
 
 #endif
