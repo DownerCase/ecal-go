@@ -88,18 +88,6 @@ CProcessMon toCType(const eCAL::Monitoring::SProcessMon &proc) {
   };
 }
 
-CLogMessage toCType(const eCAL::Logging::SLogMessage &log) {
-  return {
-      log.time,
-      log.hname.c_str(),
-      log.pname.c_str(),
-      log.uname.c_str(),
-      log.content.c_str(),
-      log.pid,
-      log.level
-  };
-}
-
 CClientMon toCType(const eCAL::Monitoring::SClientMon &client) {
   return {toServiceCommon(client)};
 }
