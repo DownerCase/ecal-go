@@ -16,7 +16,7 @@ int safe_len(size_t str_len) {
 
 } // namespace
 
-CDatatype toCType(const eCAL::SDataTypeInformation &datatype) {
+CDatatype toCDatatype(const eCAL::SDataTypeInformation &datatype) {
   return {
       datatype.name.c_str(),
       datatype.encoding.c_str(),

@@ -8,7 +8,7 @@
 
 #include "types.h"
 
-CDatatype toCType(const eCAL::SDataTypeInformation &datatype);
+CDatatype toCDatatype(const eCAL::SDataTypeInformation &datatype);
 
 template <
     template <typename> typename DstContainerT,

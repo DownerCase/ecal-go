@@ -18,7 +18,7 @@ CTopicMon toCTopicMon(const eCAL::Monitoring::STopicMon &topic) {
       topic.tid,
       topic.tname.c_str(),
       topic.direction.c_str(),
-      toCType(topic.tdatatype),
+      toCDatatype(topic.tdatatype),
       topic.dclock,
       topic.dfreq,
       topic.rclock,
@@ -73,8 +73,8 @@ CServerMon toCServerMon(const eCAL::Monitoring::SServerMon &server) {
 CMethodMon toCMethodMon(const eCAL::Monitoring::SMethodMon &method) {
   return {
       method.mname.c_str(),
-      toCType(method.req_datatype),
-      toCType(method.resp_datatype),
+      toCDatatype(method.req_datatype),
+      toCDatatype(method.resp_datatype),
       method.call_count
   };
 }
