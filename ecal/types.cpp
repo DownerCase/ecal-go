@@ -1,6 +1,8 @@
 #include <climits>
+#include <ecal/ecal_process_severity.h>
 #include <ecal/types/monitoring.h>
 
+#include "process.h"
 #include "types.h"
 #include "types.hpp"
 
@@ -104,3 +106,24 @@ CMethodMon toCType(const eCAL::Monitoring::SMethodMon &method) {
       method.call_count
   };
 }
+
+static_assert(
+    process_severity_unknown ==
+    static_cast<CProcessSeverity>(eCAL::Process::eSeverity::unknown)
+);
+static_assert(
+    process_severity_healthy ==
+    static_cast<CProcessSeverity>(eCAL::Process::eSeverity::healthy)
+);
+static_assert(
+    process_severity_warning ==
+    static_cast<CProcessSeverity>(eCAL::Process::eSeverity::warning)
+);
+static_assert(
+    process_severity_critical ==
+    static_cast<CProcessSeverity>(eCAL::Process::eSeverity::critical)
+);
+static_assert(
+    process_severity_failed ==
+    static_cast<CProcessSeverity>(eCAL::Process::eSeverity::failed)
+);
