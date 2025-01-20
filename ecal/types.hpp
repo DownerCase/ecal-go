@@ -9,11 +9,6 @@
 #include "types.h"
 
 CDatatype toCType(const eCAL::SDataTypeInformation &datatype);
-CTopicMon toCType(const eCAL::Monitoring::STopicMon &topic);
-CProcessMon toCType(const eCAL::Monitoring::SProcessMon &proc);
-CClientMon toCType(const eCAL::Monitoring::SClientMon &client);
-CServerMon toCType(const eCAL::Monitoring::SServerMon &server);
-CMethodMon toCType(const eCAL::Monitoring::SMethodMon &method);
 
 template <
     template <typename> typename DstContainerT,
