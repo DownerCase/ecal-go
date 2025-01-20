@@ -21,8 +21,8 @@ RUN apk add --no-cache \
 # So we end up with the full commit history but only download trees for HEAD
 # This is needed over shallow clone for the tag-based auto-versioning
 # Reset added to ensure the same commit is always used, even if master advances
-RUN git clone --single-branch --filter=tree:0 --branch alpine https://github.com/DownerCase/ecal.git /ecal \
-    && git -C /ecal reset --hard c9e9a489e44420899693bba7360ce1e235d691e6 \
+RUN git clone --single-branch --filter=tree:0 --branch master https://github.com/DownerCase/ecal.git /ecal \
+    && git -C /ecal reset --hard 4bbe51cede87c77e5fcaed9cbe3ec64fc21da91f \
     # Only download the submodules for dependencies not available as system packages
     && git -C /ecal submodule update --init --single-branch --depth 1 \
     thirdparty/recycle/recycle \

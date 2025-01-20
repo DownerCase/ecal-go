@@ -1,8 +1,8 @@
 package monitoring
 
 //#cgo LDFLAGS: -lecal_core
-//#include <ecal/ecal_process_severity.h>
 //#include "monitoring.h"
+//#include "process.h"
 //#cgo CPPFLAGS: -I${SRCDIR}/..
 import "C"
 
@@ -29,11 +29,11 @@ const (
 type ProcessSeverity uint8
 
 const (
-	ProcSevUnknown  ProcessSeverity = C.proc_sev_unknown
-	ProcSevHealthy  ProcessSeverity = C.proc_sev_healthy
-	ProcSevWarning  ProcessSeverity = C.proc_sev_warning
-	ProcSevCritical ProcessSeverity = C.proc_sev_critical
-	ProcSevFailed   ProcessSeverity = C.proc_sev_failed
+	ProcSevUnknown  ProcessSeverity = C.process_severity_unknown
+	ProcSevHealthy  ProcessSeverity = C.process_severity_healthy
+	ProcSevWarning  ProcessSeverity = C.process_severity_warning
+	ProcSevCritical ProcessSeverity = C.process_severity_critical
+	ProcSevFailed   ProcessSeverity = C.process_severity_failed
 )
 
 func (p ProcessSeverity) String() string {

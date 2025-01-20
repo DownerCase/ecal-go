@@ -23,6 +23,69 @@ enum eCAL_Monitoring_eEntity {
                    monitoring_host,
 };
 
+struct CTopicMon {
+  const char *unit_name;
+  const char *host_name;
+  uint64_t topic_id;
+  const char *topic_name;
+  const char *direction;
+  struct CDatatype datatype;
+  int64_t data_clock;
+  int64_t data_freq;
+  int32_t registration_clock;
+  int32_t topic_size;
+  int32_t connections_local;
+  int32_t connections_external;
+  int32_t message_drops;
+  char _PADDING[4];
+};
+
+struct CProcessMon {
+  const char *host_name;
+  const char *host_group;
+  int32_t registration_clock;
+  int32_t pid;
+  const char *process_name;
+  const char *unit_name;
+  const char *process_parameters;
+  int32_t state_severity;
+  int32_t state_severity_level;
+  const char *state_info;
+  const char *components;
+  const char *runtime;
+};
+
+struct CMethodMon {
+  const char *name;
+  struct CDatatype req_datatype;
+  struct CDatatype resp_datatype;
+  int64_t call_count;
+};
+
+struct CServiceCommon {
+  const char *name;
+  uint64_t id;
+  const struct CMethodMon *methods;
+  size_t methods_len;
+  const char *host_name;
+  const char *process_name;
+  const char *unit_name;
+  int32_t registration_clock;
+  int32_t pid;
+  uint32_t protocol_version;
+  char _PADDING[4];
+};
+
+struct CServerMon {
+  struct CServiceCommon base;
+  uint32_t port_v0;
+  uint32_t port_v1;
+};
+
+struct CClientMon {
+  struct CServiceCommon base;
+};
+
 struct CMonitoring {
   const struct CTopicMon *publishers;
   size_t publishers_len;

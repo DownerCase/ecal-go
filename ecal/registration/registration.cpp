@@ -9,13 +9,27 @@ extern "C" {
 extern void goTopicEventCallback(uintptr_t handle, CTopicId id, uint8_t event);
 }
 
+namespace {
+CTopicId toCTopicId(const eCAL::Registration::STopicId &id) {
+  return {
+      {
+          id.topic_id.entity_id,
+          id.topic_id.host_name.data(),
+          id.topic_id.process_id,
+          {},
+      },
+      id.topic_name.data()
+  };
+}
+} // namespace
+
 size_t AddPublisherEventCallback(uintptr_t handle) {
   const auto callback_adapter = [handle](
                                     const eCAL::Registration::STopicId &id,
                                     eCAL::Registration::RegistrationEventType
                                         event
                                 ) {
-    goTopicEventCallback(handle, toCType(id), static_cast<uint8_t>(event));
+    goTopicEventCallback(handle, toCTopicId(id), static_cast<uint8_t>(event));
   };
   return eCAL::Registration::AddPublisherEventCallback(callback_adapter);
 }
@@ -30,7 +44,7 @@ size_t AddSubscriberEventCallback(uintptr_t handle) {
                                     eCAL::Registration::RegistrationEventType
                                         event
                                 ) {
-    goTopicEventCallback(handle, toCType(id), static_cast<uint8_t>(event));
+    goTopicEventCallback(handle, toCTopicId(id), static_cast<uint8_t>(event));
   };
   return eCAL::Registration::AddSubscriberEventCallback(callback_adapter);
 }
