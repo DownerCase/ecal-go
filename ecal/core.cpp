@@ -2,7 +2,7 @@
 
 #include <ecal/config/configuration.h>
 #include <ecal/core.h>
-#include <ecal/ecal_defs.h>
+#include <ecal/defs.h>
 #include <ecal/process.h>
 
 extern "C" {
