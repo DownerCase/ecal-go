@@ -1,9 +1,9 @@
 #include "core.h"
 
 #include <ecal/config/configuration.h>
-#include <ecal/ecal_core.h>
+#include <ecal/core.h>
 #include <ecal/ecal_defs.h>
-#include <ecal/ecal_process.h>
+#include <ecal/process.h>
 
 extern "C" {
 extern void goCopyString(uintptr_t, const char *);

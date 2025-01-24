@@ -1,6 +1,6 @@
 #include "publisher.h"
 
-#include <ecal/ecal_publisher.h>
+#include <ecal/pubsub/publisher.h>
 
 #include "internal/handle_map.hpp"
 

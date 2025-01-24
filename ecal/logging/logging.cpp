@@ -1,8 +1,8 @@
 #include "logging.h"
 
-#include "types.hpp"
+#include "cgo_types.hpp"
 
-#include <ecal/ecal_log.h>
+#include <ecal/log.h>
 #include <ecal/types/logging.h>
 
 extern "C" {

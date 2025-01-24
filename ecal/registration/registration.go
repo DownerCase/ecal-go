@@ -2,7 +2,7 @@ package registration
 
 // #cgo LDFLAGS: -lecal_core
 //#include "registration.h"
-//#include "types.h"
+//#include "cgo_types.h"
 // #cgo CPPFLAGS: -I${SRCDIR}/..
 import "C"
 
