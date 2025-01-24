@@ -22,7 +22,7 @@ RUN apk add --no-cache \
 # This is needed over shallow clone for the tag-based auto-versioning
 # Reset added to ensure the same commit is always used, even if master advances
 RUN git clone --single-branch --filter=tree:0 --branch master https://github.com/DownerCase/ecal.git /ecal \
-    && git -C /ecal reset --hard 4bbe51cede87c77e5fcaed9cbe3ec64fc21da91f \
+    && git -C /ecal reset --hard dcd73635dfcaec79634ec009060b19bc77e11f86 \
     # Only download the submodules for dependencies not available as system packages
     && git -C /ecal submodule update --init --single-branch --depth 1 \
     thirdparty/recycle/recycle \
