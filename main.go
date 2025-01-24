@@ -33,9 +33,6 @@ func main() {
 
 	registration.AddPublisherEventCallback(registrationLogger)
 
-	// Change the unit name
-	logging.Debug("Changed name:", ecal.SetUnitName("Go demo"))
-
 	// Check if the eCAL system is Ok.
 	// Other eCAL programs can send a message to cause ecal.Ok() to return false
 	// Typically used as a condition to terminate daemon-style programs

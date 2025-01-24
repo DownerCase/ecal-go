@@ -43,8 +43,6 @@ bool IsComponentInitialized(unsigned int component) {
   return eCAL::IsInitialized(component);
 }
 
-bool SetUnitName(const char *unit_name) { return eCAL::SetUnitName(unit_name); }
-
 bool Ok() { return eCAL::Ok(); }
 
 void GetConfig(uintptr_t handle) {

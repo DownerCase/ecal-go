@@ -86,14 +86,6 @@ func IsComponentInitialized(component uint) bool {
 	return bool(C.IsComponentInitialized(C.uint(component)))
 }
 
-func SetUnitName(unitName string) bool {
-	unitNameC := C.CString(unitName)
-
-	defer C.free(unsafe.Pointer(unitNameC))
-
-	return bool(C.SetUnitName(unitNameC))
-}
-
 func Ok() bool {
 	return bool(C.Ok())
 }
