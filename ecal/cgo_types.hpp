@@ -3,10 +3,10 @@
 
 #include <vector>
 
-#include <ecal/ecal_types.h>
+#include <ecal/types.h>
 #include <ecal/types/monitoring.h>
 
-#include "types.h"
+#include "cgo_types.h"
 
 CDatatype toCDatatype(const eCAL::SDataTypeInformation &datatype);
 

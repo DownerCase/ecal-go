@@ -10,9 +10,9 @@ add_library(ecal_go_core)
 target_sources(ecal_go_core PRIVATE
   ./ecal/core.h
   ./ecal/core.cpp
-  ./ecal/types.h
-  ./ecal/types.hpp
-  ./ecal/types.cpp
+  ./ecal/cgo_types.h
+  ./ecal/cgo_types.hpp
+  ./ecal/cgo_types.cpp
 )
 target_link_libraries(ecal_go_core PRIVATE eCAL::core)
 target_include_directories(ecal_go_core PUBLIC ./ecal)

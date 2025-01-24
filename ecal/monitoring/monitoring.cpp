@@ -1,9 +1,8 @@
 #include "monitoring.h"
 
-#include "types.h"
-#include "types.hpp"
+#include "cgo_types.hpp"
 
-#include <ecal/ecal_monitoring.h>
+#include <ecal/monitoring.h>
 #include <ecal/types/monitoring.h>
 
 extern "C" {

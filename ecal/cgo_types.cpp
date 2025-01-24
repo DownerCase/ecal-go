@@ -1,10 +1,10 @@
 #include <climits>
-#include <ecal/ecal_process_severity.h>
+#include <ecal/process_severity.h>
 #include <ecal/types/monitoring.h>
 
 #include "process.h"
-#include "types.h"
-#include "types.hpp"
+#include "cgo_types.h"
+#include "cgo_types.hpp"
 
 namespace {
 int safe_len(size_t str_len) {

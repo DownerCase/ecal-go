@@ -1,7 +1,7 @@
 package logging
 
 //#include "logging.h"
-//#include "types.h"
+//#include "cgo_types.h"
 import "C"
 
 import (

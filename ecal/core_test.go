@@ -57,10 +57,6 @@ func TestInitializeFinalize(t *testing.T) {
 		t.Error("Expected publisheCPublisher to be initialised")
 	}
 
-	if !ecal.SetUnitName("go_test_set_name") {
-		t.Error("Failed to set unit name")
-	}
-
 	if !ecal.Ok() {
 		t.Error("eCAL not Ok")
 	}

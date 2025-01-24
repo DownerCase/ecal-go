@@ -1,6 +1,6 @@
 #include "subscriber.h"
 
-#include <ecal/ecal_subscriber.h>
+#include <ecal/pubsub/subscriber.h>
 
 #include "internal/handle_map.hpp"
 

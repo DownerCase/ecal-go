@@ -1,9 +1,9 @@
 #include "core.h"
 
 #include <ecal/config/configuration.h>
-#include <ecal/ecal_core.h>
-#include <ecal/ecal_defs.h>
-#include <ecal/ecal_process.h>
+#include <ecal/core.h>
+#include <ecal/defs.h>
+#include <ecal/process.h>
 
 extern "C" {
 extern void goCopyString(uintptr_t, const char *);
@@ -42,8 +42,6 @@ bool IsInitialized() { return eCAL::IsInitialized(); }
 bool IsComponentInitialized(unsigned int component) {
   return eCAL::IsInitialized(component);
 }
-
-bool SetUnitName(const char *unit_name) { return eCAL::SetUnitName(unit_name); }
 
 bool Ok() { return eCAL::Ok(); }
 

@@ -1,9 +1,7 @@
 #include "registration.h"
 
-#include "types.hpp"
-
 #include <climits>
-#include <ecal/ecal_registration.h>
+#include <ecal/registration.h>
 
 extern "C" {
 extern void goTopicEventCallback(uintptr_t handle, CTopicId id, uint8_t event);
