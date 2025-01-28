@@ -21,13 +21,20 @@ func main() {
 	// Initialize eCAL with default config, the unit name "Go eCAL",
 	// and the Publisher, Subscriber and Logging components enabled
 	initResult := ecal.Initialize(
-		ecal.NewConfig(),
+		ecal.NewConfig(ecal.WithConsoleLogging(true), ecal.WithConsoleLogAll()),
 		"Go eCAL!",
 		ecal.CPublisher|ecal.CSubscriber|ecal.CLogging,
 	)
 
 	// Log a message
 	logging.Log(logging.LevelInfo, "Initialized: ", initResult)
+	logging.Log(logging.LevelWarn, "Consider this a warning")
+	logging.Log(logging.LevelError, "This is an error")
+	logging.Log(logging.LevelFatal, "When things are really bad")
+	logging.Log(logging.LevelDebug1, "Level 1 debug message")
+	logging.Log(logging.LevelDebug2, "Level 2 debug message")
+	logging.Log(logging.LevelDebug3, "Level 3 debug message")
+	logging.Log(logging.LevelDebug4, "Level 4 debug message")
 
 	defer ecal.Finalize() // Shutdown eCAL at the end of the program
 

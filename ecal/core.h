@@ -14,20 +14,12 @@ struct version {
   int patch;
 };
 
-struct CConfigLogging {
-  bool receive_enabled;
-};
-
-struct CConfig {
-  struct CConfigLogging logging;
-};
-
 const char *GetVersionString(void);
 const char *GetVersionDateString(void);
 struct version GetVersion(void);
 
 bool Initialize(
-    struct CConfig *config,
+    void *config,
     const char *unit_name,
     unsigned int components
 );

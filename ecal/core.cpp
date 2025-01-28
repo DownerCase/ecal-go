@@ -9,14 +9,6 @@ extern "C" {
 extern void goCopyString(uintptr_t, const char *);
 }
 
-namespace {
-eCAL::Configuration convertConfig(CConfig &config) {
-  eCAL::Configuration cfg{};
-  cfg.logging.receiver.enable = config.logging.receive_enabled;
-  return cfg;
-}
-} // namespace
-
 const char *GetVersionString() { return ECAL_VERSION; }
 
 const char *GetVersionDateString() { return ECAL_DATE; }
@@ -27,12 +19,12 @@ version GetVersion() {
 }
 
 bool Initialize(
-    CConfig *config,
+    void *config,
     const char *unit_name,
     unsigned int components
 ) {
-  auto cfg = convertConfig(*config);
-  return eCAL::Initialize(cfg, unit_name, components);
+  auto* cfg = reinterpret_cast<eCAL::Configuration*>(config);
+  return eCAL::Initialize(*cfg, unit_name, components);
 }
 
 bool Finalize() { return eCAL::Finalize(); }
