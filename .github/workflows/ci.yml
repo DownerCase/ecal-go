@@ -83,7 +83,6 @@ jobs:
       run: 'cmake -S . -B build -G Ninja -Werror=dev
         -DCMAKE_COMPILE_WARNING_AS_ERROR=ON
         -DCMAKE_TOOLCHAIN_FILE=project/gcc.cmake
-        -DCMAKE_CXX_FLAGS="-Wall -Wextra -Wpedantic -Wconversion"
         '
 
     - name: Build

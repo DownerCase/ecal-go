@@ -21,8 +21,8 @@ RUN apk add --no-cache \
 # So we end up with the full commit history but only download trees for HEAD
 # This is needed over shallow clone for the tag-based auto-versioning
 # Reset added to ensure the same commit is always used, even if master advances
-RUN git clone --single-branch --filter=tree:0 --branch master https://github.com/DownerCase/ecal.git /ecal \
-    && git -C /ecal reset --hard dcd73635dfcaec79634ec009060b19bc77e11f86 \
+RUN git clone --single-branch --filter=tree:0 --branch ecal-go https://github.com/DownerCase/ecal.git /ecal \
+    && git -C /ecal reset --hard 1027772c6a9a163bab08266443a19ec91fc1c440 \
     # Only download the submodules for dependencies not available as system packages
     && git -C /ecal submodule update --init --single-branch --depth 1 \
     thirdparty/recycle/recycle \
@@ -45,6 +45,7 @@ RUN \
     -DECAL_THIRDPARTY_BUILD_PROTOBUF=OFF \
     -DECAL_THIRDPARTY_BUILD_YAML-CPP=OFF \
     -DECAL_THIRDPARTY_BUILD_TCLAP=OFF \
+    -DBUILD_C_BINDING=OFF \
     # Build core preset
     &&  cmake --build --preset core \
     # Component based install avoids the unneeded `app` component

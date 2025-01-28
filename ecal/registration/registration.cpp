@@ -8,7 +8,7 @@ extern void goTopicEventCallback(uintptr_t handle, CTopicId id, uint8_t event);
 }
 
 namespace {
-CTopicId toCTopicId(const eCAL::Registration::STopicId &id) {
+CTopicId toCTopicId(const eCAL::STopicId &id) {
   return {
       {
           id.topic_id.entity_id,
@@ -23,7 +23,7 @@ CTopicId toCTopicId(const eCAL::Registration::STopicId &id) {
 
 size_t AddPublisherEventCallback(uintptr_t handle) {
   const auto callback_adapter = [handle](
-                                    const eCAL::Registration::STopicId &id,
+                                    const eCAL::STopicId &id,
                                     eCAL::Registration::RegistrationEventType
                                         event
                                 ) {
@@ -38,7 +38,7 @@ void RemPublisherEventCallback(size_t handle) {
 
 size_t AddSubscriberEventCallback(uintptr_t handle) {
   const auto callback_adapter = [handle](
-                                    const eCAL::Registration::STopicId &id,
+                                    const eCAL::STopicId &id,
                                     eCAL::Registration::RegistrationEventType
                                         event
                                 ) {

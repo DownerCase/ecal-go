@@ -13,7 +13,7 @@ handle_map<eCAL::CSubscriber> subscribers;
 
 void receive_callback(
     const uintptr_t handle,
-    const eCAL::Registration::STopicId & /*topic*/,
+    const eCAL::STopicId & /*topic*/,
     const eCAL::SDataTypeInformation & /*datatype*/,
     const eCAL::SReceiveCallbackData &data
 ) {
@@ -48,7 +48,7 @@ bool NewSubscriber(
   }
 
   const auto bound_callback = [handle](
-                                  const eCAL::Registration::STopicId &_topic,
+                                  const eCAL::STopicId &_topic,
                                   const eCAL::SDataTypeInformation &_datatype,
                                   const eCAL::SReceiveCallbackData &_data
                               ) {

@@ -42,7 +42,7 @@ struct CTopicMon {
 
 struct CProcessMon {
   const char *host_name;
-  const char *host_group;
+  const char *shm_domain;
   int32_t registration_clock;
   int32_t pid;
   const char *process_name;
