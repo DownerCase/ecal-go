@@ -7,7 +7,6 @@ package ecal
 import "C"
 
 import (
-	"runtime/cgo"
 	"unsafe"
 )
 
@@ -37,7 +36,6 @@ func GetVersion() C.struct_version {
 }
 
 func Initialize(config Config, unitName string, components uint) bool {
-
 	unitNameC := C.CString(unitName)
 
 	defer C.free(unsafe.Pointer(unitNameC))

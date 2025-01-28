@@ -33,11 +33,11 @@ func getContent() string {
 			publisherLayers = append(publisherLayers, "SHM")
 		}
 
-		if ecal.PublisherUdpEnabled() {
+		if ecal.PublisherUDPEnabled() {
 			publisherLayers = append(publisherLayers, "UDP")
 		}
 
-		if ecal.PublisherTcpEnabled() {
+		if ecal.PublisherTCPEnabled() {
 			publisherLayers = append(publisherLayers, "TCP")
 		}
 
@@ -53,11 +53,11 @@ func getContent() string {
 			publisherLayers = append(publisherLayers, "SHM")
 		}
 
-		if ecal.SubscriberUdpEnabled() {
+		if ecal.SubscriberUDPEnabled() {
 			publisherLayers = append(publisherLayers, "UDP")
 		}
 
-		if ecal.SubscriberTcpEnabled() {
+		if ecal.SubscriberTCPEnabled() {
 			publisherLayers = append(publisherLayers, "TCP")
 		}
 

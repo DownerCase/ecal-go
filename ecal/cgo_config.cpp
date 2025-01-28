@@ -28,6 +28,11 @@ void ConfigLoggingConsoleAll(void *config) {
       eCAL::Logging::eLogLevel::log_level_all;
 }
 
+void ConfigLoggingUdpReceive(void *config, bool enable) {
+  auto *cfg = reinterpret_cast<eCAL::Configuration *>(config);
+  cfg->logging.receiver.enable = enable;
+}
+
 void ConfigGetLoadedFilePath(uintptr_t handle) {
   const auto cfg = eCAL::Config::GetLoadedEcalIniPath();
   goCopyString(handle, cfg.c_str());

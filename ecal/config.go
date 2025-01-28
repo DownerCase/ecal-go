@@ -47,6 +47,12 @@ func WithConsoleLogAll() ConfigOption {
 	}
 }
 
+func WithUDPLogReceiving(enable bool) ConfigOption {
+	return func(c *Config) {
+		C.ConfigLoggingUdpReceive(c.config, C.bool(enable))
+	}
+}
+
 // WARNING: These functions will return the default values before Initialize has been called
 
 func GetLoadedConfigFilePath() string {
@@ -63,11 +69,11 @@ func PublisherShmEnabled() bool {
 	return bool(C.ConfigPubShmEnabled())
 }
 
-func PublisherUdpEnabled() bool {
+func PublisherUDPEnabled() bool {
 	return bool(C.ConfigPubUdpEnabled())
 }
 
-func PublisherTcpEnabled() bool {
+func PublisherTCPEnabled() bool {
 	return bool(C.ConfigPubTcpEnabled())
 }
 
@@ -75,10 +81,10 @@ func SubscriberShmEnabled() bool {
 	return bool(C.ConfigSubShmEnabled())
 }
 
-func SubscriberUdpEnabled() bool {
+func SubscriberUDPEnabled() bool {
 	return bool(C.ConfigSubUdpEnabled())
 }
 
-func SubscriberTcpEnabled() bool {
+func SubscriberTCPEnabled() bool {
 	return bool(C.ConfigSubTcpEnabled())
 }
