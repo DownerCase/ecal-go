@@ -23,7 +23,6 @@ const (
 	pageProcesses
 	pageLogs
 	pageSystem
-	pageAbout
 )
 
 type model struct {
@@ -39,7 +38,6 @@ func newModel() *model {
 	pagesMap[pageProcesses] = NewProcessesModel()
 	pagesMap[pageLogs] = NewLogsModel()
 	pagesMap[pageSystem] = NewConfigModel()
-	pagesMap[pageAbout] = &PlaceholderModel{"About Placeholder"}
 
 	return &model{
 		page:  pageTopics,
@@ -96,8 +94,6 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.transitionTo(pageLogs)
 		case "6":
 			m.transitionTo(pageSystem)
-		case "7":
-			m.transitionTo(pageAbout)
 		default:
 			cmd = m.updatePage(msg)
 		}
@@ -120,7 +116,6 @@ func (m *model) View() string {
 		"4: Processes",
 		"5: Logs",
 		"6: Config",
-		"7: About",
 	}
 	tabs[m.page] = highlight.Render(tabs[m.page])
 

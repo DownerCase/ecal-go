@@ -1,8 +1,6 @@
 #ifndef ECAL_GO_TYPES_HPP
 #define ECAL_GO_TYPES_HPP
 
-#include <vector>
-
 #include <ecal/types.h>
 #include <ecal/types/monitoring.h>
 

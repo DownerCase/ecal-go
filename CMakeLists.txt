@@ -13,6 +13,8 @@ target_sources(ecal_go_core PRIVATE
   ./ecal/cgo_types.h
   ./ecal/cgo_types.hpp
   ./ecal/cgo_types.cpp
+  ./ecal/cgo_config.h
+  ./ecal/cgo_config.cpp
 )
 target_link_libraries(ecal_go_core PRIVATE eCAL::core)
 target_include_directories(ecal_go_core PUBLIC ./ecal)
