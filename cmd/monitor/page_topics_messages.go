@@ -6,11 +6,18 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/DownerCase/ecal-go/ecal/monitoring"
-	"github.com/DownerCase/ecal-go/ecal/subscriber"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/muesli/reflow/wrap"
+	"google.golang.org/protobuf/encoding/prototext"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/reflect/protodesc"
+	"google.golang.org/protobuf/reflect/protoreflect"
+	"google.golang.org/protobuf/types/descriptorpb"
+	"google.golang.org/protobuf/types/dynamicpb"
+
+	"github.com/DownerCase/ecal-go/ecal/monitoring"
+	"github.com/DownerCase/ecal-go/ecal/subscriber"
 )
 
 type ModelTopicMessages struct {
@@ -88,7 +95,9 @@ func (m *ModelTopicMessages) ShowTopic(topicID uint64, topicType TopicType) {
 
 func (m *ModelTopicMessages) createSubscriber() {
 	// (re)create subscriber with new topic type
-	m.subscriber.Delete()
+	if m.subscriber != nil {
+		m.subscriber.Delete()
+	}
 
 	subscriber, err := subscriber.New(m.mon.TopicName, m.mon.Datatype)
 	if err != nil {
@@ -99,6 +108,44 @@ func (m *ModelTopicMessages) createSubscriber() {
 	switch {
 	case m.mon.Datatype.Name == "std::string" && m.mon.Datatype.Encoding == "base":
 		m.deserializer = deserializeBasicString
+	case m.mon.Datatype.Encoding == "proto":
+		// 1. Take descriptor and unmarshal it into a descriptorpb
+		var descriptorSet descriptorpb.FileDescriptorSet
+		if err := proto.Unmarshal(m.mon.Datatype.Descriptor, &descriptorSet); err != nil {
+			panic(err)
+		}
+		// Turn the file descriptor set into a protoregistry.Files
+		registry, err := protodesc.NewFiles(&descriptorSet)
+		if err != nil {
+			panic(err)
+		}
+
+		types := dynamicpb.NewTypes(registry)
+
+		messageType, err := types.FindMessageByName(protoreflect.FullName(m.mon.Datatype.Name))
+		if err != nil {
+			panic(err)
+		}
+
+		// Obtain a protoreflect.MessageDescriptor
+		messageDescriptor := messageType.Descriptor()
+
+		// N. Use the protoreflect.MessageDescriptor to create an instance of a message
+		protoMsg := dynamicpb.NewMessage(messageDescriptor)
+		m.deserializer = func(msg []byte) string {
+			_ = proto.Unmarshal(msg, protoMsg)
+
+			textMarshal := prototext.MarshalOptions{
+				Multiline: true,
+			}
+
+			textMsg, err := textMarshal.Marshal(protoMsg)
+			if err != nil {
+				panic(err)
+			}
+
+			return string(textMsg)
+		}
 	default:
 		m.deserializer = deserializeAsHex
 	}
