@@ -65,7 +65,7 @@ func (m *ModelProcessDetailed) updateDetailedTable(msg tea.Msg) {
 		{"Unit", p.UnitName},
 		{health, p.StateInfo},
 		{"Parameters", p.ProcessParameters},
-		{"Host", fmt.Sprintf("%s (Group: %s)", p.HostName, p.HostGroup)},
+		{"Host", fmt.Sprintf("%s (SHM Domain: %s)", p.HostName, p.ShmDomain)},
 		{"Components", p.ComponentsInitialized},
 		{"Runtime", p.RuntimeVersion},
 		{"Tick", strconv.FormatInt(int64(p.RegistrationClock), 10)},

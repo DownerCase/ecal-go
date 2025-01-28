@@ -78,7 +78,7 @@ type TopicMon struct {
 type ProcessMon struct {
 	RegistrationClock  int32 // registration heart beat
 	HostName           string
-	HostGroup          string
+	ShmDomain          string
 	Pid                int32
 	ProcessName        string
 	UnitName           string

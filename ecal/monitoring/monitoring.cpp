@@ -32,7 +32,7 @@ CTopicMon toCTopicMon(const eCAL::Monitoring::STopicMon &topic) {
 CProcessMon toCProcessMon(const eCAL::Monitoring::SProcessMon &proc) {
   return {
       proc.hname.c_str(),
-      proc.hgname.c_str(),
+      proc.shm_transport_domain.c_str(),
       proc.rclock,
       proc.pid,
       proc.pname.c_str(),
