@@ -12,8 +12,9 @@ import (
 
 func copyToDatatype(datatype C.struct_CDatatype) ecal.DataType {
 	return ecal.DataType{
-		Name:     C.GoString(datatype.name),
-		Encoding: C.GoString(datatype.encoding),
+		Name:       C.GoString(datatype.name),
+		Encoding:   C.GoString(datatype.encoding),
+		Descriptor: C.GoBytes(datatype.descriptor, datatype.descriptor_len),
 	}
 }
 
