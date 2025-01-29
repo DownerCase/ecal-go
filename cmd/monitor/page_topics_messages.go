@@ -6,6 +6,9 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/DownerCase/ecal-go/ecal"
+	"github.com/DownerCase/ecal-go/ecal/monitoring"
+	"github.com/DownerCase/ecal-go/ecal/subscriber"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/muesli/reflow/wrap"
@@ -15,10 +18,6 @@ import (
 	"google.golang.org/protobuf/reflect/protoreflect"
 	"google.golang.org/protobuf/types/descriptorpb"
 	"google.golang.org/protobuf/types/dynamicpb"
-
-	"github.com/DownerCase/ecal-go/ecal"
-	"github.com/DownerCase/ecal-go/ecal/monitoring"
-	"github.com/DownerCase/ecal-go/ecal/subscriber"
 )
 
 type ModelTopicMessages struct {
