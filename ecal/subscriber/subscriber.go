@@ -97,9 +97,10 @@ func deserializer(data unsafe.Pointer, dataLen int) any {
 // This function is called by the C code whenever a new message is received
 // and deserializes it into a []byte
 // If the subscriber Receive is not waiting the incoming message will be dropped
+// C.GoBytes takes an int as its length
 //
 //export goReceiveCallback
-func goReceiveCallback(handle C.uintptr_t, data unsafe.Pointer, dataLen C.long) {
+func goReceiveCallback(handle C.uintptr_t, data unsafe.Pointer, dataLen C.int) {
 	h := cgo.Handle(handle)
 	sub := h.Value().(*Subscriber)
 	select {
