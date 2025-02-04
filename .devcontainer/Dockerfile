@@ -22,7 +22,7 @@ RUN apk add --no-cache \
 # This is needed over shallow clone for the tag-based auto-versioning
 # Reset added to ensure the same commit is always used, even if master advances
 RUN git clone --single-branch --filter=tree:0 --branch ecal-go https://github.com/DownerCase/ecal.git /ecal \
-    && git -C /ecal reset --hard 1027772c6a9a163bab08266443a19ec91fc1c440 \
+    && git -C /ecal reset --hard 490ce71b4c3297f0c50671cdcc603d0c06be6587 \
     # Only download the submodules for dependencies not available as system packages
     && git -C /ecal submodule update --init --single-branch --depth 1 \
     thirdparty/recycle/recycle \
@@ -31,21 +31,17 @@ RUN git clone --single-branch --filter=tree:0 --branch ecal-go https://github.co
 
 WORKDIR /ecal
 
-# TODO: Blocker for installing to / or / usr
-# - Fix usage of `INSTALL_INCLUDE_DIR` instead of `eCAL_install_include_dir`
-# - Get CMakeFunctions to use GNUInstallDirs
-
 RUN \
     # Configure a minimal build with less vendored dependencies
     cmake --preset core -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_STAGING_PREFIX=staging \
-    -DBUILD_TIME=OFF \
+    -DECAL_BUILD_TIMEPLUGINS=OFF \
     -DECAL_THIRDPARTY_BUILD_ASIO=OFF \
     -DECAL_THIRDPARTY_BUILD_PROTOBUF=OFF \
     -DECAL_THIRDPARTY_BUILD_YAML-CPP=OFF \
     -DECAL_THIRDPARTY_BUILD_TCLAP=OFF \
-    -DBUILD_C_BINDING=OFF \
+    -DECAL_BUILD_C_BINDING=OFF \
     # Build core preset
     &&  cmake --build --preset core \
     # Component based install avoids the unneeded `app` component

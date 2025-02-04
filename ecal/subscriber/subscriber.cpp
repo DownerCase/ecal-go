@@ -1,14 +1,24 @@
 #include "subscriber.h"
 
+#include <climits>
+
 #include <ecal/pubsub/subscriber.h>
 
 #include "internal/handle_map.hpp"
 
 extern "C" {
-extern void goReceiveCallback(uintptr_t, void *, long);
+extern void goReceiveCallback(uintptr_t, const void *, int);
 }
 
 namespace {
+
+int safe_len(size_t str_len) {
+  if (str_len > size_t{INT_MAX}) {
+    return INT_MAX;
+  }
+  return static_cast<int>(str_len);
+}
+
 handle_map<eCAL::CSubscriber> subscribers;
 
 void receive_callback(
@@ -17,7 +27,7 @@ void receive_callback(
     const eCAL::SDataTypeInformation & /*datatype*/,
     const eCAL::SReceiveCallbackData &data
 ) {
-  goReceiveCallback(handle, data.buf, data.size);
+  goReceiveCallback(handle, data.buffer, safe_len(data.buffer_size));
 }
 
 } // namespace

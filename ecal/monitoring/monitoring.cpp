@@ -12,18 +12,18 @@ extern void goCopyMonitoring(uintptr_t handle, CMonitoring *);
 namespace {
 CTopicMon toCTopicMon(const eCAL::Monitoring::STopicMon &topic) {
   return {
-      topic.uname.c_str(),
-      topic.hname.c_str(),
-      topic.tid,
-      topic.tname.c_str(),
+      topic.unit_name.c_str(),
+      topic.host_name.c_str(),
+      topic.topic_id,
+      topic.topic_name.c_str(),
       topic.direction.c_str(),
-      toCDatatype(topic.tdatatype),
-      topic.dclock,
-      topic.dfreq,
-      topic.rclock,
-      topic.tsize,
-      topic.connections_loc,
-      topic.connections_ext,
+      toCDatatype(topic.datatype_information),
+      topic.data_clock,
+      topic.data_frequency,
+      topic.registration_clock,
+      topic.topic_size,
+      topic.connections_local,
+      topic.connections_external,
       topic.message_drops,
       {}
   };
@@ -31,13 +31,13 @@ CTopicMon toCTopicMon(const eCAL::Monitoring::STopicMon &topic) {
 
 CProcessMon toCProcessMon(const eCAL::Monitoring::SProcessMon &proc) {
   return {
-      proc.hname.c_str(),
+      proc.host_name.c_str(),
       proc.shm_transport_domain.c_str(),
-      proc.rclock,
-      proc.pid,
-      proc.pname.c_str(),
-      proc.uname.c_str(),
-      proc.pparam.c_str(),
+      proc.registration_clock,
+      proc.process_id,
+      proc.process_name.c_str(),
+      proc.unit_name.c_str(),
+      proc.process_parameter.c_str(),
       proc.state_severity,
       proc.state_severity_level,
       proc.state_info.c_str(),
@@ -48,15 +48,15 @@ CProcessMon toCProcessMon(const eCAL::Monitoring::SProcessMon &proc) {
 
 template <class T> CServiceCommon toCServiceCommon(const T &t) {
   return {
-      t.sname.c_str(),
-      t.sid,
+      t.service_name.c_str(),
+      t.service_id,
       nullptr, // Methods are filled in a separate pass
       t.methods.size(),
-      t.hname.c_str(),
-      t.pname.c_str(),
-      t.uname.c_str(),
-      t.rclock,
-      t.pid,
+      t.host_name.c_str(),
+      t.process_name.c_str(),
+      t.unit_name.c_str(),
+      t.registration_clock,
+      t.process_id,
       t.version,
       {}
   };
@@ -71,9 +71,9 @@ CServerMon toCServerMon(const eCAL::Monitoring::SServerMon &server) {
 
 CMethodMon toCMethodMon(const eCAL::Monitoring::SMethodMon &method) {
   return {
-      method.mname.c_str(),
-      toCDatatype(method.req_datatype),
-      toCDatatype(method.resp_datatype),
+      method.method_name.c_str(),
+      toCDatatype(method.request_datatype_information),
+      toCDatatype(method.response_datatype_information),
       method.call_count
   };
 }
