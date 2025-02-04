@@ -5,7 +5,7 @@
 #include "internal/handle_map.hpp"
 
 extern "C" {
-extern void goReceiveCallback(uintptr_t, void *, long);
+extern void goReceiveCallback(uintptr_t, const void *, long);
 }
 
 namespace {
@@ -17,7 +17,7 @@ void receive_callback(
     const eCAL::SDataTypeInformation & /*datatype*/,
     const eCAL::SReceiveCallbackData &data
 ) {
-  goReceiveCallback(handle, data.buf, data.size);
+  goReceiveCallback(handle, data.buffer, data.buffer_size);
 }
 
 } // namespace

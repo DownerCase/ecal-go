@@ -13,11 +13,11 @@ namespace {
 CLogMessage toCLogMessage(const eCAL::Logging::SLogMessage &log) {
   return {
       log.time,
-      log.hname.c_str(),
-      log.pname.c_str(),
-      log.uname.c_str(),
+      log.host_name.c_str(),
+      log.process_name.c_str(),
+      log.unit_name.c_str(),
       log.content.c_str(),
-      log.pid,
+      log.process_id,
       static_cast<CLogLevel>(log.level)
   };
 }
