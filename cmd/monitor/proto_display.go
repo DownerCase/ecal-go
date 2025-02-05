@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/DownerCase/ecal-go/ecal"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protodesc"
 	"google.golang.org/protobuf/reflect/protopath"
@@ -12,7 +13,6 @@ import (
 	"google.golang.org/protobuf/types/dynamicpb"
 
 	"github.com/DownerCase/ecal-go/cmd/monitor/internal/protobuf/protorange"
-	"github.com/DownerCase/ecal-go/ecal"
 )
 
 func makeProtobufDeserializer(datatype ecal.DataType) (func(msg []byte) string, error) {
