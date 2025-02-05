@@ -33,6 +33,27 @@ var (
 	Terminate = errors.New("terminate range operation")
 )
 
+// unpopulatedFieldRanger wraps a protoreflect.Message and modifies its Range
+// method to additionally iterate over unpopulated fields.
+type unpopulatedFieldRanger struct {
+	protoreflect.Message
+}
+
+func (m unpopulatedFieldRanger) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	fds := m.Descriptor().Fields()
+	for i := range fds.Len() {
+		fd := fds.Get(i)
+		if m.Has(fd) || fd.ContainingOneof() != nil {
+			continue // ignore populated fields and fields within a oneofs
+		}
+
+		if !f(fd, m.Get(fd)) {
+			return
+		}
+	}
+	m.Message.Range(f)
+}
+
 // Range performs a depth-first traversal over reachable values in a message.
 //
 // See [Options.Range] for details.
@@ -52,6 +73,19 @@ type Options struct {
 	// numeric keys are ordered based on the numeric value, and
 	// string keys are lexicographically ordered by Unicode codepoints.
 	Stable bool
+
+	// EmitDefaultValues specifies whether to emit default-valued primitive fields,
+	// empty lists, and empty maps. The fields affected are as follows:
+	//  ╔═══════╤════════════════════════════════════════╗
+	//  ║ JSON  │ Protobuf field                         ║
+	//  ╠═══════╪════════════════════════════════════════╣
+	//  ║ false │ non-optional scalar boolean fields     ║
+	//  ║ 0     │ non-optional scalar numeric fields     ║
+	//  ║ ""    │ non-optional scalar string/byte fields ║
+	//  ║ []    │ empty repeated fields                  ║
+	//  ║ {}    │ empty map fields                       ║
+	//  ╚═══════╧════════════════════════════════════════╝
+	EmitDefaultValues bool
 
 	// Resolver is used for looking up types when expanding google.protobuf.Any
 	// messages. If nil, this defaults to using protoregistry.GlobalTypes.
@@ -138,7 +172,14 @@ func (o Options) rangeMessage(p *protopath.Values, m protoreflect.Message, push,
 	if o.Stable {
 		fieldOrder = order.NumberFieldOrder
 	}
-	order.RangeFields(m, fieldOrder, func(fd protoreflect.FieldDescriptor, v protoreflect.Value) bool {
+
+	var fields order.FieldRanger = m
+
+	if o.EmitDefaultValues {
+		fields = unpopulatedFieldRanger{Message: m}
+	}
+
+	order.RangeFields(fields, fieldOrder, func(fd protoreflect.FieldDescriptor, v protoreflect.Value) bool {
 		pushStep(p, protopath.FieldAccess(fd), v)
 		if push != nil {
 			err = amendError(err, push(*p))
