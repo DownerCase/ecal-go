@@ -38,3 +38,5 @@ issues:
     - path: monitor/styles.go
       linters:
         - gochecknoglobals
+  exclude-dirs:
+    - cmd/monitor/internal/
