@@ -6,18 +6,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/DownerCase/ecal-go/ecal"
 	"github.com/DownerCase/ecal-go/ecal/monitoring"
 	"github.com/DownerCase/ecal-go/ecal/subscriber"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/muesli/reflow/wrap"
-	"google.golang.org/protobuf/encoding/prototext"
-	"google.golang.org/protobuf/proto"
-	"google.golang.org/protobuf/reflect/protodesc"
-	"google.golang.org/protobuf/reflect/protoreflect"
-	"google.golang.org/protobuf/types/descriptorpb"
-	"google.golang.org/protobuf/types/dynamicpb"
 )
 
 type ModelTopicMessages struct {
@@ -109,6 +102,7 @@ func (m *ModelTopicMessages) createSubscriber() {
 	case m.mon.Datatype.Name == "std::string" && m.mon.Datatype.Encoding == "base":
 		m.deserializer = deserializeBasicString
 	case m.mon.Datatype.Encoding == "proto":
+		// Implemented in dedicated file
 		m.deserializer, err = makeProtobufDeserializer(m.mon.Datatype)
 		if err != nil {
 			panic(err)
@@ -138,61 +132,4 @@ func deserializeBasicString(msg []byte) string {
 
 func deserializeAsHex(msg []byte) string {
 	return hex.EncodeToString(msg)
-}
-
-func makeProtobufDeserializer(datatype ecal.DataType) (func(msg []byte) string, error) {
-	// 1. Take descriptor from the wire and unmarshal it into a descriptorpb
-	var descriptorSet descriptorpb.FileDescriptorSet
-	if err := proto.Unmarshal(datatype.Descriptor, &descriptorSet); err != nil {
-		return nil, fmt.Errorf(
-			"makeProtobufDeserializer: Failed to unmarshal datatype descriptor %w", err,
-		)
-	}
-
-	// 2. Turn the file descriptor set into a protoregistry.Files
-	registry, err := protodesc.NewFiles(&descriptorSet)
-	if err != nil {
-		return nil, fmt.Errorf(
-			"makeProtobufDeserializer: Failed to parse file descriptor set %w", err,
-		)
-	}
-
-	// 3. Extract the type descriptors from the registry
-	types := dynamicpb.NewTypes(registry)
-
-	// 4. Find the type corresponding to topic datatype
-	messageType, err := types.FindMessageByName(protoreflect.FullName(datatype.Name))
-	if err != nil {
-		return nil, fmt.Errorf(
-			"makeProtobufDeserializer: Failed to find definition for message type %s %w",
-			protoreflect.FullName(datatype.Name),
-			err,
-		)
-	}
-
-	// 5. Get the message descriptor for the type
-	messageDescriptor := messageType.Descriptor()
-
-	// 6. Use the message descriptor to create an instance of a message
-	protoMsg := dynamicpb.NewMessage(messageDescriptor)
-
-	// Create a deserializer closure using the extracted message prototype
-	return func(msg []byte) string {
-		// Unmarshal the binary data into the proto message
-		err := proto.Unmarshal(msg, protoMsg)
-		if err != nil {
-			return fmt.Errorf("protobuf deserialize: Failed to unmarshal %w", err).Error()
-		}
-
-		// Marshal the parsed message into a textual format
-		textMsg, err := prototext.MarshalOptions{
-			Multiline: true,
-		}.Marshal(protoMsg)
-		if err != nil {
-			return fmt.Errorf("protobuf deserialize: Failed to marshal to prototext %w", err).Error()
-		}
-
-		// Display that string
-		return string(textMsg)
-	}, nil
 }
