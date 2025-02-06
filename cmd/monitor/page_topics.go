@@ -43,6 +43,8 @@ func (m *ModelTopics) navDown() tea.Cmd {
 		detailed.ShowTopic(topic, topicType)
 
 		m.subpage = subpageTopicDetailed
+	} else {
+		return m.pages[m.subpage].Update(tea.KeyMsg{Type: tea.KeyEnter})
 	}
 
 	return nil
