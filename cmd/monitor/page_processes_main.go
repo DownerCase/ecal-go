@@ -4,13 +4,41 @@ import (
 	"path/filepath"
 	"strconv"
 
+	"github.com/DownerCase/ecal-go/ecal"
 	"github.com/DownerCase/ecal-go/ecal/monitoring"
+	"github.com/charmbracelet/bubbles/help"
+	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+type processesKeyMap struct {
+	table.KeyMap
+	StopUnit key.Binding
+}
+
+func newProcessesKeyMap() processesKeyMap {
+	return processesKeyMap{
+		KeyMap: table.DefaultKeyMap(),
+		StopUnit: key.NewBinding(
+			key.WithKeys("x"),
+			key.WithHelp("x", "Stop"),
+		),
+	}
+}
+
+func (km processesKeyMap) ShortHelp() []key.Binding {
+	return append(km.KeyMap.ShortHelp(), km.StopUnit)
+}
+
+func (km processesKeyMap) FullHelp() [][]key.Binding {
+	return append([][]key.Binding{{km.StopUnit}}, km.KeyMap.FullHelp()...)
+}
+
 type ModelProcessesMain struct {
-	table table.Model
+	table  table.Model
+	keymap processesKeyMap
+	help   help.Model
 }
 
 func NewProcessesMainModel() *ModelProcessesMain {
@@ -23,16 +51,34 @@ func NewProcessesMainModel() *ModelProcessesMain {
 	}
 
 	return &ModelProcessesMain{
-		table: NewTable(columns),
+		table:  NewTable(columns),
+		keymap: newProcessesKeyMap(),
+		help:   help.New(),
 	}
 }
 
 func (m *ModelProcessesMain) Update(msg tea.Msg) tea.Cmd {
-	return m.updateTable(msg)
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch {
+		case key.Matches(msg, m.keymap.StopUnit):
+			if pid, err := strconv.ParseInt(m.table.SelectedRow()[0], 10, 32); err != nil {
+				panic(err)
+			} else {
+				ecal.ShutdownLocalEcalProcess(int(pid))
+			}
+		default:
+			return m.updateTable(msg)
+		}
+	default:
+		return m.updateTable(msg)
+	}
+
+	return nil
 }
 
 func (m *ModelProcessesMain) View() string {
-	return baseStyle.Render(m.table.View()) + "\n" + m.table.HelpView()
+	return baseStyle.Render(m.table.View()) + "\n" + m.help.View(m.keymap)
 }
 
 func (m *ModelProcessesMain) Refresh() {

@@ -58,3 +58,8 @@ func IsComponentInitialized(component uint) bool {
 func Ok() bool {
 	return bool(C.Ok())
 }
+
+// Signals an event to a local process to cause eCAL::Ok() to return false.
+func ShutdownLocalEcalProcess(pid int) {
+	C.ShutdownProcess(C.int(pid))
+}

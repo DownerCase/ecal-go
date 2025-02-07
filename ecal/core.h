@@ -18,16 +18,14 @@ const char *GetVersionString(void);
 const char *GetVersionDateString(void);
 struct version GetVersion(void);
 
-bool Initialize(
-    void *config,
-    const char *unit_name,
-    unsigned int components
-);
+bool Initialize(void *config, const char *unit_name, unsigned int components);
 bool Finalize(void);
 bool IsInitialized(void);
 bool IsComponentInitialized(unsigned int component);
 bool SetUnitName(const char *unit_name);
 bool Ok(void);
+
+void ShutdownProcess(int pid);
 
 void GetConfig(uintptr_t handle);
 
