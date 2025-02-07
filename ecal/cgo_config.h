@@ -13,9 +13,11 @@ void *NewConfig(void);
 void DeleteConfig(void *config);
 
 // Logging
-void ConfigLoggingConsole(void* config, bool enable);
-void ConfigLoggingConsoleAll(void* config);
-void ConfigLoggingUdpReceive(void* config, bool enable);
+void ConfigLoggingConsole(void *config, bool enable);
+void ConfigLoggingConsoleAll(void *config);
+void ConfigLoggingUdp(void *config, bool enable);
+void ConfigLoggingUdpAll(void *config);
+void ConfigLoggingUdpReceive(void *config, bool enable);
 
 void ConfigGetLoadedFilePath(uintptr_t handle);
 
@@ -28,7 +30,6 @@ bool ConfigPubTcpEnabled(void);
 bool ConfigSubShmEnabled(void);
 bool ConfigSubUdpEnabled(void);
 bool ConfigSubTcpEnabled(void);
-
 
 #ifdef __cplusplus
 }

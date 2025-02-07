@@ -28,6 +28,17 @@ void ConfigLoggingConsoleAll(void *config) {
       eCAL::Logging::eLogLevel::log_level_all;
 }
 
+void ConfigLoggingUdp(void *config, bool enable) {
+  auto *cfg = reinterpret_cast<eCAL::Configuration *>(config);
+  cfg->logging.provider.udp.enable = enable;
+}
+
+void ConfigLoggingUdpAll(void *config) {
+  auto *cfg = reinterpret_cast<eCAL::Configuration *>(config);
+  cfg->logging.provider.udp.filter_log =
+      eCAL::Logging::eLogLevel::log_level_all;
+}
+
 void ConfigLoggingUdpReceive(void *config, bool enable) {
   auto *cfg = reinterpret_cast<eCAL::Configuration *>(config);
   cfg->logging.receiver.enable = enable;

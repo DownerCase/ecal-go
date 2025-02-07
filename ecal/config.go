@@ -47,6 +47,20 @@ func WithConsoleLogAll() ConfigOption {
 	}
 }
 
+// Enable/Disable sending eCAL logs over UDP.
+func WithUDPLogging(enable bool) ConfigOption {
+	return func(c *Config) {
+		C.ConfigLoggingUdp(c.config, C.bool(enable))
+	}
+}
+
+// Enable all log levels when sending eCAL logs over UDP.
+func WithUDPLogAll() ConfigOption {
+	return func(c *Config) {
+		C.ConfigLoggingUdpAll(c.config)
+	}
+}
+
 func WithUDPLogReceiving(enable bool) ConfigOption {
 	return func(c *Config) {
 		C.ConfigLoggingUdpReceive(c.config, C.bool(enable))
