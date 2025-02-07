@@ -4,6 +4,7 @@
 #include <ecal/core.h>
 #include <ecal/defs.h>
 #include <ecal/process.h>
+#include <ecal/util.h>
 
 extern "C" {
 extern void goCopyString(uintptr_t, const char *);
@@ -18,12 +19,8 @@ version GetVersion() {
   return {version.major, version.minor, version.patch};
 }
 
-bool Initialize(
-    void *config,
-    const char *unit_name,
-    unsigned int components
-) {
-  auto* cfg = reinterpret_cast<eCAL::Configuration*>(config);
+bool Initialize(void *config, const char *unit_name, unsigned int components) {
+  auto *cfg = reinterpret_cast<eCAL::Configuration *>(config);
   return eCAL::Initialize(*cfg, unit_name, components);
 }
 
@@ -36,6 +33,8 @@ bool IsComponentInitialized(unsigned int component) {
 }
 
 bool Ok() { return eCAL::Ok(); }
+
+void ShutdownProcess(int pid) { eCAL::Util::ShutdownProcess(pid); }
 
 void GetConfig(uintptr_t handle) {
   std::string cfg{};
