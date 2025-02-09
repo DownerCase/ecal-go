@@ -79,9 +79,9 @@ func main() {
 	for ecal.Ok() {
 		msg, err := subscriber.Receive(time.Second * 2)
 		if err == nil {
-			fmt.Println("Received:", msg) //nolint:forbidigo
+			fmt.Println("Received:", msg)
 		} else {
-			fmt.Println(err) //nolint:forbidigo
+			fmt.Println(err)
 		}
 	}
 }
