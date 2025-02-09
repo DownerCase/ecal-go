@@ -22,23 +22,14 @@ go run ./cmd/monitor
 - Rewrite of eCAL monitor using [bubbletea](https://github.com/charmbracelet/bubbletea)
 
 Provides Go interfaces for:
-- [x] Core
-- [ ] Configuration
-- [x] Publisher
-  - [ ] Zero Copy
-- [x] Subscriber
-- [x] Message Types
-  - [x] Generic
-  - [x] String
-  - [x] Protobuf
+- [x] Configuration (partial, expanded as required)
+- [x] Publisher & Subscriber
+- [x] Message Types: Custom/binary, String, Protobuf
 - [x] Logging
+- [x] Monitoring ("slow" API for detailed information)
+- [ ] Registration ("fast" API for basic topic name and datatype information)
+  - [x] Topic event (added/removed publisher/subscriber) callbacks 
 - [ ] Services
-- [x] Monitoring
-  - [x] Publisher/Subscribers
-  - [x] Processes
-  - [ ] Server/Clients
-- [ ] Registration
-  - [x] Topic callbacks
 
 ## CLI Tools
 
@@ -46,14 +37,10 @@ Provides Go interfaces for:
 
 Features:
 
-- [x] Show Publishers and Subscribers
-  - [x] Detailed topic view
-  - [ ] Live message view
-- [x] Show Services
-- [x] Show Hosts
-- [x] Show Processes
-- [x] Show eCAL Logs
-- [ ] Show config
+All the basic functionality from the upstream TUI monitor but:
+
+- More efficient use of space; use the _whole_ screen to view your messages!
+- Easily send stop commands to eCAL processes (make `eCAL::Ok()` return `false`)
 
 ## Non-system installations
 
