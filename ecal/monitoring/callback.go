@@ -51,8 +51,8 @@ func copyToProcessMons(cprocs []C.struct_CProcessMon) []ProcessMon {
 			ProcessName:           C.GoString(proc.process_name),
 			UnitName:              C.GoString(proc.unit_name),
 			ProcessParameters:     C.GoString(proc.process_parameters), // Command line args
-			StateSeverity:         ProcessSeverity(proc.state_severity),
-			StateSeverityLevel:    int32(proc.state_severity_level),
+			StateSeverity:         ecal.ProcessSeverity(proc.state_severity),
+			StateSeverityLevel:    ecal.ProcessSeverityLevel(proc.state_severity_level),
 			StateInfo:             C.GoString(proc.state_info),
 			ComponentsInitialized: C.GoString(proc.components),
 			RuntimeVersion:        C.GoString(proc.runtime), // eCAL Version in use

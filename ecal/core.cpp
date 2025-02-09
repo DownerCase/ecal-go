@@ -34,6 +34,14 @@ bool IsComponentInitialized(unsigned int component) {
 
 bool Ok() { return eCAL::Ok(); }
 
+void SetState(int severity, int level, const char *state) {
+  eCAL::Process::SetState(
+      static_cast<eCAL::Process::eSeverity>(severity),
+      static_cast<eCAL::Process::eSeverityLevel>(level),
+      state
+  );
+}
+
 void ShutdownProcess(int pid) { eCAL::Util::ShutdownProcess(pid); }
 
 void GetConfig(uintptr_t handle) {

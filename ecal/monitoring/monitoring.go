@@ -2,13 +2,11 @@ package monitoring
 
 //#cgo LDFLAGS: -lecal_core
 //#include "monitoring.h"
-//#include "process.h"
 //#cgo CPPFLAGS: -I${SRCDIR}/..
 import "C"
 
 import (
 	"runtime/cgo"
-	"strconv"
 
 	"github.com/DownerCase/ecal-go/ecal"
 )
@@ -25,33 +23,6 @@ const (
 	MonitorHost       MonitorEntity = C.monitoring_host
 	MonitorAll        MonitorEntity = C.monitoring_all
 )
-
-type ProcessSeverity uint8
-
-const (
-	ProcSevUnknown  ProcessSeverity = C.process_severity_unknown
-	ProcSevHealthy  ProcessSeverity = C.process_severity_healthy
-	ProcSevWarning  ProcessSeverity = C.process_severity_warning
-	ProcSevCritical ProcessSeverity = C.process_severity_critical
-	ProcSevFailed   ProcessSeverity = C.process_severity_failed
-)
-
-func (p ProcessSeverity) String() string {
-	switch p {
-	case ProcSevUnknown:
-		return "Unknown"
-	case ProcSevHealthy:
-		return "Healthy"
-	case ProcSevWarning:
-		return "Warning"
-	case ProcSevCritical:
-		return "Critical"
-	case ProcSevFailed:
-		return "Failed"
-	default:
-		return strconv.FormatUint(uint64(p), 10)
-	}
-}
 
 type TopicMon struct {
 	RegistrationClock int32 // registration heart beat
@@ -83,8 +54,8 @@ type ProcessMon struct {
 	ProcessName        string
 	UnitName           string
 	ProcessParameters  string // Command line args
-	StateSeverity      ProcessSeverity
-	StateSeverityLevel int32
+	StateSeverity      ecal.ProcessSeverity
+	StateSeverityLevel ecal.ProcessSeverityLevel
 	StateInfo          string
 	// TODO: Time sync?
 	ComponentsInitialized string

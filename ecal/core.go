@@ -7,6 +7,7 @@ package ecal
 import "C"
 
 import (
+	"strconv"
 	"unsafe"
 )
 
@@ -22,6 +23,43 @@ const (
 	CDefault    uint = CPublisher | CSubscriber | CService | CLogging | CTimeSync
 	CAll        uint = CPublisher | CSubscriber | CService | CMonitoring | CLogging | CTimeSync
 )
+
+type ProcessSeverity uint8
+
+const (
+	ProcSevUnknown  ProcessSeverity = C.process_severity_unknown
+	ProcSevHealthy  ProcessSeverity = C.process_severity_healthy
+	ProcSevWarning  ProcessSeverity = C.process_severity_warning
+	ProcSevCritical ProcessSeverity = C.process_severity_critical
+	ProcSevFailed   ProcessSeverity = C.process_severity_failed
+)
+
+type ProcessSeverityLevel uint8
+
+const (
+	ProcSevLevel1 ProcessSeverityLevel = 1
+	ProcSevLevel2 ProcessSeverityLevel = 2
+	ProcSevLevel3 ProcessSeverityLevel = 3
+	ProcSevLevel4 ProcessSeverityLevel = 4
+	ProcSevLevel5 ProcessSeverityLevel = 5
+)
+
+func (p ProcessSeverity) String() string {
+	switch p {
+	case ProcSevUnknown:
+		return "Unknown"
+	case ProcSevHealthy:
+		return "Healthy"
+	case ProcSevWarning:
+		return "Warning"
+	case ProcSevCritical:
+		return "Critical"
+	case ProcSevFailed:
+		return "Failed"
+	default:
+		return strconv.FormatUint(uint64(p), 10)
+	}
+}
 
 func GetVersionString() string {
 	return C.GoString(C.GetVersionString())
@@ -57,6 +95,11 @@ func IsComponentInitialized(component uint) bool {
 
 func Ok() bool {
 	return bool(C.Ok())
+}
+
+// Set the processes state info.
+func SetState(severity ProcessSeverity, level ProcessSeverityLevel, state string) {
+	C.SetState(C.int(severity), C.int(level), C.CString(state))
 }
 
 // Signals an event to a local process to cause eCAL::Ok() to return false.

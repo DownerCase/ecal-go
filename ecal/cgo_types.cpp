@@ -2,7 +2,6 @@
 #include <ecal/process_severity.h>
 #include <ecal/types/monitoring.h>
 
-#include "process.h"
 #include "cgo_types.h"
 #include "cgo_types.hpp"
 
