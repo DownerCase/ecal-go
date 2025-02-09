@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "cgo_types.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -24,6 +26,8 @@ bool IsInitialized(void);
 bool IsComponentInitialized(unsigned int component);
 bool SetUnitName(const char *unit_name);
 bool Ok(void);
+
+void SetState(int severity, int level, const char *state);
 
 void ShutdownProcess(int pid);
 

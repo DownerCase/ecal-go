@@ -25,6 +25,9 @@ func main() {
 		"Go eCAL!",
 		ecal.CPublisher|ecal.CSubscriber|ecal.CLogging,
 	)
+	defer ecal.Finalize() // Shutdown eCAL at the end of the program
+
+	ecal.SetState(ecal.ProcSevHealthy, ecal.ProcSevLevel1, "Running the ecal-go demo")
 
 	// Log a message
 	logging.Log(logging.LevelInfo, "Initialized: ", initResult)
@@ -35,8 +38,6 @@ func main() {
 	logging.Log(logging.LevelDebug2, "Level 2 debug message")
 	logging.Log(logging.LevelDebug3, "Level 3 debug message")
 	logging.Log(logging.LevelDebug4, "Level 4 debug message")
-
-	defer ecal.Finalize() // Shutdown eCAL at the end of the program
 
 	registration.AddPublisherEventCallback(registrationLogger)
 

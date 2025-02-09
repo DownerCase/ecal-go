@@ -55,7 +55,7 @@ func TestPublisherMonitoring(t *testing.T) {
 	expectTopicPresent(t, mon.Publishers, topic)
 }
 
-func expectPid(t *testing.T, pid int, procs []monitoring.ProcessMon) {
+func expectPid(t *testing.T, pid int, procs []monitoring.ProcessMon) *monitoring.ProcessMon {
 	t.Helper()
 
 	hostname, err := os.Hostname()
@@ -69,11 +69,13 @@ func expectPid(t *testing.T, pid int, procs []monitoring.ProcessMon) {
 				t.Error("Expected hostname", hostname, "got", proc.HostName)
 			}
 
-			return
+			return &proc
 		}
 	}
 
 	t.Error("Could not find self in process list")
+
+	return nil
 }
 
 func TestSubscriberMonitoring(t *testing.T) {
@@ -102,10 +104,12 @@ func TestSubscriberMonitoring(t *testing.T) {
 }
 
 func TestProcessMonitoring(t *testing.T) {
-	// Given: eCAL Initialized
+	// Given: eCAL Initialized and a state set
 	ecaltest.InitEcal(t)
 
 	defer ecal.Finalize()
+
+	ecal.SetState(ecal.ProcSevHealthy, ecal.ProcSevLevel1, "Testing state")
 
 	time.Sleep(1500 * time.Millisecond) // Propagation delay...
 
@@ -113,5 +117,18 @@ func TestProcessMonitoring(t *testing.T) {
 	mon := monitoring.GetMonitoring(monitoring.MonitorProcess)
 
 	// Expect: This program
-	expectPid(t, os.Getpid(), mon.Processes)
+	thisProc := expectPid(t, os.Getpid(), mon.Processes)
+	if thisProc != nil {
+		if thisProc.StateSeverity != ecal.ProcSevHealthy {
+			t.Error("State severity mismatch")
+		}
+
+		if thisProc.StateSeverityLevel != ecal.ProcSevLevel1 {
+			t.Error("State severity level mismatch")
+		}
+
+		if thisProc.StateInfo != "Testing state" {
+			t.Error("State info mismatch")
+		}
+	}
 }
