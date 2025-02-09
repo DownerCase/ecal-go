@@ -29,6 +29,8 @@ linters-settings:
     ignored-files:
       - 'monitor/.*.go' # UI code has many magic layout numbers...
       - 'main.go' # Main file allowed, as it is example code
+    ignored-numbers:
+      - 2
   paralleltest:
     # eCAL uses global state, any test using Initialize can't be run in parallel
     ignore-missing: true
