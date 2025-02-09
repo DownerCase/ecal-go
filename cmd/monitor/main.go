@@ -11,5 +11,7 @@ func main() {
 		ecal.CSubscriber|ecal.CMonitoring|ecal.CLogging|ecal.CService,
 	)
 	defer ecal.Finalize() // Shutdown eCAL at the end of the program
+
+	ecal.SetState(ecal.ProcSevHealthy, ecal.ProcSevLevel1, "Monitoring eCAL")
 	doCli()
 }
