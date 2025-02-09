@@ -45,7 +45,11 @@ func receiveMessage(t *testing.T, msg string, level logging.Level) bool {
 
 func TestGetLogging(t *testing.T) {
 	// Given: eCAL Initialized
-	ecaltest.InitEcal(t, ecal.WithUDPLogReceiving(true))
+	ecaltest.InitEcal(t,
+		ecal.WithUDPLogReceiving(true),
+		ecal.WithUDPLogging(true),
+		ecal.WithUDPLogAll(),
+	)
 	defer ecal.Finalize()
 
 	// When: Logging a message
