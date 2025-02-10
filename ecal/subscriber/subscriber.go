@@ -66,17 +66,16 @@ func New(topic string, datatype DataType) (*Subscriber, error) {
 }
 
 func (p *Subscriber) Delete() {
-	if !p.stopped {
-		p.stopped = true
-		close(p.Messages)
-	}
-
 	if !bool(C.DestroySubscriber(C.uintptr_t(p.handle))) {
 		// "Failed to delete subscriber"
 		return
 	}
-	// Deleted, clear handle
-	p.handle.Delete()
+
+	if !p.stopped {
+		p.stopped = true
+		close(p.Messages)
+		p.Messages = nil
+	}
 }
 
 // Receive a new message from the eCAL receive callback.
@@ -103,8 +102,11 @@ func deserializer(data unsafe.Pointer, dataLen int) any {
 func goReceiveCallback(handle C.uintptr_t, data unsafe.Pointer, dataLen C.int) {
 	h := cgo.Handle(handle)
 	sub := h.Value().(*Subscriber)
+	// We must deserialize _before_ submitting the message otherwise
+	// the channel may be closed before we finish deserializing
+	msg := sub.Deserialize(data, int(dataLen))
 	select {
-	case sub.Messages <- sub.Deserialize(data, int(dataLen)):
+	case sub.Messages <- msg:
 	default:
 	}
 }
