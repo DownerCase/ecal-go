@@ -28,12 +28,14 @@ type Publisher struct {
 	Messages chan []byte
 	handle   cgo.Handle
 	stopped  bool
+	closed   chan bool
 }
 
 func New(topic string, datatype DataType) (*Publisher, error) {
 	pub := &Publisher{
 		Messages: make(chan []byte),
 		stopped:  false,
+		closed:   make(chan bool),
 	}
 	handle := cgo.NewHandle(pub)
 	pub.handle = handle
@@ -64,6 +66,7 @@ func (p *Publisher) Delete() {
 	if !p.stopped {
 		p.stopped = true
 		close(p.Messages)
+		<-p.closed // Wait for sendMessages to finish
 	}
 
 	if !bool(C.DestroyPublisher(C.uintptr_t(p.handle))) {
@@ -82,4 +85,5 @@ func (p *Publisher) sendMessages() {
 	for msg := range p.Messages {
 		C.PublisherSend(C.uintptr_t(p.handle), unsafe.Pointer(&msg[0]), C.size_t(len(msg)))
 	}
+	p.closed <- true
 }
