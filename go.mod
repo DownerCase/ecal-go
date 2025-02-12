@@ -1,5 +1,5 @@
 module github.com/DownerCase/ecal-go
 
-go 1.23.2
+go 1.24
 
-require google.golang.org/protobuf v1.35.2
+require google.golang.org/protobuf v1.36.5
