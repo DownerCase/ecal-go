@@ -62,11 +62,12 @@ func (m *ModelProcessesMain) Update(msg tea.Msg) tea.Cmd {
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, m.keymap.StopUnit):
-			if pid, err := strconv.ParseInt(m.table.SelectedRow()[0], 10, 32); err != nil {
+			pid, err := strconv.ParseInt(m.table.SelectedRow()[0], 10, 32)
+			if err != nil {
 				panic(err)
-			} else {
-				ecal.ShutdownLocalEcalProcess(int(pid))
 			}
+
+			ecal.ShutdownLocalEcalProcess(int(pid))
 		default:
 			return m.updateTable(msg)
 		}
