@@ -64,7 +64,6 @@ func measureReceive(wg *sync.WaitGroup, cancel context.CancelFunc) {
 	defer wg.Done()
 	defer subscriber.Delete()
 
-	collectionDuration := 4 * time.Second
 	bytesReceived := 0
 	counter := 0
 
@@ -81,13 +80,14 @@ func measureReceive(wg *sync.WaitGroup, cancel context.CancelFunc) {
 	bytesReceived = 0
 	counter = 0
 
-	<-time.After(collectionDuration)
+	<-time.After(40 * time.Second)
 
 	bytesSnapshot := bytesReceived
 	after := time.Now()
 
 	p := message.NewPrinter(language.English)
-	p.Printf("Received %d bytes in %v seconds over %d messages\n", bytesSnapshot, collectionDuration, counter)
-	p.Printf("Total: %.0f MB/s\n", float64(bytesSnapshot/1024/1024)/after.Sub(before).Seconds())
+	captureDuration := after.Sub(before).Seconds()
+	p.Printf("Received %d bytes in %.2f seconds over %d messages\n", bytesSnapshot, captureDuration, counter)
+	p.Printf("Total: %.0f MB/s\n", float64(bytesSnapshot/1024/1024)/captureDuration)
 	cancel()
 }
