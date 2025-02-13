@@ -11,13 +11,13 @@ extern "C" {
 
 bool NewSubscriber(
     uintptr_t handle,
-    const char *const topic,
+    const char *topic,
     size_t topic_len,
-    const char *const datatype_name,
+    const char *datatype_name,
     size_t datatype_name_len,
-    const char *const datatype_encoding,
+    const char *datatype_encoding,
     size_t datatype_encoding_len,
-    const char *const datatype_descriptor,
+    const char *datatype_descriptor,
     size_t datatype_descriptor_len
 );
 
