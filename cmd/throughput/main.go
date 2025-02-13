@@ -4,6 +4,7 @@ import (
 	"context"
 	"sync"
 	"time"
+	"unsafe"
 
 	"github.com/DownerCase/ecal-go/ecal"
 	"github.com/DownerCase/ecal-go/ecal/publisher"
@@ -43,21 +44,13 @@ func measurePublish(context context.Context, wg *sync.WaitGroup) {
 	defer publisher.Delete()
 
 	payload := make([]byte, 4*1024*1024)
-	counter := 0
-
-	p := message.NewPrinter(language.English)
-	defer func() { p.Printf("Sent %d messages\n", counter) }()
 
 	for {
 		select {
 		case <-context.Done():
 			return
 		default:
-			if len(publisher.Messages) < 100 {
-				publisher.Messages <- payload
-
-				counter++
-			}
+			publisher.Messages <- payload
 		}
 	}
 }
@@ -75,22 +68,19 @@ func measureReceive(wg *sync.WaitGroup, cancel context.CancelFunc) {
 	bytesReceived := 0
 	counter := 0
 
+	subscriber.Deserialize = func(_ unsafe.Pointer, dataLen int) any {
+		bytesReceived += dataLen
+		counter++
+
+		return nil
+	}
+
 	time.Sleep(2 * time.Second)
 
-	timeout := time.After(collectionDuration)
+	<-time.After(collectionDuration)
 
-	for {
-		select {
-		case <-timeout:
-			p := message.NewPrinter(language.English)
-			p.Printf("Received %d bytes in %v seconds over %d messages\n", bytesReceived, collectionDuration, counter)
-			p.Printf("Total: %d MB/s\n", bytesReceived/1000/1000/int(collectionDuration.Seconds()))
-			cancel()
-
-			return
-		case msg := <-subscriber.Messages:
-			bytesReceived += len(msg.([]byte))
-			counter++
-		}
-	}
+	p := message.NewPrinter(language.English)
+	p.Printf("Received %d bytes in %v seconds over %d messages\n", bytesReceived, collectionDuration, counter)
+	p.Printf("Total: %d MB/s\n", bytesReceived/1024/1024/int(collectionDuration.Seconds()))
+	cancel()
 }
