@@ -2,16 +2,14 @@
 
 #include <ecal/pubsub/publisher.h>
 
-#include "internal/handle_map.hpp"
+void DestroyPublisher(void *publisher) {
+  if (publisher == nullptr) {
+    return;
+  }
+  delete static_cast<eCAL::CPublisher*>(publisher);
+}
 
-namespace {
-handle_map<eCAL::CPublisher> publishers{};
-} // namespace
-
-bool DestroyPublisher(uintptr_t handle) { return publishers.erase(handle); }
-
-bool NewPublisher(
-    uintptr_t handle,
+void *NewPublisher(
     const char *const topic,
     size_t topic_len,
     const char *const datatype_name,
@@ -21,8 +19,7 @@ bool NewPublisher(
     const char *const datatype_descriptor,
     size_t datatype_descriptor_len
 ) {
-  const auto [it, added] = publishers.emplace(
-      handle,
+  return new eCAL::CPublisher(
       std::string(topic, topic_len),
       eCAL::SDataTypeInformation{
           std::string(datatype_name, datatype_name_len),
@@ -30,13 +27,11 @@ bool NewPublisher(
           std::string(datatype_descriptor, datatype_descriptor_len)
       }
   );
-  return added;
 }
 
-void PublisherSend(uintptr_t handle, void *buf, size_t len) {
-  auto *publisher = publishers.find(handle);
+void PublisherSend(void *publisher, void *buf, size_t len) {
   if (publisher == nullptr) {
     return;
   }
-  publisher->Send(buf, len);
+  static_cast<eCAL::CPublisher*>(publisher)->Send(buf, len);
 }

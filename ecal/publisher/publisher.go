@@ -1,10 +1,8 @@
 package publisher
 
 // #cgo LDFLAGS: -lecal_core
-// #cgo CPPFLAGS: -I${SRCDIR}/../../
 // #include "publisher.h"
-// bool GoNewPublisher(
-//  uintptr_t handle,
+// void *GoNewPublisher(
 //  _GoString_ topic,
 //  _GoString_ name, _GoString_ encoding,
 //  const char* const descriptor, size_t descriptor_len
@@ -14,7 +12,6 @@ import "C"
 
 import (
 	"errors"
-	"runtime/cgo"
 	"unsafe"
 
 	"github.com/DownerCase/ecal-go/ecal"
@@ -26,35 +23,33 @@ type DataType = ecal.DataType
 
 type Publisher struct {
 	Messages chan []byte
-	handle   cgo.Handle
+	handle   unsafe.Pointer
 	stopped  bool
 	closed   chan bool
 }
 
 func New(topic string, datatype DataType) (*Publisher, error) {
-	pub := &Publisher{
-		Messages: make(chan []byte),
-		stopped:  false,
-		closed:   make(chan bool),
-	}
-	handle := cgo.NewHandle(pub)
-	pub.handle = handle
-
 	var descriptorPtr *C.char
 	if len(datatype.Descriptor) > 0 {
 		descriptorPtr = (*C.char)(unsafe.Pointer(&datatype.Descriptor[0]))
 	}
 
-	if !C.GoNewPublisher(
-		C.uintptr_t(pub.handle),
+	handle := C.GoNewPublisher(
 		topic,
 		datatype.Name,
 		datatype.Encoding,
 		descriptorPtr,
 		C.size_t(len(datatype.Descriptor)),
-	) {
-		handle.Delete()
+	)
+	if handle == nil {
 		return nil, ErrFailedNew
+	}
+
+	pub := &Publisher{
+		Messages: make(chan []byte),
+		stopped:  false,
+		closed:   make(chan bool),
+		handle:   handle,
 	}
 
 	go pub.sendMessages()
@@ -69,12 +64,10 @@ func (p *Publisher) Delete() {
 		<-p.closed // Wait for sendMessages to finish
 	}
 
-	if !bool(C.DestroyPublisher(C.uintptr_t(p.handle))) {
-		// "Failed to delete publisher"
-		return
-	}
+	C.DestroyPublisher(p.handle)
+
 	// Deleted, clear handle
-	p.handle = 0
+	p.handle = nil
 }
 
 func (p *Publisher) IsStopped() bool {
@@ -83,7 +76,7 @@ func (p *Publisher) IsStopped() bool {
 
 func (p *Publisher) sendMessages() {
 	for msg := range p.Messages {
-		C.PublisherSend(C.uintptr_t(p.handle), unsafe.Pointer(&msg[0]), C.size_t(len(msg)))
+		C.PublisherSend(p.handle, unsafe.Pointer(&msg[0]), C.size_t(len(msg)))
 	}
 	p.closed <- true
 }
