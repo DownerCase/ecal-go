@@ -43,7 +43,7 @@ func measurePublish(context context.Context, wg *sync.WaitGroup) {
 	defer wg.Done()
 	defer publisher.Delete()
 
-	payload := make([]byte, 4*1024*1024)
+	payload := make([]byte, 8*1024*1024)
 
 	for {
 		select {
@@ -64,9 +64,10 @@ func measureReceive(wg *sync.WaitGroup, cancel context.CancelFunc) {
 	defer wg.Done()
 	defer subscriber.Delete()
 
-	collectionDuration := 4 * time.Second
 	bytesReceived := 0
 	counter := 0
+
+	time.Sleep(2 * time.Second)
 
 	subscriber.Deserialize = func(_ unsafe.Pointer, dataLen int) any {
 		bytesReceived += dataLen
@@ -75,12 +76,18 @@ func measureReceive(wg *sync.WaitGroup, cancel context.CancelFunc) {
 		return nil
 	}
 
-	time.Sleep(2 * time.Second)
+	before := time.Now()
+	bytesReceived = 0
+	counter = 0
 
-	<-time.After(collectionDuration)
+	<-time.After(40 * time.Second)
+
+	bytesSnapshot := bytesReceived
+	after := time.Now()
 
 	p := message.NewPrinter(language.English)
-	p.Printf("Received %d bytes in %v seconds over %d messages\n", bytesReceived, collectionDuration, counter)
-	p.Printf("Total: %d MB/s\n", bytesReceived/1024/1024/int(collectionDuration.Seconds()))
+	captureDuration := after.Sub(before).Seconds()
+	p.Printf("Received %d bytes in %.2f seconds over %d messages\n", bytesSnapshot, captureDuration, counter)
+	p.Printf("Total: %.0f MB/s\n", float64(bytesSnapshot/1024/1024)/captureDuration)
 	cancel()
 }
