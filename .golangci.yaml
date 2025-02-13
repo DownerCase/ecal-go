@@ -1,7 +1,6 @@
 linters:
   enable-all: true
   disable:
-    - exportloopref # Deprecated
     - exhaustruct # Very noisy, hard to disable when want zero values
     - forcetypeassert # If its wrong, we want to know
     - nlreturn # Not desired
@@ -9,6 +8,7 @@ linters:
     - depguard # Not desired
     - varnamelen # Not desired
     - cyclop # Flags big simple switch statements
+    - tenv # Deprecated
 
 linters-settings:
   gci:
