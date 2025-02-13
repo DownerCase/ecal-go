@@ -3,7 +3,7 @@ package main
 import (
 	"time"
 
-	"github.com/DownerCase/ecal-go/ecal/logging"
+	"github.com/DownerCase/ecal-go/ecal/ecallog"
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/table"
@@ -105,7 +105,7 @@ func (m *ModelLogs) Refresh() {
 
 func (m *ModelLogs) updateTable(msg tea.Msg) {
 	rows := []table.Row{}
-	logs := logging.GetLogging().Messages
+	logs := ecallog.GetLogging().Messages
 
 	for _, log := range logs {
 		rows = append(rows, logToRow(log))
@@ -115,7 +115,7 @@ func (m *ModelLogs) updateTable(msg tea.Msg) {
 	m.table, _ = m.table.Update(msg)
 }
 
-func logToRow(log logging.LogMessage) table.Row {
+func logToRow(log ecallog.LogMessage) table.Row {
 	return []string{
 		time.UnixMicro(log.Time).Format(time.TimeOnly),
 		log.Level.String(),

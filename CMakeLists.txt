@@ -35,8 +35,8 @@ target_link_libraries(ecal_go_subscriber PRIVATE eCAL::core utils)
 
 add_library(ecal_go_logging)
 target_sources(ecal_go_logging PRIVATE
-  ./ecal/logging/logging.h
-  ./ecal/logging/logging.cpp
+  ./ecal/ecallog/logging.h
+  ./ecal/ecallog/logging.cpp
 )
 target_link_libraries(ecal_go_logging PRIVATE eCAL::core ecal_go_core)
 
@@ -59,7 +59,7 @@ set(subpackages
   "ecal"
   "ecal/publisher"
   "ecal/subscriber"
-  "ecal/logging"
+  "internal/logging"
   "ecal/registration"
   "ecal/monitoring"
 )

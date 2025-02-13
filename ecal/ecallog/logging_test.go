@@ -1,4 +1,4 @@
-package logging_test
+package ecallog_test
 
 import (
 	"os"
@@ -6,11 +6,11 @@ import (
 	"time"
 
 	"github.com/DownerCase/ecal-go/ecal"
-	"github.com/DownerCase/ecal-go/ecal/logging"
+	"github.com/DownerCase/ecal-go/ecal/ecallog"
 	"github.com/DownerCase/ecal-go/internal/ecaltest"
 )
 
-func expectMessageIsFromHost(t *testing.T, msg logging.LogMessage) {
+func expectMessageIsFromHost(t *testing.T, msg ecallog.LogMessage) {
 	t.Helper()
 
 	host, err := os.Hostname()
@@ -23,10 +23,10 @@ func expectMessageIsFromHost(t *testing.T, msg logging.LogMessage) {
 	}
 }
 
-func receiveMessage(t *testing.T, msg string, level logging.Level) bool {
+func receiveMessage(t *testing.T, msg string, level ecallog.Level) bool {
 	t.Helper()
 
-	logs := logging.GetLogging()
+	logs := ecallog.GetLogging()
 
 	for _, rmsg := range logs.Messages {
 		if rmsg.Content == msg {
@@ -54,8 +54,8 @@ func TestGetLogging(t *testing.T) {
 
 	// When: Logging a message
 	testMessage := "This is a test log message"
-	level := logging.LevelError
-	logging.Log(level, testMessage)
+	level := ecallog.LogLevelError
+	ecallog.Log(level, testMessage)
 
 	// Expect: To receieve that message
 	time.Sleep(5 * time.Millisecond)

@@ -1,4 +1,4 @@
-package logging
+package ecallog
 
 //#include "logging.h"
 //#include "cgo_types.h"
@@ -28,7 +28,7 @@ func copyToLogMessages(cmsgs []C.struct_CLogMessage) []LogMessage {
 
 //export goCopyLogging
 func goCopyLogging(handle C.uintptr_t, clogging *C.struct_CLogging) {
-	l := cgo.Handle(handle).Value().(*Logging)
+	l := cgo.Handle(handle).Value().(*LogMessages)
 
 	numMessages := clogging.num_messages
 	if numMessages > 0 {
