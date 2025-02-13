@@ -76,6 +76,8 @@ func (p *Publisher) IsStopped() bool {
 
 func (p *Publisher) sendMessages() {
 	for msg := range p.Messages {
+		// #cgo noescape PublisherSend
+		// #cgo nocallback PublisherSend
 		C.PublisherSend(p.handle, unsafe.Pointer(&msg[0]), C.size_t(len(msg)))
 	}
 	p.closed <- true
