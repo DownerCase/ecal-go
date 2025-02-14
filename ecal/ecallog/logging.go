@@ -1,4 +1,4 @@
-package logging
+package ecallog
 
 // #cgo CPPFLAGS: -I${SRCDIR}/..
 // #include "logging.h"
@@ -26,58 +26,49 @@ type LogMessage struct {
 	Level    Level
 }
 
+type LogMessages struct {
+	Messages []LogMessage
+}
+
 const (
-	LevelNone   Level = C.log_level_none
-	LevelAll    Level = C.log_level_all
-	LevelInfo   Level = C.log_level_info
-	LevelWarn   Level = C.log_level_warning
-	LevelError  Level = C.log_level_error
-	LevelFatal  Level = C.log_level_fatal
-	LevelDebug  Level = C.log_level_debug1
-	LevelDebug1 Level = C.log_level_debug1
-	LevelDebug2 Level = C.log_level_debug2
-	LevelDebug3 Level = C.log_level_debug3
-	LevelDebug4 Level = C.log_level_debug4
+	LogLevelNone   Level = C.log_level_none
+	LogLevelAll    Level = C.log_level_all
+	LogLevelInfo   Level = C.log_level_info
+	LogLevelWarn   Level = C.log_level_warning
+	LogLevelError  Level = C.log_level_error
+	LogLevelFatal  Level = C.log_level_fatal
+	LogLevelDebug  Level = C.log_level_debug1
+	LogLevelDebug1 Level = C.log_level_debug1
+	LogLevelDebug2 Level = C.log_level_debug2
+	LogLevelDebug3 Level = C.log_level_debug3
+	LogLevelDebug4 Level = C.log_level_debug4
 )
 
 func (l Level) String() string {
 	switch l {
-	case LevelNone:
+	case LogLevelNone:
 		return "None"
-	case LevelAll:
+	case LogLevelAll:
 		return "All"
-	case LevelInfo:
+	case LogLevelInfo:
 		return "Info"
-	case LevelWarn:
+	case LogLevelWarn:
 		return "Warn"
-	case LevelError:
+	case LogLevelError:
 		return "Error"
-	case LevelFatal:
+	case LogLevelFatal:
 		return "Fatal"
-	case LevelDebug1:
+	case LogLevelDebug1:
 		return "Debug1"
-	case LevelDebug2:
+	case LogLevelDebug2:
 		return "Debug2"
-	case LevelDebug3:
+	case LogLevelDebug3:
 		return "Debug3"
-	case LevelDebug4:
+	case LogLevelDebug4:
 		return "Debug4"
 	default:
 		return strconv.FormatUint(uint64(l), 10)
 	}
-}
-
-type Logging struct {
-	Messages []LogMessage
-}
-
-func GetLogging() Logging {
-	var logs Logging
-	handle := cgo.NewHandle(&logs)
-	C.GetLogging(C.uintptr_t(handle))
-	handle.Delete()
-
-	return logs
 }
 
 func Log(level Level, a ...any) {
@@ -89,33 +80,42 @@ func Logf(level Level, format string, a ...any) {
 }
 
 func Error(a ...any) {
-	Log(LevelError, a...)
+	Log(LogLevelError, a...)
 }
 
 func Errorf(format string, a ...any) {
-	Logf(LevelError, format, a...)
+	Logf(LogLevelError, format, a...)
 }
 
 func Warn(a ...any) {
-	Log(LevelWarn, a...)
+	Log(LogLevelWarn, a...)
 }
 
 func Warnf(format string, a ...any) {
-	Logf(LevelWarn, format, a...)
+	Logf(LogLevelWarn, format, a...)
 }
 
 func Info(a ...any) {
-	Log(LevelInfo, a...)
+	Log(LogLevelInfo, a...)
 }
 
 func Infof(format string, a ...any) {
-	Logf(LevelInfo, format, a...)
+	Logf(LogLevelInfo, format, a...)
 }
 
 func Debug(a ...any) {
-	Log(LevelDebug, a...)
+	Log(LogLevelDebug, a...)
 }
 
 func Debugf(format string, a ...any) {
-	Logf(LevelDebug, format, a...)
+	Logf(LogLevelDebug, format, a...)
+}
+
+func GetLogging() LogMessages {
+	var logs LogMessages
+	handle := cgo.NewHandle(&logs)
+	C.GetLogging(C.uintptr_t(handle))
+	handle.Delete()
+
+	return logs
 }

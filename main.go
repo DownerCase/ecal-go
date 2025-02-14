@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/DownerCase/ecal-go/ecal"
-	"github.com/DownerCase/ecal-go/ecal/logging"
+	"github.com/DownerCase/ecal-go/ecal/ecallog"
 	"github.com/DownerCase/ecal-go/ecal/protobuf/publisher"
 	"github.com/DownerCase/ecal-go/ecal/registration"
 	string_publisher "github.com/DownerCase/ecal-go/ecal/string/publisher"
@@ -21,7 +21,7 @@ func main() {
 	// Initialize eCAL with default config, the unit name "Go eCAL",
 	// and the Publisher, Subscriber and Logging components enabled
 	initResult := ecal.Initialize(
-		ecal.NewConfig(ecal.WithConsoleLogging(true), ecal.WithConsoleLogAll()),
+		ecal.NewConfig(ecal.WithConsoleLogging(true), ecal.WithConsoleLogAll(), ecal.WithUDPLogAll()),
 		"Go eCAL!",
 		ecal.CPublisher|ecal.CSubscriber|ecal.CLogging,
 	)
@@ -30,21 +30,21 @@ func main() {
 	ecal.SetState(ecal.ProcSevHealthy, ecal.ProcSevLevel1, "Running the ecal-go demo")
 
 	// Log a message
-	logging.Log(logging.LevelInfo, "Initialized: ", initResult)
-	logging.Log(logging.LevelWarn, "Consider this a warning")
-	logging.Log(logging.LevelError, "This is an error")
-	logging.Log(logging.LevelFatal, "When things are really bad")
-	logging.Log(logging.LevelDebug1, "Level 1 debug message")
-	logging.Log(logging.LevelDebug2, "Level 2 debug message")
-	logging.Log(logging.LevelDebug3, "Level 3 debug message")
-	logging.Log(logging.LevelDebug4, "Level 4 debug message")
+	ecallog.Infof("Initialized: %t", initResult)
+	ecallog.Warn("Consider this a warning")
+	ecallog.Error("This is an error")
+	ecallog.Log(ecallog.LogLevelFatal, "When things are really bad")
+	ecallog.Log(ecallog.LogLevelDebug1, "Level 1 debug message")
+	ecallog.Log(ecallog.LogLevelDebug2, "Level 2 debug message")
+	ecallog.Log(ecallog.LogLevelDebug3, "Level 3 debug message")
+	ecallog.Log(ecallog.LogLevelDebug4, "Level 4 debug message")
 
 	registration.AddPublisherEventCallback(registrationLogger)
 
 	// Check if the eCAL system is Ok.
 	// Other eCAL programs can send a message to cause ecal.Ok() to return false
 	// Typically used as a condition to terminate daemon-style programs
-	logging.Infof("eCAL ok: %t", ecal.Ok())
+	ecallog.Infof("eCAL ok: %t", ecal.Ok())
 
 	// Create new protobuf publisher
 	pub, err := publisher.New[protos.Person]("person")
@@ -82,22 +82,22 @@ func sendMessages(
 	for idx := range numToSend {
 		// Check if program has been requested to stop
 		if !ecal.Ok() {
-			logging.Warn("eCAL.Ok() is false; shutting down")
+			ecallog.Warn("eCAL.Ok() is false; shutting down")
 			return
 		}
 
-		logging.Info("Sending message ", idx)
+		ecallog.Info("Sending message ", idx)
 
 		// Update message to send
 		person.Id = idx
 
 		// Serialize and send protobuf message
 		if err := pub.Send(person); err != nil {
-			logging.Error(err)
+			ecallog.Error(err)
 		}
 
 		if err := stringPublisher.Send("Message ", idx); err != nil {
-			logging.Error(err)
+			ecallog.Error(err)
 		}
 
 		// Delay next iteration

@@ -6,7 +6,9 @@ import (
 
 func main() {
 	ecal.Initialize(
-		ecal.NewConfig(),
+		ecal.NewConfig(
+			ecal.WithUDPLogReceiving(true),
+		),
 		"Go Monitor",
 		ecal.CSubscriber|ecal.CMonitoring|ecal.CLogging|ecal.CService,
 	)
