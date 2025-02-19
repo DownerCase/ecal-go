@@ -9,7 +9,11 @@ import "C"
 import (
 	"strconv"
 	"unsafe"
+
+	"github.com/DownerCase/ecal-go/ecal/ecaltypes"
 )
+
+type DataType = ecaltypes.DataType
 
 const (
 	// eCAL Components.

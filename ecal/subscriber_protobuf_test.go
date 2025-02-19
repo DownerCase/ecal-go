@@ -1,4 +1,4 @@
-package subscriber_test
+package ecal_test
 
 import (
 	"testing"
@@ -6,22 +6,11 @@ import (
 
 	"github.com/DownerCase/ecal-go/ecal"
 	"github.com/DownerCase/ecal-go/ecal/protobuf/publisher"
-	"github.com/DownerCase/ecal-go/ecal/protobuf/subscriber"
 	"github.com/DownerCase/ecal-go/internal/ecaltest"
 	testutilpublisher "github.com/DownerCase/ecal-go/internal/ecaltest/protobuf/testutil_publisher"
+	testutilsubscriber "github.com/DownerCase/ecal-go/internal/ecaltest/testutil_subscriber"
 	"github.com/DownerCase/ecal-go/protos"
 )
-
-func newSubscriber[U any, T subscriber.Msg[U]](t *testing.T, topic string) *subscriber.Subscriber[U, T] {
-	t.Helper()
-
-	sub, err := subscriber.New[U, T](topic)
-	if err != nil {
-		t.Error(err)
-	}
-
-	return sub
-}
 
 func TestSubscriber(t *testing.T) {
 	ecaltest.InitEcal(t)
@@ -31,7 +20,7 @@ func TestSubscriber(t *testing.T) {
 	pub := testutilpublisher.NewProtobufPublisher[protos.Person](t, "testing_protobuf_subscriber")
 	defer pub.Delete()
 
-	sub := newSubscriber[protos.Person](t, "testing_protobuf_subscriber")
+	sub := testutilsubscriber.NewProtobufSubscriber[protos.Person](t, "testing_protobuf_subscriber")
 	defer sub.Delete()
 
 	go sendMessages(pub)
@@ -65,7 +54,7 @@ func TestSubscriberTimeout(t *testing.T) {
 
 	defer ecal.Finalize() // Shutdown eCAL at the end of the program
 
-	sub := newSubscriber[protos.Person](t, "testing_protobuf_subscriber_timeout")
+	sub := testutilsubscriber.NewProtobufSubscriber[protos.Person](t, "testing_protobuf_subscriber_timeout")
 	defer sub.Delete()
 
 	msg, err := sub.Receive(50 * time.Millisecond)

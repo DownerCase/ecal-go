@@ -6,10 +6,10 @@ import (
 
 	"github.com/DownerCase/ecal-go/ecal"
 	"github.com/DownerCase/ecal-go/ecal/ecallog"
+	"github.com/DownerCase/ecal-go/ecal/ecaltypes"
 	"github.com/DownerCase/ecal-go/ecal/protobuf/publisher"
 	"github.com/DownerCase/ecal-go/ecal/registration"
 	string_publisher "github.com/DownerCase/ecal-go/ecal/string/publisher"
-	"github.com/DownerCase/ecal-go/ecal/string/subscriber"
 	"github.com/DownerCase/ecal-go/protos"
 )
 
@@ -53,17 +53,23 @@ func main() {
 	}
 	defer pub.Delete() // Don't forget to delete the publisher when done!
 
+	protoSub, err := ecal.NewProtobufSubscriber[protos.Person]("person")
+	if err != nil {
+		panic("Failed to make protobuf subscriber")
+	}
+	defer protoSub.Delete()
+
 	stringPublisher, err := string_publisher.New("string topic")
 	if err != nil {
 		panic("Failed to make string publisher")
 	}
 
-	sub, err := subscriber.New("string topic")
+	sub, err := ecal.NewStringSubscriber("string topic")
 	if err != nil {
-		panic("Failed to Create string subscriber")
+		panic("Failed to make string subscriber")
 	}
 
-	go receiveMessages(sub)
+	go receiveMessages(sub, protoSub)
 
 	sendMessages(100, stringPublisher, pub)
 }
@@ -105,7 +111,7 @@ func sendMessages(
 	}
 }
 
-func receiveMessages(s *subscriber.Subscriber) {
+func receiveMessages(s *ecal.StringSubscriber, s2 *ecal.ProtobufSubscriber[*protos.Person]) {
 	for {
 		msg, err := s.Receive(2 * time.Second)
 		if err == nil {
@@ -113,9 +119,16 @@ func receiveMessages(s *subscriber.Subscriber) {
 		} else {
 			fmt.Println(err) //nolint:forbidigo
 		}
+
+		msg2, err := s2.Receive(2 * time.Second)
+		if err == nil {
+			fmt.Println("Received:", msg2) //nolint:forbidigo
+		} else {
+			fmt.Println(err) //nolint:forbidigo
+		}
 	}
 }
 
-func registrationLogger(id ecal.TopicID, _ registration.Event) {
+func registrationLogger(id ecaltypes.TopicID, _ registration.Event) {
 	fmt.Println("Received registration sample:", id) //nolint:forbidigo
 }

@@ -56,7 +56,19 @@ func measurePublish(context context.Context, wg *sync.WaitGroup) {
 }
 
 func measureReceive(wg *sync.WaitGroup, cancel context.CancelFunc) {
-	subscriber, err := subscriber.New(topic, ecal.DataType{})
+	bytesReceived := 0
+	counter := 0
+
+	subscriber, err := subscriber.NewGenericSubscriber(
+		topic,
+		ecal.DataType{},
+		func(_ unsafe.Pointer, dataLen int) any {
+			bytesReceived += dataLen
+			counter++
+
+			return nil
+		},
+	)
 	if err != nil {
 		panic(err)
 	}
@@ -64,17 +76,7 @@ func measureReceive(wg *sync.WaitGroup, cancel context.CancelFunc) {
 	defer wg.Done()
 	defer subscriber.Delete()
 
-	bytesReceived := 0
-	counter := 0
-
 	time.Sleep(2 * time.Second)
-
-	subscriber.Deserialize = func(_ unsafe.Pointer, dataLen int) any {
-		bytesReceived += dataLen
-		counter++
-
-		return nil
-	}
 
 	before := time.Now()
 	bytesReceived = 0

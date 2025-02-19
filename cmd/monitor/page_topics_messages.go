@@ -1,11 +1,14 @@
 package main
 
+import "C"
+
 import (
 	"encoding/hex"
 	"fmt"
 	"strconv"
 	"strings"
 	"time"
+	"unsafe"
 
 	"github.com/DownerCase/ecal-go/ecal/monitoring"
 	"github.com/DownerCase/ecal-go/ecal/subscriber"
@@ -19,7 +22,7 @@ type ModelTopicMessages struct {
 	mon          monitoring.TopicMon
 	topicType    TopicType
 	topicID      uint64
-	subscriber   *subscriber.Subscriber
+	subscriber   *subscriber.GenericSubscriber[[]byte]
 	msg          []byte
 	deserializer func([]byte) []table.Row
 	collapsed    map[string]struct{}
@@ -106,7 +109,13 @@ func (m *ModelTopicMessages) createSubscriber() {
 		m.subscriber.Delete()
 	}
 
-	subscriber, err := subscriber.New(m.mon.TopicName, m.mon.Datatype)
+	subscriber, err := subscriber.NewGenericSubscriber(
+		m.mon.TopicName,
+		m.mon.Datatype,
+		func(data unsafe.Pointer, dataLen int) []byte {
+			return C.GoBytes(data, C.int(dataLen))
+		},
+	)
 	if err != nil {
 		subscriber.Delete()
 		panic(fmt.Errorf("[Topic Messages]: %w", err))
@@ -137,7 +146,7 @@ func (m *ModelTopicMessages) receiveTicks() tea.Cmd {
 		// Hard throttle to 250 updates/s
 		time.Sleep(time.Millisecond * 4)
 
-		if msg, ok := (<-m.subscriber.Messages).([]byte); ok {
+		if msg, ok := <-m.subscriber.Messages; ok {
 			return msgMsg{msg: msg}
 		}
 

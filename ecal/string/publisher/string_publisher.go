@@ -3,6 +3,7 @@ package publisher
 import (
 	"fmt"
 
+	"github.com/DownerCase/ecal-go/ecal/ecaltypes"
 	"github.com/DownerCase/ecal-go/ecal/publisher"
 )
 
@@ -12,7 +13,7 @@ type Publisher struct {
 
 func New(topic string) (*Publisher, error) {
 	pub, err := publisher.New(topic,
-		publisher.DataType{
+		ecaltypes.DataType{
 			Name:     "std::string",
 			Encoding: "base",
 		},

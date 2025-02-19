@@ -41,7 +41,7 @@ func TestSubscriberCallback(t *testing.T) {
 
 	registration.AddSubscriberEventCallback(regtest.EventCallback(topic, channel))
 
-	sub := testutilsubscriber.NewGenericSubscriber(t, topic)
+	sub := testutilsubscriber.NewBinarySubscriber(t, topic)
 	defer sub.Delete()
 
 	regtest.ExpectNew(t, topic, channel)

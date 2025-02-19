@@ -6,6 +6,7 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
+	"github.com/DownerCase/ecal-go/ecal/ecaltypes"
 	"github.com/DownerCase/ecal-go/ecal/publisher"
 	"github.com/DownerCase/ecal-go/internal/protobuf"
 )
@@ -24,7 +25,7 @@ func New[U any, T Msg[U]](topic string) (*Publisher[T], error) {
 	var msg T
 
 	pub, err := publisher.New(topic,
-		publisher.DataType{
+		ecaltypes.DataType{
 			Name:       protobuf.GetFullName(msg),
 			Encoding:   "proto",
 			Descriptor: protobuf.GetProtoMessageDescription(msg),

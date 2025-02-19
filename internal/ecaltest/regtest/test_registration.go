@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/DownerCase/ecal-go/ecal"
+	"github.com/DownerCase/ecal-go/ecal/ecaltypes"
 	"github.com/DownerCase/ecal-go/ecal/registration"
 )
 
@@ -15,11 +15,11 @@ const (
 
 type Callback struct {
 	Event registration.Event
-	ID    ecal.TopicID
+	ID    ecaltypes.TopicID
 }
 
-func EventCallback(topic string, channel chan Callback) func(ecal.TopicID, registration.Event) {
-	return func(id ecal.TopicID, event registration.Event) {
+func EventCallback(topic string, channel chan Callback) func(ecaltypes.TopicID, registration.Event) {
+	return func(id ecaltypes.TopicID, event registration.Event) {
 		if id.TopicName == topic {
 			channel <- Callback{event, id}
 		}
