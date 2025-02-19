@@ -24,7 +24,7 @@ func NewBinarySubscriber(topic string) (*BinarySubscriber, error) {
 		},
 	)
 	if err != nil {
-		err = fmt.Errorf("string Subscriber.New(): %w", err)
+		err = fmt.Errorf("NewBinarySubscriber(): %w", err)
 	}
 
 	return sub, err

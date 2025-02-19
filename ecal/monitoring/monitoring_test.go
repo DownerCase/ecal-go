@@ -10,8 +10,7 @@ import (
 	"github.com/DownerCase/ecal-go/ecal/registration"
 	"github.com/DownerCase/ecal-go/internal/ecaltest"
 	"github.com/DownerCase/ecal-go/internal/ecaltest/regtest"
-	testutilpublisher "github.com/DownerCase/ecal-go/internal/ecaltest/testutil_publisher"
-	testutilsubscriber "github.com/DownerCase/ecal-go/internal/ecaltest/testutil_subscriber"
+	"github.com/DownerCase/ecal-go/internal/ecaltest/testutil"
 )
 
 func expectTopicPresent(t *testing.T, ts []monitoring.TopicMon, topicName string) {
@@ -39,7 +38,7 @@ func TestPublisherMonitoring(t *testing.T) {
 	channel := make(chan regtest.Callback)
 	registration.AddPublisherEventCallback(regtest.EventCallback(topic, channel))
 
-	pub := testutilpublisher.NewGenericPublisher(t, topic)
+	pub := testutil.NewBinaryPublisher(t, topic)
 	defer pub.Delete()
 
 	mon := monitoring.GetMonitoring(monitoring.MonitorHost)
@@ -87,7 +86,7 @@ func TestSubscriberMonitoring(t *testing.T) {
 	channel := make(chan regtest.Callback)
 	registration.AddSubscriberEventCallback(regtest.EventCallback(topic, channel))
 
-	sub := testutilsubscriber.NewBinarySubscriber(t, topic)
+	sub := testutil.NewBinarySubscriber(t, topic)
 	defer sub.Delete()
 
 	mon := monitoring.GetMonitoring(monitoring.MonitorHost)

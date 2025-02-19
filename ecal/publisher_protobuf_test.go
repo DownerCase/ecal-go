@@ -1,14 +1,14 @@
-package publisher_test
+package ecal_test
 
 import (
 	"testing"
 
-	testutilpublisher "github.com/DownerCase/ecal-go/internal/ecaltest/protobuf/testutil_publisher"
+	"github.com/DownerCase/ecal-go/internal/ecaltest/testutil"
 	"github.com/DownerCase/ecal-go/protos"
 )
 
 func TestProtobufPublisher(t *testing.T) {
-	pub := testutilpublisher.NewProtobufPublisher[protos.Person](t, "testing_protobuf_publisher")
+	pub := testutil.NewProtobufPublisher[protos.Person](t, "testing_protobuf_publisher")
 	defer pub.Delete()
 
 	if pub.Messages == nil {
@@ -22,7 +22,5 @@ func TestProtobufPublisher(t *testing.T) {
 	}
 
 	// TODO: Check datatype information
-	if err := pub.Send(person); err != nil {
-		t.Error("Failed to send message", err)
-	}
+	pub.Send(person)
 }
