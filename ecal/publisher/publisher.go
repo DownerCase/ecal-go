@@ -19,14 +19,19 @@ import (
 
 var ErrFailedNew = errors.New("failed to create new publisher")
 
-type Publisher struct {
-	Messages chan []byte
-	handle   unsafe.Pointer
-	stopped  bool
-	closed   chan bool
+type GenericPublisher[T any] struct {
+	Messages   chan T
+	handle     unsafe.Pointer
+	stopped    bool
+	closed     chan bool
+	Serializer func(T) []byte
 }
 
-func New(topic string, datatype ecaltypes.DataType) (*Publisher, error) {
+func NewGenericPublisher[T any](
+	topic string,
+	datatype ecaltypes.DataType,
+	serializer func(T) []byte,
+) (*GenericPublisher[T], error) {
 	var descriptorPtr *C.char
 	if len(datatype.Descriptor) > 0 {
 		descriptorPtr = (*C.char)(unsafe.Pointer(&datatype.Descriptor[0]))
@@ -43,11 +48,12 @@ func New(topic string, datatype ecaltypes.DataType) (*Publisher, error) {
 		return nil, ErrFailedNew
 	}
 
-	pub := &Publisher{
-		Messages: make(chan []byte),
-		stopped:  false,
-		closed:   make(chan bool),
-		handle:   handle,
+	pub := &GenericPublisher[T]{
+		Messages:   make(chan T),
+		stopped:    false,
+		closed:     make(chan bool),
+		handle:     handle,
+		Serializer: serializer,
 	}
 
 	go pub.sendMessages()
@@ -55,7 +61,7 @@ func New(topic string, datatype ecaltypes.DataType) (*Publisher, error) {
 	return pub, nil
 }
 
-func (p *Publisher) Delete() {
+func (p *GenericPublisher[T]) Delete() {
 	if !p.stopped {
 		p.stopped = true
 		close(p.Messages)
@@ -68,15 +74,20 @@ func (p *Publisher) Delete() {
 	p.handle = nil
 }
 
-func (p *Publisher) IsStopped() bool {
+func (p *GenericPublisher[T]) IsStopped() bool {
 	return p.stopped
 }
 
-func (p *Publisher) sendMessages() {
+func (p *GenericPublisher[T]) Send(msg T) {
+	p.Messages <- msg
+}
+
+func (p *GenericPublisher[T]) sendMessages() {
 	for msg := range p.Messages {
+		bytesMsg := p.Serializer(msg)
 		// #cgo noescape PublisherSend
 		// #cgo nocallback PublisherSend
-		C.PublisherSend(p.handle, unsafe.Pointer(&msg[0]), C.size_t(len(msg)))
+		C.PublisherSend(p.handle, unsafe.Pointer(&bytesMsg[0]), C.size_t(len(bytesMsg)))
 	}
 	p.closed <- true
 }

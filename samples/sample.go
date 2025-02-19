@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/DownerCase/ecal-go/ecal"
-	"github.com/DownerCase/ecal-go/ecal/string/publisher"
 )
 
 func main() {
@@ -19,14 +18,14 @@ func main() {
 
 	// Send messages
 	go func() {
-		publisher, err := publisher.New("string topic")
+		publisher, err := ecal.NewStringPublisher("string topic")
 		if err != nil {
 			panic("Failed to make string publisher")
 		}
 		defer publisher.Delete()
 
 		for idx := 0; true; idx++ {
-			_ = publisher.Send("This is message ", idx)
+			publisher.Send(fmt.Sprint("This is message ", idx))
 
 			time.Sleep(time.Second)
 		}

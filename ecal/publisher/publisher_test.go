@@ -4,23 +4,23 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/DownerCase/ecal-go/ecal/ecaltypes"
-	"github.com/DownerCase/ecal-go/ecal/publisher"
-	testutilpublisher "github.com/DownerCase/ecal-go/internal/ecaltest/testutil_publisher"
+	"github.com/DownerCase/ecal-go/ecal"
+	"github.com/DownerCase/ecal-go/internal/ecaltest/testutil"
 )
 
 func TestNewPublishers(t *testing.T) {
-	for i := range 100 {
-		ptr, err := publisher.New(fmt.Sprintf("testPubTopic-%v", i), ecaltypes.DataType{})
-		if err != nil {
-			t.Error(err)
-		}
-		defer ptr.Delete()
+	publishers := make([]*ecal.BinaryPublisher, 100)
+	for i := range publishers {
+		publishers[i] = testutil.NewBinaryPublisher(t, fmt.Sprintf("testPubTopic-%v", i))
+	}
+
+	for _, p := range publishers {
+		p.Delete()
 	}
 }
 
 func TestPublisher(t *testing.T) {
-	pub := testutilpublisher.NewGenericPublisher(t, "testing")
+	pub := testutil.NewBinaryPublisher(t, "testing")
 	defer pub.Delete()
 
 	if pub.Messages == nil {

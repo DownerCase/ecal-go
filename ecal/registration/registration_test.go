@@ -7,8 +7,7 @@ import (
 	"github.com/DownerCase/ecal-go/ecal/registration"
 	"github.com/DownerCase/ecal-go/internal/ecaltest"
 	"github.com/DownerCase/ecal-go/internal/ecaltest/regtest"
-	testutilpublisher "github.com/DownerCase/ecal-go/internal/ecaltest/testutil_publisher"
-	testutilsubscriber "github.com/DownerCase/ecal-go/internal/ecaltest/testutil_subscriber"
+	"github.com/DownerCase/ecal-go/internal/ecaltest/testutil"
 )
 
 func TestPublisherCallback(t *testing.T) {
@@ -21,7 +20,7 @@ func TestPublisherCallback(t *testing.T) {
 
 	registration.AddPublisherEventCallback(regtest.EventCallback(topic, channel))
 
-	pub := testutilpublisher.NewGenericPublisher(t, topic)
+	pub := testutil.NewBinaryPublisher(t, topic)
 	defer pub.Delete()
 
 	regtest.ExpectNew(t, topic, channel)
@@ -41,7 +40,7 @@ func TestSubscriberCallback(t *testing.T) {
 
 	registration.AddSubscriberEventCallback(regtest.EventCallback(topic, channel))
 
-	sub := testutilsubscriber.NewBinarySubscriber(t, topic)
+	sub := testutil.NewBinarySubscriber(t, topic)
 	defer sub.Delete()
 
 	regtest.ExpectNew(t, topic, channel)

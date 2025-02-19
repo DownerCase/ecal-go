@@ -6,10 +6,8 @@ import (
 	"time"
 
 	"github.com/DownerCase/ecal-go/ecal"
-	"github.com/DownerCase/ecal-go/ecal/publisher"
 	"github.com/DownerCase/ecal-go/internal/ecaltest"
-	testutilpublisher "github.com/DownerCase/ecal-go/internal/ecaltest/testutil_publisher"
-	testutilsubscriber "github.com/DownerCase/ecal-go/internal/ecaltest/testutil_subscriber"
+	"github.com/DownerCase/ecal-go/internal/ecaltest/testutil"
 )
 
 func GetTestMessage() []byte {
@@ -21,10 +19,10 @@ func TestSubscriber(t *testing.T) {
 
 	defer ecal.Finalize() // Shutdown eCAL at the end of the program
 
-	pub := testutilpublisher.NewGenericPublisher(t, "testing_subscriber")
+	pub := testutil.NewBinaryPublisher(t, "testing_subscriber")
 	defer pub.Delete()
 
-	sub := testutilsubscriber.NewBinarySubscriber(t, "testing_subscriber")
+	sub := testutil.NewBinarySubscriber(t, "testing_subscriber")
 	defer sub.Delete()
 
 	go sendMessages(pub)
@@ -58,7 +56,7 @@ func TestSubscriberTimeout(t *testing.T) {
 
 	defer ecal.Finalize() // Shutdown eCAL at the end of the program
 
-	sub := testutilsubscriber.NewBinarySubscriber(t, "testing_subscriber_timeout")
+	sub := testutil.NewBinarySubscriber(t, "testing_subscriber_timeout")
 	defer sub.Delete()
 
 	msg, err := sub.Receive(50 * time.Millisecond)
@@ -67,7 +65,7 @@ func TestSubscriberTimeout(t *testing.T) {
 	}
 }
 
-func sendMessages(p *publisher.Publisher) {
+func sendMessages(p *ecal.BinaryPublisher) {
 	TestMessage := GetTestMessage()
 	for !p.IsStopped() {
 		p.Messages <- TestMessage

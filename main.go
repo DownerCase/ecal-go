@@ -7,9 +7,7 @@ import (
 	"github.com/DownerCase/ecal-go/ecal"
 	"github.com/DownerCase/ecal-go/ecal/ecallog"
 	"github.com/DownerCase/ecal-go/ecal/ecaltypes"
-	"github.com/DownerCase/ecal-go/ecal/protobuf/publisher"
 	"github.com/DownerCase/ecal-go/ecal/registration"
-	string_publisher "github.com/DownerCase/ecal-go/ecal/string/publisher"
 	"github.com/DownerCase/ecal-go/protos"
 )
 
@@ -47,7 +45,7 @@ func main() {
 	ecallog.Infof("eCAL ok: %t", ecal.Ok())
 
 	// Create new protobuf publisher
-	pub, err := publisher.New[protos.Person]("person")
+	pub, err := ecal.NewProtobufPublisher[protos.Person]("person")
 	if err != nil {
 		panic("Failed to make new publisher")
 	}
@@ -59,7 +57,7 @@ func main() {
 	}
 	defer protoSub.Delete()
 
-	stringPublisher, err := string_publisher.New("string topic")
+	stringPublisher, err := ecal.NewStringPublisher("string topic")
 	if err != nil {
 		panic("Failed to make string publisher")
 	}
@@ -76,8 +74,8 @@ func main() {
 
 func sendMessages(
 	numToSend int32,
-	stringPublisher *string_publisher.Publisher,
-	pub *publisher.Publisher[*protos.Person],
+	stringPublisher *ecal.StringPublisher,
+	pub *ecal.ProtobufPublisher[*protos.Person],
 ) {
 	person := &protos.Person{
 		Id: 0, Name: "John", Email: "john@doe.net",
@@ -98,13 +96,9 @@ func sendMessages(
 		person.Id = idx
 
 		// Serialize and send protobuf message
-		if err := pub.Send(person); err != nil {
-			ecallog.Error(err)
-		}
+		pub.Send(person)
 
-		if err := stringPublisher.Send("Message ", idx); err != nil {
-			ecallog.Error(err)
-		}
+		stringPublisher.Send(fmt.Sprint("Message ", idx))
 
 		// Delay next iteration
 		time.Sleep(1 * time.Second)

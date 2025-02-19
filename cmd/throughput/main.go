@@ -7,7 +7,6 @@ import (
 	"unsafe"
 
 	"github.com/DownerCase/ecal-go/ecal"
-	"github.com/DownerCase/ecal-go/ecal/publisher"
 	"github.com/DownerCase/ecal-go/ecal/subscriber"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
@@ -35,7 +34,7 @@ func main() {
 }
 
 func measurePublish(context context.Context, wg *sync.WaitGroup) {
-	publisher, err := publisher.New(topic, ecal.DataType{})
+	publisher, err := ecal.NewBinaryPublisher(topic)
 	if err != nil {
 		panic(err)
 	}
