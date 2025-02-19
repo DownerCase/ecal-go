@@ -18,7 +18,7 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/DownerCase/ecal-go/ecal"
+	"github.com/DownerCase/ecal-go/ecal/ecaltypes"
 )
 
 var (
@@ -27,22 +27,26 @@ var (
 	ErrRcvBadType = errors.New("receive could not handle type")
 )
 
-type Subscriber struct {
-	Messages    chan any
+type GenericSubscriber[T any] struct {
+	ecaltypes.Subscriber
+	Messages    chan T
 	handle      cgo.Handle
 	stopped     bool
-	Deserialize func(unsafe.Pointer, int) any
+	Deserialize func(unsafe.Pointer, int) T
 }
 
-type DataType = ecal.DataType
-
-func New(topic string, datatype DataType) (*Subscriber, error) {
-	sub := &Subscriber{
-		Messages:    make(chan any),
+func NewGenericSubscriber[T any](
+	topic string,
+	datatype ecaltypes.DataType,
+	deserializer func(unsafe.Pointer, int) T,
+) (*GenericSubscriber[T], error) {
+	sub := &GenericSubscriber[T]{
+		Messages:    make(chan T),
 		stopped:     false,
 		Deserialize: deserializer,
 	}
-	handle := cgo.NewHandle(sub)
+	sub.Subscriber.Callback = sub.subCallback
+	handle := cgo.NewHandle(sub.Subscriber)
 	sub.handle = handle
 
 	var descriptorPtr *C.char
@@ -65,48 +69,48 @@ func New(topic string, datatype DataType) (*Subscriber, error) {
 	return sub, nil
 }
 
-func (p *Subscriber) Delete() {
-	if !bool(C.DestroySubscriber(C.uintptr_t(p.handle))) {
+func (sub *GenericSubscriber[T]) Delete() {
+	if !bool(C.DestroySubscriber(C.uintptr_t(sub.handle))) {
 		// "Failed to delete subscriber"
 		return
 	}
 
-	if !p.stopped {
-		p.stopped = true
-		close(p.Messages)
-		p.Messages = nil
+	if !sub.stopped {
+		sub.stopped = true
+		close(sub.Messages)
+		sub.Messages = nil
 	}
 }
 
 // Receive a new message from the eCAL receive callback.
-func (p *Subscriber) Receive(timeout time.Duration) ([]byte, error) {
+func (sub *GenericSubscriber[T]) Receive(timeout time.Duration) (T, error) {
 	select {
-	case msg := <-p.Messages:
-		return msg.([]byte), nil
+	case msg := <-sub.Messages:
+		return msg, nil
 	case <-time.After(timeout):
-		return nil, fmt.Errorf("[Receive]: %w", ErrRcvTimeout)
+		var t T
+		return t, fmt.Errorf("[Receive]: %w", ErrRcvTimeout)
 	}
 }
 
-// Deserialize straight from the eCAL internal buffer to our Go []byte.
-func deserializer(data unsafe.Pointer, dataLen int) any {
-	return C.GoBytes(data, C.int(dataLen))
+func (sub *GenericSubscriber[T]) subCallback(data unsafe.Pointer, dataLen int) {
+	// We must deserialize _before_ submitting the message otherwise
+	// the channel may be closed before we finish deserializing
+	msg := sub.Deserialize(data, dataLen)
+	select {
+	case sub.Messages <- msg:
+	default:
+	}
 }
 
 // This function is called by the C code whenever a new message is received
 // and deserializes it into a []byte
 // If the subscriber Receive is not waiting the incoming message will be dropped
-// C.GoBytes takes an int as its length
+// C.GoBytes takes an int as its length.
 //
 //export goReceiveCallback
 func goReceiveCallback(handle C.uintptr_t, data unsafe.Pointer, dataLen C.int) {
 	h := cgo.Handle(handle)
-	sub := h.Value().(*Subscriber)
-	// We must deserialize _before_ submitting the message otherwise
-	// the channel may be closed before we finish deserializing
-	msg := sub.Deserialize(data, int(dataLen))
-	select {
-	case sub.Messages <- msg:
-	default:
-	}
+	subBase := h.Value().(ecaltypes.Subscriber)
+	subBase.Callback(data, int(dataLen))
 }

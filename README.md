@@ -42,7 +42,6 @@ import (
 
 	"github.com/DownerCase/ecal-go/ecal"
 	"github.com/DownerCase/ecal-go/ecal/string/publisher"
-	"github.com/DownerCase/ecal-go/ecal/string/subscriber"
 )
 
 func main() {
@@ -70,7 +69,7 @@ func main() {
 	}()
 
 	// Receive messages
-	subscriber, err := subscriber.New("string topic")
+	subscriber, err := ecal.NewStringSubscriber("string topic")
 	if err != nil {
 		panic("Failed to Create string subscriber")
 	}

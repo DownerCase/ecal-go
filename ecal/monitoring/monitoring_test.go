@@ -87,7 +87,7 @@ func TestSubscriberMonitoring(t *testing.T) {
 	channel := make(chan regtest.Callback)
 	registration.AddSubscriberEventCallback(regtest.EventCallback(topic, channel))
 
-	sub := testutilsubscriber.NewGenericSubscriber(t, topic)
+	sub := testutilsubscriber.NewBinarySubscriber(t, topic)
 	defer sub.Delete()
 
 	mon := monitoring.GetMonitoring(monitoring.MonitorHost)

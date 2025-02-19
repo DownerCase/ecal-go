@@ -24,7 +24,7 @@ func TestSubscriber(t *testing.T) {
 	pub := testutilpublisher.NewGenericPublisher(t, "testing_subscriber")
 	defer pub.Delete()
 
-	sub := testutilsubscriber.NewGenericSubscriber(t, "testing_subscriber")
+	sub := testutilsubscriber.NewBinarySubscriber(t, "testing_subscriber")
 	defer sub.Delete()
 
 	go sendMessages(pub)
@@ -58,7 +58,7 @@ func TestSubscriberTimeout(t *testing.T) {
 
 	defer ecal.Finalize() // Shutdown eCAL at the end of the program
 
-	sub := testutilsubscriber.NewGenericSubscriber(t, "testing_subscriber_timeout")
+	sub := testutilsubscriber.NewBinarySubscriber(t, "testing_subscriber_timeout")
 	defer sub.Delete()
 
 	msg, err := sub.Receive(50 * time.Millisecond)

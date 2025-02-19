@@ -14,12 +14,10 @@ import (
 	"errors"
 	"unsafe"
 
-	"github.com/DownerCase/ecal-go/ecal"
+	"github.com/DownerCase/ecal-go/ecal/ecaltypes"
 )
 
 var ErrFailedNew = errors.New("failed to create new publisher")
-
-type DataType = ecal.DataType
 
 type Publisher struct {
 	Messages chan []byte
@@ -28,7 +26,7 @@ type Publisher struct {
 	closed   chan bool
 }
 
-func New(topic string, datatype DataType) (*Publisher, error) {
+func New(topic string, datatype ecaltypes.DataType) (*Publisher, error) {
 	var descriptorPtr *C.char
 	if len(datatype.Descriptor) > 0 {
 		descriptorPtr = (*C.char)(unsafe.Pointer(&datatype.Descriptor[0]))
