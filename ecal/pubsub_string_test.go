@@ -12,7 +12,22 @@ import (
 
 const TestMessage = "Test string"
 
-func TestStringSubscriber(t *testing.T) {
+func TestStringSubscriberTimeout(t *testing.T) {
+	ecaltest.InitEcal(t)
+
+	defer ecal.Finalize() // Shutdown eCAL at the end of the program
+
+	sub := testutil.NewStringSubscriber(t, "testing_string_subscriber_timeout")
+	defer sub.Delete()
+
+	msg, err := sub.Receive(50 * time.Millisecond)
+	if err == nil {
+		t.Error("Expected timeout, received message:", msg)
+	}
+}
+
+func TestStringPubSub(t *testing.T) {
+	// Given: eCAL initialized, a string publisher and a string subscriber
 	ecaltest.InitEcal(t)
 
 	defer ecal.Finalize() // Shutdown eCAL at the end of the program
@@ -23,8 +38,10 @@ func TestStringSubscriber(t *testing.T) {
 	sub := testutil.NewStringSubscriber(t, "testing_string_subscriber")
 	defer sub.Delete()
 
+	// When: Publishing messages
 	go sendStringMessages(pub)
 
+	// Expect: To receive those messages
 	for range 10 {
 		msg, err := sub.Receive(2 * time.Second)
 		if err != nil {
@@ -41,24 +58,19 @@ func TestStringSubscriber(t *testing.T) {
 	}
 }
 
-func TestStringSubscriberTimeout(t *testing.T) {
-	ecaltest.InitEcal(t)
-
-	defer ecal.Finalize() // Shutdown eCAL at the end of the program
-
-	sub := testutil.NewStringSubscriber(t, "testing_string_subscriber_timeout")
-	defer sub.Delete()
-
-	msg, err := sub.Receive(50 * time.Millisecond)
-	if err == nil {
-		t.Error("Expected timeout, received message:", msg)
-	}
-}
-
 func sendStringMessages(p *ecal.StringPublisher) {
+	// Alternate between using the channel directly and the function call
 	for !p.IsStopped() {
-		p.Messages <- TestMessage
+		if !p.IsStopped() {
+			p.Messages <- TestMessage
 
-		time.Sleep(10 * time.Millisecond)
+			time.Sleep(10 * time.Millisecond)
+		}
+
+		if !p.IsStopped() {
+			p.Send(TestMessage)
+
+			time.Sleep(10 * time.Millisecond)
+		}
 	}
 }

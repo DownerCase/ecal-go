@@ -10,7 +10,22 @@ import (
 	"github.com/DownerCase/ecal-go/protos"
 )
 
-func TestSubscriber(t *testing.T) {
+func TestProtobufSubscriberTimeout(t *testing.T) {
+	ecaltest.InitEcal(t)
+
+	defer ecal.Finalize() // Shutdown eCAL at the end of the program
+
+	sub := testutil.NewProtobufSubscriber[protos.Person](t, "testing_protobuf_subscriber_timeout")
+	defer sub.Delete()
+
+	msg, err := sub.Receive(50 * time.Millisecond)
+	if err == nil {
+		t.Error("Expected timeout, received message:", &msg)
+	}
+}
+
+func TestProtobufPubSub(t *testing.T) {
+	// Given: eCAL initialized, a protobuf publisher and a protobuf subscriber
 	ecaltest.InitEcal(t)
 
 	defer ecal.Finalize() // Shutdown eCAL at the end of the program
@@ -21,8 +36,10 @@ func TestSubscriber(t *testing.T) {
 	sub := testutil.NewProtobufSubscriber[protos.Person](t, "testing_protobuf_subscriber")
 	defer sub.Delete()
 
-	go sendMessages(pub)
+	// When: Publishing messages
+	go sendProtobufMessages(pub)
 
+	// Expect: To receive those messages
 	for range 10 {
 		msg, err := sub.Receive(2 * time.Second)
 		if err != nil {
@@ -47,21 +64,7 @@ func TestSubscriber(t *testing.T) {
 	}
 }
 
-func TestSubscriberTimeout(t *testing.T) {
-	ecaltest.InitEcal(t)
-
-	defer ecal.Finalize() // Shutdown eCAL at the end of the program
-
-	sub := testutil.NewProtobufSubscriber[protos.Person](t, "testing_protobuf_subscriber_timeout")
-	defer sub.Delete()
-
-	msg, err := sub.Receive(50 * time.Millisecond)
-	if err == nil {
-		t.Error("Expected timeout, received message:", &msg)
-	}
-}
-
-func sendMessages(p *ecal.ProtobufPublisher[*protos.Person]) {
+func sendProtobufMessages(p *ecal.ProtobufPublisher[*protos.Person]) {
 	person := &protos.Person{
 		Id: 0, Name: "John", Email: "john@doe.net",
 		Dog:   &protos.Dog{Name: "Pluto"},
