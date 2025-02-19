@@ -61,12 +61,16 @@ func TestStringPubSub(t *testing.T) {
 func sendStringMessages(p *ecal.StringPublisher) {
 	// Alternate between using the channel directly and the function call
 	for !p.IsStopped() {
-		p.Messages <- TestMessage
+		if !p.IsStopped() {
+			p.Messages <- TestMessage
 
-		time.Sleep(10 * time.Millisecond)
+			time.Sleep(10 * time.Millisecond)
+		}
 
-		p.Send(TestMessage)
+		if !p.IsStopped() {
+			p.Send(TestMessage)
 
-		time.Sleep(10 * time.Millisecond)
+			time.Sleep(10 * time.Millisecond)
+		}
 	}
 }

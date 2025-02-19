@@ -77,7 +77,5 @@ func sendProtobufMessages(p *ecal.ProtobufPublisher[*protos.Person]) {
 		person.House.Rooms++
 
 		time.Sleep(10 * time.Millisecond)
-
-		p.Messages <- person
 	}
 }
