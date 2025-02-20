@@ -10,6 +10,12 @@ import (
 	"google.golang.org/protobuf/types/descriptorpb"
 )
 
+// CloneOf returns a deep copy of m. If the top-level message is invalid,
+// it returns an invalid message as well.
+func CloneOf[M proto.Message](m M) M {
+	return proto.Clone(m).(M)
+}
+
 func hasFile(fsetFile []*descriptorpb.FileDescriptorProto, fname string) bool {
 	return slices.ContainsFunc(
 		fsetFile,
