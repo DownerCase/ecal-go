@@ -155,6 +155,9 @@ func (m *ModelTopicMessages) receiveTicks() tea.Cmd {
 }
 
 func wrapAndSplitToItems(content string, width int) []table.Row {
+	if len(content) == 0 {
+		return []table.Row{}
+	}
 	// Remove trailing blank line
 	if content[len(content)-1] == '\n' {
 		content = content[:len(content)-1]
