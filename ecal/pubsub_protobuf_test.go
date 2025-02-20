@@ -6,8 +6,8 @@ import (
 
 	"github.com/DownerCase/ecal-go/ecal"
 	"github.com/DownerCase/ecal-go/internal/ecaltest"
-	"github.com/DownerCase/ecal-go/internal/protobuf"
 	"github.com/DownerCase/ecal-go/internal/ecaltest/testutil"
+	"github.com/DownerCase/ecal-go/internal/protobuf"
 	"github.com/DownerCase/ecal-go/protos"
 )
 

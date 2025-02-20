@@ -12,8 +12,8 @@ import "C"
 
 import (
 	"errors"
-	"unsafe"
 	"sync/atomic"
+	"unsafe"
 
 	"github.com/DownerCase/ecal-go/ecal/ecaltypes"
 )
@@ -62,7 +62,7 @@ func NewGenericPublisher[T any](
 }
 
 func (p *GenericPublisher[T]) Delete() {
-	if p.stopped.CompareAndSwap(false,true) {
+	if p.stopped.CompareAndSwap(false, true) {
 		close(p.Messages)
 		<-p.closed // Wait for sendMessages to finish
 	}
