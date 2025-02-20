@@ -12,6 +12,7 @@ import "C"
 
 import (
 	"errors"
+	"sync/atomic"
 	"unsafe"
 
 	"github.com/DownerCase/ecal-go/ecal/ecaltypes"
@@ -22,7 +23,7 @@ var ErrFailedNew = errors.New("failed to create new publisher")
 type GenericPublisher[T any] struct {
 	Messages   chan T
 	handle     unsafe.Pointer
-	stopped    bool
+	stopped    atomic.Bool
 	closed     chan bool
 	Serializer func(T) []byte
 }
@@ -50,7 +51,6 @@ func NewGenericPublisher[T any](
 
 	pub := &GenericPublisher[T]{
 		Messages:   make(chan T),
-		stopped:    false,
 		closed:     make(chan bool),
 		handle:     handle,
 		Serializer: serializer,
@@ -62,8 +62,7 @@ func NewGenericPublisher[T any](
 }
 
 func (p *GenericPublisher[T]) Delete() {
-	if !p.stopped {
-		p.stopped = true
+	if p.stopped.CompareAndSwap(false, true) {
 		close(p.Messages)
 		<-p.closed // Wait for sendMessages to finish
 	}
@@ -75,7 +74,7 @@ func (p *GenericPublisher[T]) Delete() {
 }
 
 func (p *GenericPublisher[T]) IsStopped() bool {
-	return p.stopped
+	return p.stopped.Load()
 }
 
 func (p *GenericPublisher[T]) Send(msg T) {

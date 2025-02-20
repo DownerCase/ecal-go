@@ -7,6 +7,7 @@ import (
 	"github.com/DownerCase/ecal-go/ecal"
 	"github.com/DownerCase/ecal-go/internal/ecaltest"
 	"github.com/DownerCase/ecal-go/internal/ecaltest/testutil"
+	"github.com/DownerCase/ecal-go/internal/protobuf"
 	"github.com/DownerCase/ecal-go/protos"
 )
 
@@ -65,14 +66,16 @@ func TestProtobufPubSub(t *testing.T) {
 }
 
 func sendProtobufMessages(p *ecal.ProtobufPublisher[*protos.Person]) {
-	person := &protos.Person{
+	person := protos.Person{
 		Id: 0, Name: "John", Email: "john@doe.net",
 		Dog:   &protos.Dog{Name: "Pluto"},
 		House: &protos.House{Rooms: 5},
 	}
 
 	for !p.IsStopped() {
-		p.Send(person)
+		// As we are modifing a message we must clone it before sending
+		// otherwise a datarace will happen
+		p.Send(protobuf.CloneOf(&person))
 
 		person.House.Rooms++
 
