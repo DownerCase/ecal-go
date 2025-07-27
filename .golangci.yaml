@@ -1,44 +1,61 @@
+version: "2"
 linters:
-  enable-all: true
+  default: all
   disable:
+    - cyclop # Flags big simple switch statements
+    - depguard # Not desired
     - exhaustruct # Very noisy, hard to disable when want zero values
     - forcetypeassert # If its wrong, we want to know
-    - nlreturn # Not desired
     - godox # Yes. The project is in progress
-    - depguard # Not desired
+    - nlreturn # Not desired
     - varnamelen # Not desired
-    - cyclop # Flags big simple switch statements
-    - tenv # Deprecated
-
-linters-settings:
-  gci:
-    sections:
-      - standard
-      - default
-      - localmodule
-  gomoddirectives:
-    replace-local: true
-  ireturn:
-    allow:
-      - tea.Model
-      - error
-      - stdlib
-      - empty
-      - generic
-  mnd:
-    ignored-files:
-      - 'monitor/.*.go' # UI code has many magic layout numbers...
-      - 'main.go' # Main file allowed, as it is example code
-    ignored-numbers:
-      - "2"
-  paralleltest:
+  settings:
+    gomoddirectives:
+      replace-local: true
+    ireturn:
+      allow:
+        - tea.Model
+        - error
+        - stdlib
+        - empty
+        - generic
+    mnd:
+      ignored-numbers:
+        - "2"
+      ignored-files:
+        - monitor/.*.go # UI code has many magic layout numbers...
+        - main.go # Main file allowed, as it is example code
+    paralleltest:
     # eCAL uses global state, any test using Initialize can't be run in parallel
-    ignore-missing: true
-
-issues:
-  exclude-rules:
-    - path: monitor/styles.go
-      linters:
-        - gochecknoglobals
-  exclude-dirs:
-    - cmd/monitor/internal/
+      ignore-missing: true
+  exclusions:
+    generated: strict # Must obey convention: https://go.dev/s/generatedcode
+    presets: []
+    rules:
+      - linters:
+          - gochecknoglobals
+        path: monitor/styles.go
+    paths:
+      - cmd/monitor/internal/
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  enable:
+    - gci
+    - gofmt
+    - gofumpt
+    - goimports
+  settings:
+    gci:
+      sections:
+        - standard
+        - default
+        - localmodule
+  exclusions:
+    generated: lax
+    paths:
+      - cmd/monitor/internal/
+      - third_party$
+      - builtin$
+      - examples$
