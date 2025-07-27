@@ -24,7 +24,7 @@ void ConfigLoggingConsole(void *config, bool enable) {
 
 void ConfigLoggingConsoleAll(void *config) {
   auto *cfg = reinterpret_cast<eCAL::Configuration *>(config);
-  cfg->logging.provider.console.filter_log =
+  cfg->logging.provider.console.log_level =
       eCAL::Logging::eLogLevel::log_level_all;
 }
 
@@ -35,7 +35,7 @@ void ConfigLoggingUdp(void *config, bool enable) {
 
 void ConfigLoggingUdpAll(void *config) {
   auto *cfg = reinterpret_cast<eCAL::Configuration *>(config);
-  cfg->logging.provider.udp.filter_log =
+  cfg->logging.provider.udp.log_level =
       eCAL::Logging::eLogLevel::log_level_all;
 }
 

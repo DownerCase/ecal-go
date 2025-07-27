@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=docker.io/alpine:3.21.2
+ARG BASE_IMAGE=docker.io/alpine:3.22.1
 
 ###
 # Build eCAL 6 from source
@@ -21,8 +21,8 @@ RUN apk add --no-cache \
 # So we end up with the full commit history but only download trees for HEAD
 # This is needed over shallow clone for the tag-based auto-versioning
 # Reset added to ensure the same commit is always used, even if master advances
-RUN git clone --single-branch --filter=tree:0 --branch ecal-go https://github.com/DownerCase/ecal.git /ecal \
-    && git -C /ecal reset --hard 490ce71b4c3297f0c50671cdcc603d0c06be6587 \
+RUN git clone --single-branch --filter=tree:0 --branch support/v6.0 https://github.com/eclipse-ecal/ecal.git /ecal \
+    && git -C /ecal reset --hard v6.0.0-rc.5 \
     # Only download the submodules for dependencies not available as system packages
     && git -C /ecal submodule update --init --single-branch --depth 1 \
     thirdparty/recycle/recycle \

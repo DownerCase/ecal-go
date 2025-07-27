@@ -64,7 +64,8 @@ bool NewSubscriber(
                               ) {
     receive_callback(handle, _topic, _datatype, _data);
   };
-  return (*it).second.SetReceiveCallback(bound_callback);
+  (*it).second.SetReceiveCallback(bound_callback);
+  return true;
 }
 
 bool DestroySubscriber(uintptr_t handle) { return subscribers.erase(handle); }
