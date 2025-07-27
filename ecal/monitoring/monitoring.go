@@ -83,6 +83,7 @@ type ServiceBase struct {
 
 type ServerMon struct {
 	ServiceBase
+
 	PortV0 uint32 // TCP Port for V0 protocol
 	PortV1 uint32 // TCP Port for V1 protocol
 }

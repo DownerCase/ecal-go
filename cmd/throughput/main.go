@@ -30,6 +30,7 @@ func main() {
 
 	go measurePublish(ctx, &wg)
 	go measureReceive(&wg, cancel)
+
 	wg.Wait()
 }
 
@@ -64,8 +65,10 @@ func measureReceive(wg *sync.WaitGroup, cancel context.CancelFunc) {
 		ecal.DataType{},
 		func(_ unsafe.Pointer, dataLen int) any {
 			mutex.Lock()
+
 			bytesReceived += dataLen
 			counter++
+
 			mutex.Unlock()
 
 			return nil
@@ -81,22 +84,35 @@ func measureReceive(wg *sync.WaitGroup, cancel context.CancelFunc) {
 	time.Sleep(2 * time.Second)
 
 	mutex.Lock()
+
 	bytesReceived = 0
 	counter = 0
 	before := time.Now()
+
 	mutex.Unlock()
 
 	<-time.After(40 * time.Second)
 
 	mutex.Lock()
+
 	after := time.Now()
 	bytesSnapshot := bytesReceived
 	counterSnapshot := counter
+
 	mutex.Unlock()
 
 	p := message.NewPrinter(language.English)
 	captureDuration := after.Sub(before).Seconds()
-	p.Printf("Received %d bytes in %.2f seconds over %d messages\n", bytesSnapshot, captureDuration, counterSnapshot)
-	p.Printf("Total: %.0f MB/s\n", float64(bytesSnapshot/1024/1024)/captureDuration)
+	_, _ = p.Printf(
+		"Received %d bytes in %.2f seconds over %d messages\n",
+		bytesSnapshot,
+		captureDuration,
+		counterSnapshot,
+	)
+	_, _ = p.Printf(
+		"Total: %.0f MB/s\n",
+		float64(bytesSnapshot/1024/1024)/captureDuration,
+	)
+
 	cancel()
 }

@@ -41,12 +41,12 @@ func TestInitializeFinalize(t *testing.T) {
 	}
 
 	if !ecal.Initialize(ecal.NewConfig(), "go_test", ecal.CDefault) {
-		t.Fatalf("eCAL failed to initialize with error")
+		t.Fatalf("eCAL failed to initialize")
 	}
 
 	// Test double initialization
 	if ecal.Initialize(ecal.NewConfig(), "go_test2", ecal.CPublisher) {
-		t.Errorf("Second initialize returned")
+		t.Errorf("Second initialize returned true")
 	}
 
 	if !ecal.IsInitialized() {
@@ -65,13 +65,9 @@ func TestInitializeFinalize(t *testing.T) {
 		t.Errorf("Failed to finalize")
 	}
 
-	// We've called Initialize twice so 2 calls to Finalize are needed
-	if !ecal.Finalize() {
-		t.Errorf("Expected second finalize to be successful")
-	}
-
+	// eCAL does not reference count (as of v6)
 	if ecal.Finalize() {
-		t.Errorf("Expected Finalize to already be done")
+		t.Errorf("Expected second finalize to fail")
 	}
 
 	if ecal.Ok() {

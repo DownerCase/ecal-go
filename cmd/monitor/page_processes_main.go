@@ -14,6 +14,7 @@ import (
 
 type processesKeyMap struct {
 	table.KeyMap
+
 	StopUnit key.Binding
 }
 

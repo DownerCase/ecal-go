@@ -10,9 +10,11 @@ extern "C" {
 extern void goCopyString(uintptr_t, const char *);
 }
 
-const char *GetVersionString() { return ECAL_VERSION; }
+const char *GetVersionString() { return eCAL::GetVersionString().c_str(); }
 
-const char *GetVersionDateString() { return ECAL_DATE; }
+const char *GetVersionDateString() {
+  return eCAL::GetVersionDateString().c_str();
+}
 
 version GetVersion() {
   const auto version = eCAL::GetVersion();

@@ -59,9 +59,9 @@ set(subpackages
   "ecal"
   "ecal/publisher"
   "ecal/subscriber"
-  "internal/logging"
   "ecal/registration"
   "ecal/monitoring"
+  "ecal/ecallog"
 )
 
 foreach(package ${subpackages})

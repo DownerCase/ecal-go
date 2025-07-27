@@ -19,6 +19,7 @@ const (
 
 type logsKeyMap struct {
 	table.KeyMap
+
 	Clear key.Binding
 }
 

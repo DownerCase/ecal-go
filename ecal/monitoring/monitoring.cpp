@@ -10,7 +10,7 @@ extern void goCopyMonitoring(uintptr_t handle, CMonitoring *);
 }
 
 namespace {
-CTopicMon toCTopicMon(const eCAL::Monitoring::STopicMon &topic) {
+CTopicMon toCTopicMon(const eCAL::Monitoring::STopic &topic) {
   return {
       topic.unit_name.c_str(),
       topic.host_name.c_str(),
@@ -29,7 +29,7 @@ CTopicMon toCTopicMon(const eCAL::Monitoring::STopicMon &topic) {
   };
 }
 
-CProcessMon toCProcessMon(const eCAL::Monitoring::SProcessMon &proc) {
+CProcessMon toCProcessMon(const eCAL::Monitoring::SProcess &proc) {
   return {
       proc.host_name.c_str(),
       proc.shm_transport_domain.c_str(),
@@ -61,15 +61,15 @@ template <class T> CServiceCommon toCServiceCommon(const T &t) {
       {}
   };
 }
-CClientMon toCClientMon(const eCAL::Monitoring::SClientMon &client) {
+CClientMon toCClientMon(const eCAL::Monitoring::SClient &client) {
   return {toCServiceCommon(client)};
 }
 
-CServerMon toCServerMon(const eCAL::Monitoring::SServerMon &server) {
+CServerMon toCServerMon(const eCAL::Monitoring::SServer &server) {
   return {toCServiceCommon(server), server.tcp_port_v0, server.tcp_port_v1};
 }
 
-CMethodMon toCMethodMon(const eCAL::Monitoring::SMethodMon &method) {
+CMethodMon toCMethodMon(const eCAL::Monitoring::SMethod &method) {
   return {
       method.method_name.c_str(),
       toCDatatype(method.request_datatype_information),
@@ -95,9 +95,9 @@ void GetMonitoring(uintptr_t handle, unsigned int entities) {
   eCAL::Monitoring::SMonitoring monitoring{};
   eCAL::Monitoring::GetMonitoring(monitoring, entities);
   const auto publishers =
-      containerTo<std::vector>(monitoring.publisher, toCTopicMon);
+      containerTo<std::vector>(monitoring.publishers, toCTopicMon);
   const auto subscribers =
-      containerTo<std::vector>(monitoring.subscriber, toCTopicMon);
+      containerTo<std::vector>(monitoring.subscribers, toCTopicMon);
   const auto processes =
       containerTo<std::vector>(monitoring.processes, toCProcessMon);
 
@@ -114,7 +114,7 @@ void GetMonitoring(uintptr_t handle, unsigned int entities) {
     cclient.base.methods_len = serviceMethods.back().size();
     cclient.base.methods     = serviceMethods.back().data();
   }
-  for (const auto &server : monitoring.server) {
+  for (const auto &server : monitoring.servers) {
     servers.emplace_back(toCServerMon(server));
     auto &cserver = servers.back();
     serviceMethods.emplace_back(

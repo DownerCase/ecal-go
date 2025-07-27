@@ -58,7 +58,9 @@ func makeProtobufDeserializer(
 func createBlankMessage(datatype ecal.DataType) (*dynamicpb.Message, error) {
 	// 1. Take descriptor from the wire and unmarshal it into a descriptorpb
 	var descriptorSet descriptorpb.FileDescriptorSet
-	if err := proto.Unmarshal(datatype.Descriptor, &descriptorSet); err != nil {
+
+	err := proto.Unmarshal(datatype.Descriptor, &descriptorSet)
+	if err != nil {
 		return nil, fmt.Errorf(
 			"makeProtobufDeserializer: Failed to unmarshal datatype descriptor %w", err,
 		)

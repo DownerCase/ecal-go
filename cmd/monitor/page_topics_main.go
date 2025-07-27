@@ -14,6 +14,7 @@ import (
 
 type topicsKeyMap struct {
 	table.KeyMap
+
 	FilterAll key.Binding
 	FilterPub key.Binding
 	FilterSub key.Binding
