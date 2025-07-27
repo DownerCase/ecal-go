@@ -82,6 +82,7 @@ func (m *ModelConfig) Refresh() {}
 
 func (m *ModelConfig) Update(msg tea.Msg) tea.Cmd {
 	var cmd tea.Cmd
+
 	m.viewport, cmd = m.viewport.Update(msg)
 
 	return cmd

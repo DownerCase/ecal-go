@@ -53,19 +53,6 @@ func doTick() tea.Cmd {
 	})
 }
 
-func (m *model) updatePage(msg tea.Msg) tea.Cmd {
-	return m.pages[m.page].Update(msg)
-}
-
-func (m *model) transitionTo(newPage Page) {
-	m.page = newPage
-	m.refresh()
-}
-
-func (m *model) refresh() {
-	m.pages[m.page].Refresh()
-}
-
 func (m *model) Init() tea.Cmd {
 	return doTick()
 }
@@ -127,9 +114,24 @@ func (m *model) View() string {
 	return s.String()
 }
 
+func (m *model) updatePage(msg tea.Msg) tea.Cmd {
+	return m.pages[m.page].Update(msg)
+}
+
+func (m *model) transitionTo(newPage Page) {
+	m.page = newPage
+	m.refresh()
+}
+
+func (m *model) refresh() {
+	m.pages[m.page].Refresh()
+}
+
 func doCli() {
 	p := tea.NewProgram(newModel())
-	if _, err := p.Run(); err != nil {
+
+	_, err := p.Run()
+	if err != nil {
 		log.Fatal("Error running program:", err)
 	}
 }

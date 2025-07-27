@@ -9,6 +9,7 @@ linters:
     - godox # Yes. The project is in progress
     - nlreturn # Not desired
     - varnamelen # Not desired
+    - wsl # Deprecated
   settings:
     gomoddirectives:
       replace-local: true
@@ -28,6 +29,10 @@ linters:
     paralleltest:
     # eCAL uses global state, any test using Initialize can't be run in parallel
       ignore-missing: true
+    revive:
+      rules:
+        - name: exported
+          disabled: true
   exclusions:
     generated: strict # Must obey convention: https://go.dev/s/generatedcode
     presets: []

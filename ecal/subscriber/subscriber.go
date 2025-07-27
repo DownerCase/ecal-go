@@ -29,6 +29,7 @@ var (
 
 type GenericSubscriber[T any] struct {
 	ecaltypes.Subscriber
+
 	Messages    chan T
 	handle      cgo.Handle
 	stopped     bool
@@ -45,7 +46,7 @@ func NewGenericSubscriber[T any](
 		stopped:     false,
 		Deserialize: deserializer,
 	}
-	sub.Subscriber.Callback = sub.subCallback
+	sub.Callback = sub.subCallback
 	handle := cgo.NewHandle(sub.Subscriber)
 	sub.handle = handle
 
